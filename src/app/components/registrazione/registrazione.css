@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --brand-dark:    #0f0e0c;
+  --brand-accent:  #c9a84c;
+  --brand-accent2: #e8c97a;
+  --text-primary:  #1a1814;
+  --text-secondary:#6b6560;
+  --text-muted:    #a09a93;
+  --border:        #e8e3dc;
+  --surface:       #faf9f7;
+  --white:         #ffffff;
+  --error:         #c0392b;
+  --radius-md:     14px;
+  --radius-sm:     8px;
+  --transition:    0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Wrapper: full page centered ── */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  padding: 2rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+
+  /* Subtle noise texture feel via gradient */
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(201,168,76,0.05) 0%, transparent 70%);
+}
+
+.back-home {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+  transition: color var(--transition), transform var(--transition);
+}
+
+.back-home:hover {
+  color: var(--brand-accent);
+  transform: translateX(-2px);
+}
+
+/* ── Card ── */
+.form-container {
+  width: 100%;
+  max-width: 420px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+  animation: fadeUp 0.45s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ── */
+.form-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  margin-bottom: 0.45rem;
+}
+
+.form-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+/* ── Form ── */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.field-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-icon {
+  position: absolute;
+  left: 13px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color var(--transition);
+}
+
+.field-input-wrap:focus-within .field-icon {
+  color: var(--brand-accent);
+}
+
+.field-input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.field-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+.field-input:focus {
+  border-color: var(--brand-accent);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.13);
+  background: var(--white);
+}
+
+/* Error state */
+.field-group.field-error .field-input {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.08);
+}
+
+.field-error-msg {
+  font-size: 0.75rem;
+  color: var(--error);
+}
+
+/* Server error banner */
+.server-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fdf0ef;
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: var(--radius-sm);
+  color: var(--error);
+  font-size: 0.84rem;
+}
+
+/* ── Buttons ── */
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.btn-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 24px;
+  background: var(--brand-dark);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.btn-login::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.18) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.btn-login:hover:not(:disabled)::before { opacity: 1; }
+.btn-login:hover:not(:disabled) {
+  box-shadow: 0 6px 22px rgba(15,14,12,0.2);
+  transform: translateY(-1px);
+}
+.btn-login:active:not(:disabled) { transform: translateY(0); box-shadow: none; }
+.btn-login:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.btn-register {
+  width: 100%;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.btn-register:hover {
+  border-color: var(--brand-accent);
+  color: var(--brand-accent);
+  background: rgba(201,168,76,0.04);
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .form-container { padding: 2rem 1.5rem; }
+  .form-title { font-size: 1.7rem; }
+}

@@ -1,0 +1,81 @@
+<div class="login-wrapper">
+  <div class="form-container">
+
+    <div class="form-header">
+      <p class="form-eyebrow">Bentornato</p>
+      <h1 class="form-title">Accedi al tuo account</h1>
+    </div>
+
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+
+      <!-- Username -->
+      <div class="field-group" [class.field-error]="username.invalid && username.touched">
+        <label for="username" class="field-label">Username</label>
+        <div class="field-input-wrap">
+          <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+          <input
+            id="username"
+            class="field-input"
+            type="text"
+            name="username"
+            placeholder="Inserisci username"
+            ngModel
+            required
+            #username="ngModel"
+          />
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="field-group" [class.field-error]="password.invalid && password.touched">
+        <label for="password" class="field-label">Password</label>
+        <div class="field-input-wrap">
+          <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input
+            id="password"
+            class="field-input"
+            type="password"
+            name="password"
+            placeholder="Inserisci password"
+            ngModel
+            required
+            #password="ngModel"
+          />
+        </div>
+      </div>
+
+      <!-- Server error -->
+       @if(msg()){
+        <div class="server-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          {{ msg() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button class="btn-login" type="submit" [disabled]="!loginForm.valid">
+          <span>Accedi</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <div class="divider"><span>oppure</span></div>
+
+        <button class="btn-register" type="button" (click)="registrazione()">
+          Crea un account
+        </button>
+        <a align = "center"class="back-home" (click)="goHome()">
+          ← Torna alla home
+        </a>
+      </div>
+    </form>
+  </div>
+</div>

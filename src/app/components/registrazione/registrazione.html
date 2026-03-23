@@ -1,0 +1,144 @@
+<div class="login-wrapper">
+  <div class="form-container">
+
+    <div class="form-header">
+      <p class="form-eyebrow">Nuovo account</p>
+      <h1 class="form-title">Crea il tuo profilo</h1>
+    </div>
+
+    <form #regForm="ngForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+
+      <!-- Username -->
+      <div class="field-group">
+        <label for="username" class="field-label">Username</label>
+        <div class="field-input-wrap">
+          <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+          <input
+            id="username"
+            class="field-input"
+            type="text"
+            name="username"
+            placeholder="Scegli un username"
+            ngModel
+            required
+            minlength="3"
+            #username="ngModel"
+          />
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="field-group" [class.field-error]="email.invalid && email.touched">
+        <label for="email" class="field-label">Email</label>
+        <div class="field-input-wrap">
+          <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/>
+          </svg>
+          <input
+            id="email"
+            class="field-input"
+            type="email"
+            name="email"
+            placeholder="La tua email"
+            ngModel
+            required
+            email
+            #email="ngModel"
+          />
+        </div>
+        @if (email.invalid && email.touched) {
+          <span class="field-error-msg">
+            @if (email.errors?.['required']) { Email obbligatoria }
+            @if (email.errors?.['email']) { Formato email non valido }
+          </span>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="field-group" [class.field-error]="password.invalid && password.touched">
+        <label for="password" class="field-label">Password</label>
+        <div class="field-input-wrap">
+          <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input
+            id="password"
+            class="field-input"
+            type="password"
+            name="password"
+            placeholder="Crea una password"
+            ngModel
+            required
+            minlength="6"
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$"
+            #password="ngModel"
+          />
+        </div>
+        @if (password.invalid && password.touched) {
+          <span class="field-error-msg">
+            La password deve avere almeno 6 caratteri, una lettera maiuscola, una minuscola e un carattere speciale
+          </span>
+        }
+      </div>
+
+      <!-- Conferma Password -->
+      <div class="field-group" [class.field-error]="confermaPassword.invalid && confermaPassword.touched">
+        <label for="confermaPassword" class="field-label">Conferma Password</label>
+        <div class="field-input-wrap">
+          <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input
+            id="confermaPassword"
+            class="field-input"
+            type="password"
+            name="confermaPassword"
+            placeholder="Ripeti la password"
+            ngModel
+            required
+            #confermaPassword="ngModel"
+          />
+        </div>
+        @if (confermaPassword.touched && confermaPassword.value !== password.value) {
+          <span class="field-error-msg">Le password non coincidono</span>
+        }
+      </div>
+
+      <!-- Server error -->
+      @if (msg()) {
+        <div class="server-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          {{ msg() }}
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button
+          class="btn-login"
+          type="submit"
+          [disabled]="!regForm.valid || confermaPassword.value !== password.value"
+        >
+          <span>Registrati</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <div class="divider"><span>hai già un account?</span></div>
+
+        <button class="btn-register" type="button" (click)="goLogin()">
+          Accedi
+        </button>
+        <a align = "center"class="back-home" (click)="goHome()">
+          ← Torna alla home
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>

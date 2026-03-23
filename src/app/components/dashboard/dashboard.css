@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --brand-dark:     #0f0e0c;
+  --brand-accent:   #c9a84c;
+  --brand-accent2:  #e8c97a;
+  --text-primary:   #1a1814;
+  --text-secondary: #6b6560;
+  --text-muted:     #a09a93;
+  --border:         #e8e3dc;
+  --surface:        #faf9f7;
+  --white:          #ffffff;
+  --toolbar-h:      64px;
+  --drawer-w:       230px;
+  --transition:     0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Global reset for this component ── */
+* { box-sizing: border-box; }
+
+/* ══════════════════════════════════════
+   TOOLBAR
+══════════════════════════════════════ */
+.app-toolbar {
+  position: sticky;   /* ← invece di fixed */
+  top: 0;
+  z-index: 100;
+  height: var(--toolbar-h) !important;
+  /* resto invariato */
+  background: var(--brand-dark) !important;
+  color: var(--white) !important;
+  padding: 0 1.25rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+
+  /* Subtle gold shimmer */
+  background-image: linear-gradient(
+    90deg,
+    rgba(201,168,76,0.06) 0%,
+    transparent 40%
+  ) !important;
+}
+
+.toolbar-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--brand-accent2);
+  text-transform: uppercase;
+  margin-left: 0.25rem;
+  user-select: none;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.toolbar-icon-btn {
+  color: var(--white) !important;
+  transition: color var(--transition), background var(--transition) !important;
+  border-radius: 10px !important;
+}
+
+.toolbar-icon-btn:hover {
+  color: var(--brand-accent2) !important;
+  background: rgba(201,168,76,0.1) !important;
+}
+
+.toolbar-icon-btn .mat-icon {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  color: inherit !important;
+}
+
+/* ══════════════════════════════════════
+   DRAWER CONTAINER
+══════════════════════════════════════ */
+.app-container {
+  margin-top: var(--toolbar-h);
+  height: calc(100vh - var(--toolbar-h));
+}
+
+/* ══════════════════════════════════════
+   DRAWER (sidebar)
+══════════════════════════════════════ */
+.app-drawer {
+  width: var(--drawer-w) !important;
+  background: var(--white) !important;
+  border-right: 1px solid var(--border) !important;
+  box-shadow: 2px 0 20px rgba(0,0,0,0.04) !important;
+}
+
+.drawer-header {
+  padding: 1.5rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.drawer-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Nav list ── */
+.drawer-nav {
+  padding: 0.75rem 0.6rem !important;
+}
+
+.nav-item {
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 0.88rem !important;
+  font-weight: 400 !important;
+  color: var(--text-secondary) !important;
+  border-radius: 10px !important;
+  margin-bottom: 2px !important;
+  transition: background var(--transition), color var(--transition) !important;
+  height: 44px !important;
+}
+
+.nav-item:hover {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
+.nav-item .mat-icon {
+  color: var(--text-muted) !important;
+  font-size: 19px !important;
+  width: 19px !important;
+  height: 19px !important;
+  transition: color var(--transition) !important;
+}
+
+.nav-item:hover .mat-icon {
+  color: var(--brand-accent) !important;
+}
+
+/* Active state */
+.nav-item.nav-active {
+  background: rgba(201,168,76,0.08) !important;
+  color: var(--text-primary) !important;
+  font-weight: 500 !important;
+}
+
+.nav-item.nav-active .mat-icon {
+  color: var(--brand-accent) !important;
+}
+
+/* ── Active indicator bar ── */
+.nav-item.nav-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  background: var(--brand-accent);
+  border-radius: 0 3px 3px 0;
+}
+
+/* ══════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════ */
+.app-content {
+  background: var(--surface) !important;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 80% 10%, rgba(201,168,76,0.05) 0%, transparent 70%) !important;
+}
+
+/* ══ ADMIN MENU ADDITIONS ══ */
+
+.drawer-admin-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brand-accent);
+}
+
+.drawer-admin-badge .mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.drawer-admin-badge span {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nav-section-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0.9rem 1rem 0.3rem;
+  margin: 0;
+}
+
+.nav-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.4rem 0.6rem;
+}
+
+
+/* Assicura che l'app occupi tutta la pagina */
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-container {
+  margin-top: var(--toolbar-h);
+  height: calc(100vh - var(--toolbar-h));
+  flex: 1;
+}
+
+
+
