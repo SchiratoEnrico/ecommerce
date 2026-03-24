@@ -1,13 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-interface Autore {
-  id: number;
-  nome: string;
-  cognome: string;
-  dataNascita: string;
-  descrizione: string;
-}
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Autore, AutoriServices } from '../../../services/autori-services';
 
 @Component({
   selector: 'app-gestione-autori',
@@ -17,14 +9,12 @@ interface Autore {
 })
 export class GestioneAutori implements OnInit {
 
-  private apiUrl = 'http://localhost:9090/rest/autore';
-
   autori: Autore[] = [];
   modalitaModifica = false;
   autoreInModifica: Autore | null = null;
   msg = '';
   isError = false;
-
+  
   formData = {
     nome: '',
     cognome: '',
@@ -32,45 +22,59 @@ export class GestioneAutori implements OnInit {
     descrizione: ''
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private autoriService: AutoriServices,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+
     this.caricaAutori();
   }
 
-  caricaAutori(): void {
-    this.http.get<Autore[]>(`${this.apiUrl}/list`).subscribe({
-      next: (data) => this.autori = data,
-      error: (err) => this.showMsg('Errore nel caricamento degli autori', true)
+ caricaAutori(): void {
+  this.autoriService.list().subscribe({
+    next: (data) => {
+      console.log("autori caricati");
+      this.autori = data;
+      this.cdr.detectChanges(); 
+    },
+    error: () => this.showMsg('Errore nel caricamento degli autori', true)
+  });
+}
+
+onSubmit(): void {
+  if (this.modalitaModifica && this.autoreInModifica) {
+    this.autoriService.update({ id: this.autoreInModifica.id, ...this.formData }).subscribe({
+      next: (res: any) => {
+        console.log("update response: ", res);
+        
+        this.annullaModifica();
+        this.showMsg(res.msg, false);
+        this.caricaAutori();
+      },
+      error: (err) => this.showMsg(err.error?.msg, true)
+    });
+  } else {
+    this.autoriService.create(this.formData).subscribe({
+      next: (res: any) => {
+        console.log("create response: ", res);
+        this.showMsg(res.msg, false);
+        this.resetForm();
+        this.caricaAutori();
+      },
+      error: (err) => this.showMsg(err.error?.msg, true)
     });
   }
+}
 
-  onSubmit(): void {
-    if (this.modalitaModifica && this.autoreInModifica) {
-       console.log('PAYLOAD UPDATE:', this.formData.dataNascita); // ← qui
-      this.http.put(`${this.apiUrl}/update`, {
-        id: this.autoreInModifica.id,
-        ...this.formData
-      }).subscribe({
-        next: () => {
-          console.log("wela");
-          this.showMsg('Autore modificato con successo', false);
-          this.annullaModifica();
-          this.caricaAutori();
-        },
-        error: (err) => this.showMsg(err.error?.msg || 'Errore durante la modifica', true)
-      });
-    } else {
-      this.http.post(`${this.apiUrl}/create`, this.formData).subscribe({
-        next: () => {
-          this.showMsg('Autore aggiunto con successo', false);
-          this.resetForm();
-          this.caricaAutori();
-        },
-        error: (err) => this.showMsg(err.error?.msg || 'Errore durante la creazione', true)
-      });
-    }
-  }
+eliminaAutore(id: number): void {
+  if (!confirm('Sei sicuro di voler eliminare questo autore?')) return;
+  this.autoriService.delete(id).subscribe({
+    next: (res: any) => this.showMsg(res.msg, false),
+    error: (err) => this.showMsg(err.error?.msg, true),
+    complete: () => this.caricaAutori()
+  });
+}
 
   modificaAutore(autore: Autore): void {
     this.modalitaModifica = true;
@@ -83,17 +87,6 @@ export class GestioneAutori implements OnInit {
     };
     this.msg = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  eliminaAutore(id: number): void {
-    if (!confirm('Sei sicuro di voler eliminare questo autore?')) return;
-    this.http.delete(`${this.apiUrl}/delete`, { params: { id } }).subscribe({
-      next: () => {
-        this.showMsg('Autore eliminato', false);
-        this.caricaAutori();
-      },
-      error: (err) => this.showMsg(err.error?.msg || 'Errore durante l\'eliminazione', true)
-    });
   }
 
   annullaModifica(): void {
@@ -110,6 +103,5 @@ export class GestioneAutori implements OnInit {
   private showMsg(testo: string, errore: boolean): void {
     this.msg = testo;
     this.isError = errore;
-    setTimeout(() => this.msg = '', 4000);
   }
 }
