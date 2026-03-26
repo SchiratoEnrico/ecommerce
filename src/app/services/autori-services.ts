@@ -1,14 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-
-export interface Autore {
-  id: number;
-  nome: string;
-  cognome: string;
-  dataNascita: string;
-  descrizione: string;
-}
+import { Autore } from '../models/autore';
 
 @Injectable({
   providedIn: 'root',
