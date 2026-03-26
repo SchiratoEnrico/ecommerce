@@ -1,11 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GestionePagamentiService } from '../../../services/gestione-pagamenti-service';
-
-interface Pagamento {
-  id: number;
-  tipo_pagamento: string;
-}
+import { MatTableDataSource } from '@angular/material/table';
+import { TipoPagamento } from '../../../models/tipo-pagamento.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { TipoPagamentoDialog } from '../../dialog/tipo-pagamento-dialog/tipo-pagamento-dialog';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-gestione-pagamenti',
@@ -14,82 +15,118 @@ interface Pagamento {
   styleUrl: './gestione-pagamenti.css',
 })
 export class GestionePagamenti implements OnInit {
-  private gestionePagamentiService = inject(GestionePagamentiService);
-  private fb = inject(FormBuilder);
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  pagamenti = this.gestionePagamentiService.pagamenti;
-  isEditMode = false;
-  isModalOpen = false;
-  selectedPagamentoId: number | null = null;
+  displayedColumns: string[] = ['id', 'tipoPagamento'];
+  dataSource = new MatTableDataSource<TipoPagamento>();
 
-  pagamentoForm = this.fb.group({
-    tipo_pagamento: ['', [Validators.required]],
-  });
+  constructor(
+    private gestionePagamentiService: GestionePagamentiService,
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ){}
+
+  form!: FormGroup;
+  loading = false;
+  tipoPagamentoInModifica: TipoPagamento | null = null;
 
   ngOnInit(): void {
-    this.gestionePagamentiService.list();
+    this.initForm();
+    this.loadData();
   }
 
-  openAddModal(): void {
-    this.isEditMode = false;
-    this.selectedPagamentoId = null;
-    this.pagamentoForm.reset({ tipo_pagamento: '' });
-    this.isModalOpen = true;
-  }
-
-  openEditModal(pagamento: Pagamento): void {
-    this.isEditMode = true;
-    this.selectedPagamentoId = pagamento.id;
-    this.pagamentoForm.patchValue({ tipo_pagamento: pagamento.tipo_pagamento });
-    this.isModalOpen = true;
-  }
-
-  closeModal(): void {
-    this.isModalOpen = false;
-  }
-
-  savePagamento(): void {
-    if (this.pagamentoForm.invalid) {
-      this.pagamentoForm.markAllAsTouched();
-      return;
-    }
-
-    const tipoPagamento = this.pagamentoForm.controls.tipo_pagamento.value?.trim() ?? '';
-    if (!tipoPagamento) {
-      this.pagamentoForm.controls.tipo_pagamento.setErrors({ required: true });
-      return;
-    }
-
-    const body = {
-      tipo_pagamento: tipoPagamento,
-      ...(this.isEditMode && this.selectedPagamentoId !== null
-        ? { id: this.selectedPagamentoId }
-        : {}),
-    };
-
-    const request$ = this.isEditMode
-      ? this.gestionePagamentiService.update(body)
-      : this.gestionePagamentiService.create(body);
-
-    request$.subscribe({
-      next: () => this.closeModal(),
-      error: (err) => {
-        console.error('Errore durante il salvataggio del tipo pagamento:', err);
-        alert('Salvataggio non riuscito. Controlla backend e payload in console.');
-      },
+  initForm(){
+    this.form = this.fb.group({
+      id: ['', [Validators.required]],
+      tipoPagamento: ['', [Validators.required]]
     });
   }
 
-  deletePagamento(id: number): void {
-    const confirmed = window.confirm('Vuoi eliminare questo tipo di pagamento?');
-    if (!confirmed) {
-      return;
-    }
-
-    this.gestionePagamentiService.delete(id).subscribe();
+  loadData(){
+    this.loading = true;
+    this.gestionePagamentiService.list().subscribe({
+      next: (data: TipoPagamento[]) => {
+        this.dataSource.data = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.showMsg('Errore caricamento dati', true);
+        this.loading = false;
+      }
+    });
   }
 
-  trackById(_: number, pagamento: Pagamento): number {
-    return pagamento.id;
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  openCreateDialog() {
+    const dialogRef = this.dialog.open(TipoPagamentoDialog, {
+      width: '400px',
+      data: null
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(!result) return;
+
+      this.gestionePagamentiService.create(result).subscribe({
+        next: (res: any) => {
+          this.showMsg(res.msg, false);
+          this.reset();
+          this.loadData();
+        },
+        error: (err) => {
+          this.showMsg(err.error?.msg, true);
+        }
+      });
+    });
+  }
+
+  edit(tipoPagamento: TipoPagamento) {
+    const dialogRef = this.dialog.open(TipoPagamentoDialog, {
+      width: '400px',
+      data: tipoPagamento
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(!result) return;
+      if(result.action === 'delete') {
+        this.gestionePagamentiService.delete(result.id).subscribe({
+          next: (res: any) => this.showMsg(res.msg, false),
+          error: (err) => this.showMsg(err.error?.msg, true),
+          complete: () => this.loadData()
+        });
+      }
+      if(result.action === 'save') {
+        this.gestionePagamentiService.update({
+          id: tipoPagamento.id,
+          ...result
+        }).subscribe({
+          next: (res: any) => {
+            this.showMsg(res.msg, false);
+            this.loadData();
+          },
+          error: (err) => {
+            this.showMsg(err.error?.msg, true);
+          },
+          complete: () => this.loadData()
+        });
+      }
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  reset(){
+    this.form.reset();
+    this.tipoPagamentoInModifica = null;
+  }
+
+  showMsg(msg: string, isError: boolean){
+    this.snackBar.open(msg, 'OK', {
+      duration: 3000,
+      panelClass: isError ? 'snack-error' : 'snack-success'
+    });
   }
 }

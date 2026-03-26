@@ -7,7 +7,7 @@ import { App } from './app';
 import { Dashboard } from './components/dashboard/dashboard';
 import { RouterModule } from '@angular/router';
 
-import { MatFormField, MatInputModule } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -32,6 +32,12 @@ import { GestioneAccount } from './components/admin/gestione-account/gestione-ac
 import { GestioneSpedizioni } from './components/admin/gestione-spedizioni/gestione-spedizioni';
 import { GestionePagamenti } from './components/admin/gestione-pagamenti/gestione-pagamenti';
 import { Registrazione } from './components/registrazione/registrazione';
+import { TipoPagamentoDialog } from './components/dialog/tipo-pagamento-dialog/tipo-pagamento-dialog';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -51,11 +57,12 @@ import { Registrazione } from './components/registrazione/registrazione';
     GestioneSpedizioni,
     GestionePagamenti,
     Registrazione,
+    TipoPagamentoDialog,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    MatFormField,
+    MatFormFieldModule,
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
@@ -69,7 +76,11 @@ import { Registrazione } from './components/registrazione/registrazione';
     MatIconModule,
     MatTooltipModule,
     RouterModule,
-  ],
+    MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MatDialogModule
+],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),

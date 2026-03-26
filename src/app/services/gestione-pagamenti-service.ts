@@ -1,15 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { tap } from 'rxjs';
-
-interface Pagamento {
-  id: number;
-  tipo_pagamento: string;
-}
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable, tap } from 'rxjs';
+import { TipoPagamento } from '../models/tipo-pagamento.model';
 
 interface PagamentoPayload {
   id?: number;
-  tipo_pagamento: string;
+  tipoPagamento: string;
 }
 
 @Injectable({
@@ -18,20 +15,16 @@ interface PagamentoPayload {
 export class GestionePagamentiService {
   url = 'http://localhost:9090/rest/tipo_pagamento';
 
-  pagamenti = signal<Pagamento[]>([]);
-  constructor(private http: HttpClient) {}
+  pagamenti = signal<TipoPagamento[]>([]);
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar
+  ) {}
 
-  list() {
-    this.http.get<any[]>(this.url + '/list').subscribe({
-      next: (resp) => {
-        const normalized = (resp ?? []).map((item) => ({
-          id: item.id,
-          tipo_pagamento:
-            item.tipo_pagamento ?? item.tipoPagamento ?? item.tipi_pagamento ?? '',
-        }));
-        this.pagamenti.set(normalized);
-      },
-    });
+  lista: any;
+
+  list(): Observable<TipoPagamento[]> {
+    return this.http.get<TipoPagamento[]>(`${this.url}/list`);
   }
 
   findById(id: number) {
@@ -57,12 +50,17 @@ export class GestionePagamentiService {
   }
 
   private toBackendPayload(body: PagamentoPayload) {
-    const value = body.tipo_pagamento?.trim();
+    const value = body.tipoPagamento?.trim();
     return {
       ...(body.id !== undefined ? { id: body.id } : {}),
-      tipo_pagamento: value,
       tipoPagamento: value,
-      tipi_pagamento: value,
     };
+  }
+
+  showMsg(msg: string, isError: boolean){
+    this.snackBar.open(msg, 'OK', {
+      duration: 3000,
+      panelClass: isError ? 'snack-error' : 'snack-success'
+    });
   }
 }

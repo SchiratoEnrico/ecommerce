@@ -1,0 +1,119 @@
+/* IMPORT FONT */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ROOT */
+:root {
+    --brand-dark:     #0f0e0c;
+    --brand-accent:   #c9a84c;
+    --text-primary:   #1a1814;
+    --text-secondary: #6b6560;
+    --text-muted:     #a09a93;
+    --border:         #e8e3dc;
+    --surface:        #faf9f7;
+    --white:          #ffffff;
+    --error:          #c0392b;
+    --success:        #27ae60;
+    --radius-sm:      8px;
+    --radius-md:      14px;
+    --radius-lg:      20px;
+}
+
+/* WRAPPER */
+.page-wrapper {
+    font-family: 'DM Sans', sans-serif;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* HEADER */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+}
+
+.badge-count {
+    background: var(--border);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* CARD */
+.card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.actions-group {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+/* MAT FORM FIELD FIX */
+mat-form-field {
+    width: 180px;
+}
+
+/* TABLE MATERIAL CUSTOM */
+.full-width-table {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* HEADER CELLS */
+.mat-mdc-header-cell {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+}
+
+/* ROWS */
+.mat-mdc-row {
+    transition: all 0.2s ease;
+}
+
+.mat-mdc-row:hover {
+    background: rgba(201,168,76,0.08);
+    transform: scale(1.05);
+    /*background: var(--surface);*/
+    transition: 0.2s;
+}
+
+/* CELLS */
+.mat-mdc-cell {
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+}
+
+/* ACTIONS */
+.mat-mdc-cell button {
+    margin-right: 5px;
+}
+
+/* PAGINATOR */
+mat-paginator {
+    margin-top: 15px;
+}
+
+/* SNACKBAR */
+.snack-success {
+    background: var(--success);
+    color: white;
+}
+
+.snack-error {
+    background: var(--error);
+    color: white;
+}

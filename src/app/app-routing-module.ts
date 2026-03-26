@@ -39,7 +39,7 @@ const routes: Routes = [
       { path: 'admin/ordini',         component: GestioneOrdini,        canActivate: [authAdminGuard] },
       { path: 'admin/account',        component: GestioneAccount,       canActivate: [authAdminGuard] },
       { path: 'admin/spedizioni',     component: GestioneSpedizioni,    canActivate: [authAdminGuard] },
-      { path: 'admin/pagamenti',      component: GestionePagamenti,     canActivate: [authAdminGuard] },
+      { path: 'admin/pagamenti',      component: GestionePagamenti,      },
     ]
   },
   { path: 'login', component: Login },
