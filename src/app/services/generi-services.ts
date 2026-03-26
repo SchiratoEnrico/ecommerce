@@ -2,11 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-
-export interface Genere {
-  id: number;
-  descrizione: string;
-}
+import { Genere } from '../models/genere';
 
 @Injectable({
   providedIn: 'root',
