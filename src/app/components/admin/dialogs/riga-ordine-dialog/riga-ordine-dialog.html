@@ -1,0 +1,32 @@
+
+<h2 mat-dialog-title>
+
+  {{ data?.riga ? 'Modifica Riga Ordine' : 'Nuova Riga Ordine' }}
+</h2>
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>ISBN Manga</mat-label>
+      <input matInput formControlName="manga" placeholder="es. 978-3-16-148410-0">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Numero Copie</mat-label>
+      <input matInput type="number" formControlName="numeroCopie" min="1">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annulla</button>
+  @if (data?.riga) {
+    <button mat-button color="warn" (click)="delete()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+      Elimina
+    </button>
+  }
+  <button mat-raised-button color="primary" (click)="save()">Salva</button>
+</mat-dialog-actions>
