@@ -4,41 +4,34 @@
   <div class="page-header">
     <div class="page-header-left">
       <p class="page-eyebrow">Pannello Admin</p>
-      <h1 class="page-title">Gestione Accounts</h1>
+      <h1 class="page-title">Gestione Anagrafiche di {{username}}</h1>
     </div>
     <div class="page-header-right">
       <span class="badge-count">{{ dataSource.data.length }} risultati</span>
     </div>
   </div>
 
-  <!-- FILTRI + Aggiunta -->
+  <!-- FILTRI -->
   <div class="card filter-card">
     <div class="filter-row">
       <mat-form-field appearance="outline">
-        <mat-label>Username</mat-label>
-        <input matInput [(ngModel)]="filters.username" (keyup)="onFilterChange()">
+        <mat-label>Nome</mat-label>
+        <input matInput [(ngModel)]="filters.nome" (keyup)="onFilterChange()">
       </mat-form-field>
-
       <mat-form-field appearance="outline">
-        <mat-label>E-mail</mat-label>
-        <input matInput [(ngModel)]="filters.email" (keyup)="onFilterChange()">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Ruolo</mat-label>
-        <input matInput [(ngModel)]="filters.ruolo" (keyup)="onFilterChange()">
+        <mat-label>Cognome</mat-label>
+        <input matInput [(ngModel)]="filters.cognome" (keyup)="onFilterChange()">
       </mat-form-field>
     </div>
-
     <div class="actions-group">
-      <button class="btn-primary" (click)="resetFilters()">
+      <button class="btn-primary btn-ghost" (click)="resetFilters()">
         Reset
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
         </svg>
       </button>
       <button class="btn-primary" (click)="openCreateDialog()">
-        Nuovo account
+        Nuova anagrafica
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M5 12h14M12 5l7 7-7 7"/>
         </svg>
@@ -60,26 +53,37 @@
           <td mat-cell *matCellDef="let e" class="td-id">{{ e.id }}</td>
         </ng-container>
 
-        <!-- username -->
-        <ng-container matColumnDef="username">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
-          <td mat-cell *matCellDef="let e" class="td-bold">{{ e.username }}</td>
+        <!-- NOMINATIVO -->
+        <ng-container matColumnDef="nominativo">
+          <th mat-header-cell *matHeaderCellDef>Nome e Cognome</th>
+          <td mat-cell *matCellDef="let e" class="td-bold">{{ e.nome }} {{ e.cognome }}</td>
         </ng-container>
 
-        <!-- email -->
-        <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-          <td mat-cell *matCellDef="let e">{{ e.email }}</td>
+        <!-- INDIRIZZO -->
+        <ng-container matColumnDef="indirizzo">
+          <th mat-header-cell *matHeaderCellDef>Indirizzo</th>
+          <td mat-cell *matCellDef="let e" class="td-desc">{{ e.via }}, {{ e.citta }} {{ e.cap }} ({{ e.provincia }})</td>
         </ng-container>
 
-        <!-- ruolo -->
-        <ng-container matColumnDef="ruolo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Ruolo</th>
-          <td mat-cell *matCellDef="let e" class="td-desc">{{ e.ruolo }}</td>
+        <!-- STATO -->
+        <ng-container matColumnDef="stato">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Stato</th>
+          <td mat-cell *matCellDef="let e">{{ e.stato }}</td>
+        </ng-container>
+
+        <!-- PREDEFINITO -->
+        <ng-container matColumnDef="predefinito">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Predefinito</th>
+          <td mat-cell *matCellDef="let e">
+            @if (e.predefinito) {
+              <span class="badge-predefinito">✓ Sì</span>
+            } @else {
+              <span class="badge-no">No</span>
+            }
+          </td>
         </ng-container>
 
       </table>
-
       <mat-paginator [pageSize]="15"></mat-paginator>
     </div>
   </div>

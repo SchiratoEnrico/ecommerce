@@ -45,6 +45,16 @@
   color: var(--text-primary);
 }
 
+.page-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.page-subtitle strong {
+  color: var(--brand-accent);
+}
+
 .badge-count {
   background: var(--border);
   padding: 6px 12px;
@@ -65,7 +75,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
-  align-items: center;
 }
 
 .actions-group {
@@ -75,9 +84,7 @@
   margin-top: 12px;
 }
 
-mat-form-field {
-  width: 100%;
-}
+mat-form-field { width: 100%; }
 
 .btn-primary {
   display: flex;
@@ -100,10 +107,19 @@ mat-form-field {
   transform: translateY(-1px);
 }
 
-.full-width-table {
-  width: 100%;
-  margin-top: 10px;
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
 }
+
+.btn-ghost:hover {
+  background: var(--surface);
+  box-shadow: none;
+  transform: none;
+}
+
+.full-width-table { width: 100%; margin-top: 10px; }
 
 .mat-mdc-header-cell {
   font-size: 11px;
@@ -113,37 +129,27 @@ mat-form-field {
   border-bottom: 1px solid var(--border);
 }
 
-.mat-mdc-row {
-  transition: background 0.2s ease;
+.mat-mdc-row { transition: background 0.2s ease; }
+.mat-mdc-row:hover { background: rgba(201,168,76,0.08); }
+.mat-mdc-cell { border-bottom: 1px solid var(--border); font-size: 14px; }
+
+.td-id { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.td-bold { font-weight: 500; }
+.td-desc { color: var(--text-secondary); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.badge-predefinito {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--success);
+  background: rgba(39,174,96,0.1);
+  padding: 2px 10px;
+  border-radius: 20px;
 }
 
-.mat-mdc-row:hover {
-  background: rgba(201,168,76,0.08);
-}
-
-.mat-mdc-cell {
-  border-bottom: 1px solid var(--border);
-  font-size: 14px;
-}
-
-.td-id {
-  font-size: 12px;
+.badge-no {
+  font-size: 0.75rem;
   color: var(--text-muted);
-  font-weight: 500;
 }
 
-.td-bold {
-  font-weight: 500;
-}
-
-.td-desc {
-  color: var(--text-secondary);
-  max-width: 280px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-mat-paginator {
-  margin-top: 15px;
-}
+mat-paginator { margin-top: 15px; }

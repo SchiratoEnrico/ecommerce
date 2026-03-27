@@ -1,0 +1,102 @@
+<h2 mat-dialog-title>
+  {{ data.anagrafica ? 'Modifica Anagrafica' : 'Nuova Anagrafica' }}
+</h2>
+
+<mat-dialog-content>
+
+  <!-- Info account se arriva da gestione account -->
+  @if (data.accountId) {
+    <div class="account-info-row">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span>Account ID: <strong>{{ data.accountId }}</strong></span>
+    </div>
+  }
+
+  <form [formGroup]="form">
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="nome">
+        @if (form.get('nome')?.invalid && form.get('nome')?.touched) {
+          <mat-error>Nome obbligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Cognome</mat-label>
+        <input matInput formControlName="cognome">
+        @if (form.get('cognome')?.invalid && form.get('cognome')?.touched) {
+          <mat-error>Cognome obbligatorio</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Via</mat-label>
+      <input matInput formControlName="via">
+      @if (form.get('via')?.invalid && form.get('via')?.touched) {
+        <mat-error>Via obbligatoria</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Città</mat-label>
+        <input matInput formControlName="citta">
+        @if (form.get('citta')?.invalid && form.get('citta')?.touched) {
+          <mat-error>Città obbligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Provincia</mat-label>
+        <input matInput formControlName="provincia" maxlength="2">
+        @if (form.get('provincia')?.invalid && form.get('provincia')?.touched) {
+          <mat-error>Provincia obbligatoria</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>CAP</mat-label>
+        <input matInput formControlName="cap" maxlength="5">
+        @if (form.get('cap')?.invalid && form.get('cap')?.touched) {
+          <mat-error>CAP obbligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Stato</mat-label>
+        <input matInput formControlName="stato">
+        @if (form.get('stato')?.invalid && form.get('stato')?.touched) {
+          <mat-error>Stato obbligatorio</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="predefinito-row">
+      <mat-checkbox formControlName="predefinito">Imposta come indirizzo predefinito</mat-checkbox>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annulla</button>
+  @if (data.anagrafica) {
+    <button mat-button color="warn" (click)="delete()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+      Elimina
+    </button>
+  }
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="!form.valid">Salva</button>
+</mat-dialog-actions>
