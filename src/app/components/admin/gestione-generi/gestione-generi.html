@@ -1,129 +1,53 @@
 <div class="page-wrapper">
 
-  <!-- ── Page Header ── -->
+  <!-- HEADER -->
   <div class="page-header">
     <div class="page-header-left">
       <p class="page-eyebrow">Pannello Admin</p>
       <h1 class="page-title">Gestione Generi</h1>
     </div>
     <div class="page-header-right">
-      <span class="badge-count">{{ generi.length }} generi</span>
+      <span class="badge-count">{{ dataSource.data.length }} risultati</span>
     </div>
   </div>
 
-  <!-- ── Form aggiunta / modifica ── -->
-  <div class="card form-card">
-    <div class="card-header">
-      <h2 class="card-title">
-        @if (modalitaModifica) { Modifica genere } @else { Aggiungi genere }
-      </h2>
-      @if (modalitaModifica) {
-        <button class="btn-ghost" type="button" (click)="annullaModifica()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6 6 18M6 6l12 12"/>
-          </svg>
-          Annulla
-        </button>
-      }
-    </div>
+  <!-- FILTRI + Aggiunta -->
+  <div class="card filter-card">
 
-    <form #genereForm="ngForm" (ngSubmit)="onSubmit()" class="autore-form" novalidate>
-      <div class="form-grid">
-
-        <!-- Descrizione — occupa tutta la riga -->
-        <div class="field-group field-full" [class.field-error]="descrizione.invalid && descrizione.touched">
-          <label for="descrizione" class="field-label">Descrizione</label>
-          <textarea
-            id="descrizione"
-            class="field-input field-textarea"
-            name="descrizione"
-            placeholder="Breve biografia dell'autore..."
-            [(ngModel)]="formData.descrizione"
-            required
-            rows="3"
-            #descrizione="ngModel"
-          ></textarea>
-          @if (descrizione.invalid && descrizione.touched) {
-            <span class="field-error-msg">Descrizione obbligatoria</span>
-          }
-        </div>
-
-      </div>
-
-      <!-- Feedback server -->
-      @if (msg) {
-        <div class="server-msg" [class.server-error]="isError" [class.server-success]="!isError">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            @if (isError) {
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            } @else {
-              <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
-            }
-          </svg>
-          {{ msg }}
-        </div>
-      }
-
-      <div class="form-footer">
-        <button class="btn-primary" type="submit" [disabled]="!genereForm.valid">
-          @if (modalitaModifica) { Salva modifiche } @else { Aggiungi genere }
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </button>
-      </div>
-
-    </form>
-  </div>
-
-  <!-- ── Tabella generi ── -->
-  <div class="card table-card">
-    <div class="card-header">
-      <h2 class="card-title">Lista generi</h2>
-    </div>
-
-    @if (generi.length === 0) {
-      <div class="empty-state">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    <div class="actions-group">
+      <button class="btn-primary" (click)="openCreateDialog()">
+        Nuovo Genere
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
         </svg>
-        <p>Nessun genere presente</p>
-      </div>
-    } @else {
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Descrizione</th>
-              <th class="th-actions">Azioni</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (genere of generi; track genere.id) {
-              <tr [class.row-editing]="genereInModifica?.id === genere.id">
-                <td class="td-id">{{ genere.id }}</td>
-                <td class="td-desc">{{ genere.descrizione }}</td>
-                <td class="td-actions">
-                  <button class="btn-action btn-edit" (click)="modificaGenere(genere)" matTooltip="Modifica">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                  </button>
-                  <button class="btn-action btn-delete" (click)="eliminaGenere(genere.id)" matTooltip="Elimina">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      <path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
+      </button>
+    </div>
+  </div>
+
+  <!-- TABELLA -->
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="edit(row)" style="cursor:pointer"></tr>
+
+        <!-- ID -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+          <td mat-cell *matCellDef="let e" class="td-id">{{ e.id }}</td>
+        </ng-container>
+
+        <!-- DESCRIZIONE -->
+        <ng-container matColumnDef="descrizione">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descrizione</th>
+          <td mat-cell *matCellDef="let e" class="td-desc">{{ e.descrizione }}</td>
+        </ng-container>
+
+      </table>
+
+      <mat-paginator [pageSize]="15"></mat-paginator>
+    </div>
   </div>
 
 </div>
