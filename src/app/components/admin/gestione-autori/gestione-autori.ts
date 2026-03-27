@@ -4,8 +4,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Autore, AutoriServices } from '../../../services/autori-services';
+import { AutoriServices } from '../../../services/autori-services';
 import { AutoreDialog } from '../dialogs/autore-dialog/autore-dialog';
+import { Autore } from '../../../models/autore';
 
 
 @Component({

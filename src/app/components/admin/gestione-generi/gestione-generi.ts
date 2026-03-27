@@ -4,8 +4,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Genere, GeneriServices } from '../../../services/generi-services';
+import { GeneriServices } from '../../../services/generi-services';
 import { GenereDialog } from '../dialogs/genere-dialog/genere-dialog';
+import { Genere } from '../../../models/genere';
 
 
 @Component({
