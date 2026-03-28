@@ -4,7 +4,8 @@ import { Spedizione } from '../../../models/spedizione.model';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SpedizioniDialog } from '../dialog/spedizioni-dialog/spedizioni-dialog';
+import { SpedizioniDialog } from '../dialogs/spedizioni-dialog/spedizioni-dialog';
+
 
 
 @Component({

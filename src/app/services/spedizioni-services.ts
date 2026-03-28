@@ -19,10 +19,11 @@ export class SpedizioneServices {
   list(): Observable<Spedizione[]> {
   return this.http.get<Spedizione[]>(this.url + "list");
 }
-
+/*
 findById(id: number): Observable<Spedizione[]> {
   return this.http.get<Spedizione[]>(this.url + "findById/" + id);
 }
+*/
 
   create(spedizione: Omit<Spedizione, 'id'>) {
     return this.http.post(this.url + "create", spedizione);
@@ -33,7 +34,7 @@ findById(id: number): Observable<Spedizione[]> {
   }
 
   delete(id: number) {
-    return this.http.delete(`${this.url}/delete/${id}`);
+    return this.http.delete(this.url + "delete/" + id);
   }
 
 }
