@@ -1,100 +1,110 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { Genere, GeneriServices } from '../../../services/generi-services';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { GeneriServices } from '../../../services/generi-services';
+import { GenereDialog } from '../dialogs/genere-dialog/genere-dialog';
+import { Genere } from '../../../models/genere';
+
 
 @Component({
   selector: 'app-gestione-generi',
   standalone: false,
   templateUrl: './gestione-generi.html',
-  styleUrl: './gestione-generi.css',
+  styleUrl: './gestione-generi.css'
 })
-export class GestioneGeneri {
-  generi: Genere[] = [];
-  modalitaModifica = false;
-  genereInModifica: Genere | null = null;
-  msg = '';
-  isError = false;
-  
-  formData = {
-    descrizione: ''
-  };
+export class GestioneGeneri implements OnInit {
 
-  constructor(private generiService: GeneriServices,
+  displayedColumns = ['id','descrizione'];
+  dataSource = new MatTableDataSource<Genere>([]);
+
+  filters = { descrizione: '' };
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(
+    private generiService: GeneriServices,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-
     this.caricaGeneri();
   }
 
- caricaGeneri(): void {
-  this.generiService.list().subscribe({
-    next: (data) => {
-      console.log("generi caricati");
-      this.generi = data;
-      this.cdr.detectChanges(); 
-    },
-    error: () => this.showMsg('Errore nel caricamento dei generi', true)
-  });
-}
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
-onSubmit(): void {
-  if (this.modalitaModifica && this.genereInModifica) {
-    this.generiService.update({ id: this.genereInModifica.id, ...this.formData }).subscribe({
-      next: (res: any) => {
-        console.log("update response: ", res);
-        
-        this.annullaModifica();
-        this.showMsg(res.msg, false);
-        this.caricaGeneri();
+  caricaGeneri(): void {
+    this.generiService.list().subscribe({
+      next: (data) => {
+        this.dataSource.data = data;
+        this.cdr.detectChanges();
       },
-      error: (err) => this.showMsg(err.error?.msg, true)
-    });
-  } else {
-    this.generiService.create(this.formData).subscribe({
-      next: (res: any) => {
-        console.log("create response: ", res);
-        this.showMsg(res.msg, false);
-        this.resetForm();
-        this.caricaGeneri();
-      },
-      error: (err) => this.showMsg(err.error?.msg, true)
+      error: () => this.showSnack('Errore nel caricamento dei generi', true)
     });
   }
-}
 
-eliminaGenere(id: number): void {
-  if (!confirm('Sei sicuro di voler eliminare questo genere?')) return;
-  this.generiService.delete(id).subscribe({
-    next: (res: any) => {console.log(res);this.showMsg(res.msg, false)},
-    error: (err) => this.showMsg(err.error.msg, true),
-    complete: () => this.caricaGeneri()
-  });
-}
+  onFilterChange(): void {
 
-  modificaGenere(genere: Genere): void {
-    this.modalitaModifica = true;
-    this.genereInModifica = genere;
-    this.formData = {
-      descrizione: genere.descrizione
-    };
-    this.msg = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  annullaModifica(): void {
-    this.modalitaModifica = false;
-    this.genereInModifica = null;
-    this.resetForm();
-    this.msg = '';
+  resetFilters(): void {
+    this.filters = { descrizione: '' };
+    this.dataSource.filter = '';
   }
 
-  private resetForm(): void {
-    this.formData = { descrizione: '' };
+  openCreateDialog(): void {
+    const ref = this.dialog.open(GenereDialog, { data: null });
+    ref.afterClosed().subscribe(result => {
+      if (!result || result.action !== 'save') return;
+      this.generiService.create(result).subscribe({
+        next: (res: any) => {
+          this.showSnack(res.msg, false);
+          this.caricaGeneri();
+        },
+        error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+      });
+    });
   }
 
-  private showMsg(testo: string, errore: boolean): void {
-    this.msg = testo;
-    this.isError = errore;
+  edit(genere: Genere): void {
+    const ref = this.dialog.open(GenereDialog, { data: { ...genere } });
+    ref.afterClosed().subscribe(result => {
+      if (!result) return;
+
+      if (result.action === 'save') {
+        this.generiService.update({ id: genere.id, ...result }).subscribe({
+          next: (res: any) => {
+            this.showSnack(res.msg, false);
+            this.caricaGeneri();
+          },
+          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+        });
+      }
+
+      if (result.action === 'delete') {
+        this.generiService.delete(result.id).subscribe({
+          next: (res: any) => {
+            this.showSnack(res.msg, false);
+            this.caricaGeneri();
+          },
+          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+        });
+      }
+    });
+  }
+
+  private showSnack(msg: string, isError: boolean): void {
+    this.snackBar.open(msg, '✕', {
+      duration: 4000,
+      panelClass: isError ? ['snack-error'] : ['snack-success']
+    });
   }
 }

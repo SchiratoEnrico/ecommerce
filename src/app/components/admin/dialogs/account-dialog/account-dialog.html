@@ -1,0 +1,94 @@
+<h2 mat-dialog-title>
+  {{ data ? 'Modifica Account' : 'Nuovo Account' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Username</mat-label>
+    <input matInput formControlName="username">
+    @if (form.get('username')?.invalid && form.get('username')?.touched) {
+      <mat-error>Username obbligatorio</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email">
+    @if (form.get('email')?.invalid && form.get('email')?.touched) {
+      <mat-error>Email obbligatorio</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Ruolo</mat-label>
+    <input matInput formControlName="ruolo">
+    @if (form.get('ruolo')?.invalid && form.get('ruolo')?.touched) {
+      <mat-error>Ruolo obbligatorio</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input matInput type="password" formControlName="password">
+    @if (form.get('password')?.invalid && form.get('password')?.touched) {
+      <mat-error>Password obbligatoria</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Conferma password</mat-label>
+    <input matInput type="password" formControlName="password2">
+    @if (form.get('password2')?.touched && form.hasError('passwordMismatch')) {
+      <mat-error>Le password non coincidono</mat-error>
+    }
+  </mat-form-field>
+
+</form>
+
+  <!-- Link a gestione ordini — work in progress -->
+  <div class="manga-link-row">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+    </svg>
+    <a class="manga-link manga-link-active"
+       [routerLink]="['/admin/gestione-ordini']"
+       [queryParams]="{ username: data.username }"
+       (click)="close()">
+      Vai agli ordini di questo account →
+    </a>
+  </div>
+
+  <!-- Link anagrafica — attivo solo in modifica -->
+@if (data) {
+  <div class="manga-link-row">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+    <a class="manga-link manga-link-active"
+       [routerLink]="['/admin/gestione-anagrafica']"
+       [queryParams]="{ id: data.id, username: data.username }"
+       (click)="close()">
+      Vai all'anagrafica di questo account →
+    </a>
+  </div>
+}
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annulla</button>
+  @if (data) {
+    <button mat-button color="warn" (click)="delete()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+      Elimina
+    </button>
+  }
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="!form.valid">Salva</button>
+</mat-dialog-actions>

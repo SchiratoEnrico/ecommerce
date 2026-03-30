@@ -17,6 +17,7 @@ import { Ordini } from './components/ordini/ordini';
 import { Profilo } from './components/profilo/profilo';
 import { authAuthenticatedGuard } from './auth/auth-authenticated-guard';
 import { Registrazione } from './components/registrazione/registrazione';
+import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gestione-anagrafica';
 
 const routes: Routes = [
   {
@@ -40,6 +41,8 @@ const routes: Routes = [
       { path: 'admin/account',        component: GestioneAccount,       canActivate: [authAdminGuard] },
       { path: 'admin/spedizioni',     component: GestioneSpedizioni,    canActivate: [authAdminGuard] },
       { path: 'admin/pagamenti',      component: GestionePagamenti,     canActivate: [authAdminGuard] },
+      { path: 'admin/gestione-anagrafica', component: GestioneAnagrafica, canActivate: [authAdminGuard] },
+      { path: 'admin/gestione-ordini', component: GestioneOrdini, canActivate: [authAdminGuard] }
     ]
   },
   { path: 'login', component: Login },

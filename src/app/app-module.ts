@@ -11,7 +11,7 @@ import { MatFormField, MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatSelectModule } from '@angular/material/select';
+import { MatError, MatLabel, MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -32,6 +32,16 @@ import { GestioneAccount } from './components/admin/gestione-account/gestione-ac
 import { GestioneSpedizioni } from './components/admin/gestione-spedizioni/gestione-spedizioni';
 import { GestionePagamenti } from './components/admin/gestione-pagamenti/gestione-pagamenti';
 import { Registrazione } from './components/registrazione/registrazione';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogActions, MatDialogContent } from '@angular/material/dialog';
+import {  MatTableModule } from '@angular/material/table';
+import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gestione-anagrafica';
+import { AnagraficaDialog } from './components/admin/dialogs/anagrafica-dialog/anagrafica-dialog';
+import { AccountDialog } from './components/admin/dialogs/account-dialog/account-dialog';
+import { AutoreDialog } from './components/admin/dialogs/autore-dialog/autore-dialog';
+import { GenereDialog } from './components/admin/dialogs/genere-dialog/genere-dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SpedizioniDialog } from './components/admin/dialogs/spedizioni-dialog/spedizioni-dialog';
 
 @NgModule({
   declarations: [
@@ -51,6 +61,12 @@ import { Registrazione } from './components/registrazione/registrazione';
     GestioneSpedizioni,
     GestionePagamenti,
     Registrazione,
+    GestioneAnagrafica,
+    AnagraficaDialog,
+    AccountDialog,
+    AutoreDialog,
+    GenereDialog,
+    SpedizioniDialog
   ],
   imports: [
     BrowserModule,
@@ -69,6 +85,16 @@ import { Registrazione } from './components/registrazione/registrazione';
     MatIconModule,
     MatTooltipModule,
     RouterModule,
+    MatPaginatorModule,
+    MatError,
+    MatFormField,
+    MatDialogActions,
+    MatDialogContent,
+    MatLabel,
+    MatTableModule,
+    MatPaginator,
+    MatLabel,
+    MatCheckboxModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

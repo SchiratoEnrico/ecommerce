@@ -1,107 +1,119 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Autore, AutoriServices } from '../../../services/autori-services';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AutoriServices } from '../../../services/autori-services';
+import { AutoreDialog } from '../dialogs/autore-dialog/autore-dialog';
+import { Autore } from '../../../models/autore';
 
 @Component({
   selector: 'app-gestione-autori',
   standalone: false,
   templateUrl: './gestione-autori.html',
-  styleUrl: './gestione-autori.css'
+  styleUrl: './gestione-autori.css',
 })
 export class GestioneAutori implements OnInit {
+  displayedColumns = ['id', 'nome', 'cognome', 'dataNascita', 'descrizione'];
+  dataSource = new MatTableDataSource<Autore>([]);
+  private filterTimeout: any;
 
-  autori: Autore[] = [];
-  modalitaModifica = false;
-  autoreInModifica: Autore | null = null;
-  msg = '';
-  isError = false;
-  
-  formData = {
-    nome: '',
-    cognome: '',
-    dataNascita: '',
-    descrizione: ''
-  };
+  filters = { nome: '', cognome: '' };
 
-  constructor(private autoriService: AutoriServices,
-    private cdr: ChangeDetectorRef
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(
+    private autoriService: AutoriServices,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-
     this.caricaAutori();
   }
 
- caricaAutori(): void {
-  this.autoriService.list().subscribe({
-    next: (data) => {
-      console.log("autori caricati");
-      this.autori = data;
-      this.cdr.detectChanges(); 
-    },
-    error: () => this.showMsg('Errore nel caricamento degli autori', true)
-  });
-}
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
-onSubmit(): void {
-  if (this.modalitaModifica && this.autoreInModifica) {
-    this.autoriService.update({ id: this.autoreInModifica.id, ...this.formData }).subscribe({
-      next: (res: any) => {
-        console.log("update response: ", res);
-        
-        this.annullaModifica();
-        this.showMsg(res.msg, false);
-        this.caricaAutori();
+  caricaAutori(): void {
+    this.autoriService.list().subscribe({
+      next: (data) => {
+        this.dataSource.data = data;
+        this.cdr.detectChanges();
       },
-      error: (err) => this.showMsg(err.error?.msg, true)
-    });
-  } else {
-    this.autoriService.create(this.formData).subscribe({
-      next: (res: any) => {
-        console.log("create response: ", res);
-        this.showMsg(res.msg, false);
-        this.resetForm();
-        this.caricaAutori();
-      },
-      error: (err) => this.showMsg(err.error?.msg, true)
+      error: () => this.showSnack('Errore nel caricamento degli autori', true),
     });
   }
-}
 
-eliminaAutore(id: number): void {
-  if (!confirm('Sei sicuro di voler eliminare questo autore?')) return;
-  this.autoriService.delete(id).subscribe({
-    next: (res: any) => this.showMsg(res.msg, false),
-    error: (err) => this.showMsg(err.error?.msg, true),
-    complete: () => this.caricaAutori()
-  });
-}
-
-  modificaAutore(autore: Autore): void {
-    this.modalitaModifica = true;
-    this.autoreInModifica = autore;
-    this.formData = {
-      nome: autore.nome,
-      cognome: autore.cognome,
-      dataNascita: autore.dataNascita,
-      descrizione: autore.descrizione
-    };
-    this.msg = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  onFilterChange(): void {
+    clearTimeout(this.filterTimeout);
+    this.filterTimeout = setTimeout(() => {
+      this.autoriService.findByFilters(this.filters.nome, this.filters.cognome).subscribe({
+        next: (data: any) => {
+          this.dataSource.data = data;
+          this.cdr.detectChanges();
+        },
+        error: () => this.showSnack('Errore nel filtro', true),
+      });
+    }, 400); // aspetta 400ms dopo l'ultimo tasto
   }
 
-  annullaModifica(): void {
-    this.modalitaModifica = false;
-    this.autoreInModifica = null;
-    this.resetForm();
-    this.msg = '';
+  resetFilters(): void {
+    this.filters = { nome: '', cognome: '' };
+    clearTimeout(this.filterTimeout);
+    this.caricaAutori();
   }
 
-  private resetForm(): void {
-    this.formData = { nome: '', cognome: '', dataNascita: '', descrizione: '' };
+  openCreateDialog(): void {
+    const ref = this.dialog.open(AutoreDialog, { data: null });
+    ref.afterClosed().subscribe((result) => {
+      if (!result || result.action !== 'save') return;
+      this.autoriService.create(result).subscribe({
+        next: (res: any) => {
+          this.showSnack(res.msg, false);
+          this.caricaAutori();
+        },
+        error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
+      });
+    });
   }
 
-  private showMsg(testo: string, errore: boolean): void {
-    this.msg = testo;
-    this.isError = errore;
+  edit(autore: Autore): void {
+    const ref = this.dialog.open(AutoreDialog, { data: { ...autore } });
+    ref.afterClosed().subscribe((result) => {
+      if (!result) return;
+
+      if (result.action === 'save') {
+        this.autoriService.update({ id: autore.id, ...result }).subscribe({
+          next: (res: any) => {
+            this.showSnack(res.msg, false);
+            this.caricaAutori();
+          },
+          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
+        });
+      }
+
+      if (result.action === 'delete') {
+        this.autoriService.delete(result.id).subscribe({
+          next: (res: any) => {
+            this.showSnack(res.msg, false);
+            this.caricaAutori();
+          },
+          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
+        });
+      }
+    });
+  }
+
+  private showSnack(msg: string, isError: boolean): void {
+    this.snackBar.open(msg, '✕', {
+      duration: 4000,
+      panelClass: isError ? ['snack-error'] : ['snack-success'],
+    });
   }
 }
