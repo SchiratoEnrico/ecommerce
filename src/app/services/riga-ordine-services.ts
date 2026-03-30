@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class RigaOrdineServices {
 
-   private url = 'http://localhost:9090/rest/riga_ordine/';
+   private url = 'http://localhost:9090/rest/riga_ordine';
 
   constructor(private http: HttpClient) {}
 

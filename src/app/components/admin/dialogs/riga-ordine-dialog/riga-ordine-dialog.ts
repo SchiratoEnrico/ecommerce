@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -10,7 +10,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class RigaOrdineDialog {
 
-  form: any;
+  form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -18,35 +18,32 @@ export class RigaOrdineDialog {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.form = fb.group({
-      manga: ['', Validators.required],
-      numeroCopie: [1, [Validators.required, Validators.min(1)]],
+      manga: ['', Validators.required], 
+      numeroCopie: [data?.riga?.numeroCopie || 1, [Validators.required, Validators.min(1)]],
     });
 
     if (data?.riga) {
-      this.form.patchValue({
-        manga: data.riga.manga ?? '',
-        numeroCopie: data.riga.numeroCopie ?? 1,
-      });
-    }
-  }
-  delete() {
-    if (!confirm('Confermi eliminazione?')) return;
-    this.dialogRef.close({ action: 'delete', id: this.data.riga.id });
-  }
+      const mangaIsbn = typeof data.riga.manga === 'string'
+        ? data.riga.manga
+        : (data.riga.manga as any)?.isbn ?? '';
 
+    this.form.patchValue({
+      manga: mangaIsbn,
+      numeroCopie: data.riga.numeroCopie ?? 1,
+    });
+    }
+}
   save() {
     if (this.form.invalid) return;
     this.dialogRef.close({
       action: 'save',
-      idOrdine: this.data.idOrdine,
-      username: this.data.username,
+//      idOrdine: this.data.idOrdine,
+//      username: this.data.username,
       ...this.form.value
     
     });
   }
 
-  close() {
-    this.dialogRef.close();
-  }
+  close() { this.dialogRef.close();}
 
 }

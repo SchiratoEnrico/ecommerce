@@ -9,7 +9,9 @@ export class Ordine {
     account: Account;
     pagamento: Pagamenti;
     spedizione: Spedizioni;
-    data: string;
+    anno: number;
+    mese: number;
+    giorno: number;
     stato: StatoOrdine;
     righeOrdine: RigaOrdine[];
 }

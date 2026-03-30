@@ -402,3 +402,98 @@
 .main-row td {
   border-bottom-width: 0;
 }
+
+.expanded-row td {
+  padding: 0 !important;
+  border-bottom: none;
+}
+
+.expanded-detail {
+  padding: 12px 24px 16px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.righe-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: 10px;
+}
+
+.righe-table th {
+  text-align: left;
+  padding: 6px 12px;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 1px solid #ddd;
+}
+
+.righe-table td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.btn-articoli {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: inherit;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.btn-articoli:hover { background: #f0f0f0; }
+
+.btn-add-riga {
+  background: none;
+  border: 1px dashed #aaa;
+  border-radius: 4px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.btn-add-riga:hover { background: #eee; }
+
+.btn-edit-riga {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-icon:hover {
+  background: var(--hover-bg, #f0f0f0);
+  color: var(--primary);
+}
+
+.btn-icon-danger {
+  color: #e53935;
+}
+
+.btn-icon-danger:hover {
+  background: #fdecea;
+  color: #c62828;
+}
