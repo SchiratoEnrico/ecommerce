@@ -1,5 +1,4 @@
 <div class="page-wrapper">
-
   <!-- HEADER -->
   <div class="page-header">
     <div class="page-header-left">
@@ -16,31 +15,43 @@
     <div class="filter-row">
       <mat-form-field appearance="outline">
         <mat-label>Username</mat-label>
-        <input matInput [(ngModel)]="filters.username" (keyup)="onFilterChange()">
+        <input matInput [(ngModel)]="filters.username" (keyup)="onFilterChange()" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>E-mail</mat-label>
-        <input matInput [(ngModel)]="filters.email" (keyup)="onFilterChange()">
+        <input matInput [(ngModel)]="filters.email" (keyup)="onFilterChange()" />
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Ruolo</mat-label>
-        <input matInput [(ngModel)]="filters.ruolo" (keyup)="onFilterChange()">
-      </mat-form-field>
+      <mat-checkbox [(ngModel)]="isAdmin" (change)="onRuoloChange()"> Solo Admin </mat-checkbox>
     </div>
 
     <div class="actions-group">
       <button class="btn-primary" (click)="resetFilters()">
         Reset
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+          <path d="M3 3v5h5" />
         </svg>
       </button>
       <button class="btn-primary" (click)="openCreateDialog()">
         Nuovo account
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>
       </button>
     </div>
@@ -50,9 +61,13 @@
   <div class="card table-card">
     <div class="table-wrap">
       <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
-
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="edit(row)" style="cursor:pointer"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="edit(row)"
+          style="cursor: pointer"
+        ></tr>
 
         <!-- ID -->
         <ng-container matColumnDef="id">
@@ -77,11 +92,9 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Ruolo</th>
           <td mat-cell *matCellDef="let e" class="td-desc">{{ e.ruolo }}</td>
         </ng-container>
-
       </table>
 
       <mat-paginator [pageSize]="15"></mat-paginator>
     </div>
   </div>
-
 </div>

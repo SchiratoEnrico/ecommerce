@@ -18,7 +18,9 @@ export class GestioneAccount {
   displayedColumns = ['id', 'username', 'email', 'ruolo'];
   dataSource = new MatTableDataSource<Account>([]);
 
-  filters = { username: '', email: '' , ruolo: ''};
+  filters = { username: '', email: '', ruolo: '' as string | null };
+  isAdmin: boolean = false;
+  private filterTimeout: any;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -27,7 +29,7 @@ export class GestioneAccount {
     private accountService: AccountServices,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -47,37 +49,53 @@ export class GestioneAccount {
       },
       error: (err) => {
         console.error(err);
-        this.showSnack('Errore nel caricamento degli accounts', true)
-      }
+        this.showSnack('Errore nel caricamento degli accounts', true);
+      },
     });
   }
 
-  onFilterChange(): void {
+  onRuoloChange() {
+    this.filters.ruolo = this.isAdmin ? 'ADMIN' : null;
+    this.onFilterChange();
+  }
 
+  onFilterChange(): void {
+    clearTimeout(this.filterTimeout);
+    this.filterTimeout = setTimeout(() => {
+      this.accountService.findByFilters(this.filters.username, this.filters.email, this.filters.ruolo ?? '').subscribe({
+        next: (data: any) => {
+          this.dataSource.data = data;
+          this.cdr.detectChanges();
+        },
+        error: () => this.showSnack('Errore nel filtro', true),
+      });
+    }, 400); // aspetta 400ms dopo l'ultimo tasto
   }
 
   resetFilters(): void {
-    this.filters = { username: '', email: '', ruolo: '' };
-    this.dataSource.filter = '';
+    this.filters = { username: '', email: '' , ruolo: '' as string | null};
+    this.isAdmin = false;
+    clearTimeout(this.filterTimeout);
+    this.caricaAccounts();
   }
 
   openCreateDialog(): void {
     const ref = this.dialog.open(AccountDialog, { data: null });
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().subscribe((result) => {
       if (!result || result.action !== 'save') return;
       this.accountService.create(result).subscribe({
         next: (res: any) => {
           this.showSnack(res.msg, false);
           this.caricaAccounts();
         },
-        error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+        error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
       });
     });
   }
 
   edit(account: Account): void {
     const ref = this.dialog.open(AccountDialog, { data: { ...account } });
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().subscribe((result) => {
       if (!result) return;
 
       if (result.action === 'save') {
@@ -86,7 +104,7 @@ export class GestioneAccount {
             this.showSnack(res.msg, false);
             this.caricaAccounts();
           },
-          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
         });
       }
 
@@ -96,7 +114,7 @@ export class GestioneAccount {
             this.showSnack(res.msg, false);
             this.caricaAccounts();
           },
-          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
         });
       }
     });
@@ -105,7 +123,7 @@ export class GestioneAccount {
   private showSnack(msg: string, isError: boolean): void {
     this.snackBar.open(msg, '✕', {
       duration: 4000,
-      panelClass: isError ? ['snack-error'] : ['snack-success']
+      panelClass: isError ? ['snack-error'] : ['snack-success'],
     });
   }
 }

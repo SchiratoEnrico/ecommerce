@@ -21,6 +21,10 @@ export class AutoriServices {
     return this.http.get<Autore>(`${this.url}/findById`, { params: { id } });
   }
 
+  findByFilters(nome: string, cognome: string): Observable<Autore[]> {
+    return this.http.get<Autore[]>(`${this.url}/findByFilters`, { params: { nome, cognome } });
+  }
+
   create(autore: Omit<Autore, 'id'>): Observable<any> {
     return this.http.post(`${this.url}/create`, autore);
   }
