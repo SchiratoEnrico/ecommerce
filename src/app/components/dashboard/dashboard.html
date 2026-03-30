@@ -52,7 +52,7 @@
     }
 
     <!-- ══ MENU ADMIN ══ -->
-    @if (!auth.isRoleAdmin()) {
+    @if (auth.isRoleAdmin()) {
 
       <div class="drawer-header">
         <div class="drawer-admin-badge">
