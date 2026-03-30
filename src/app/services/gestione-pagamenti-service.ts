@@ -13,7 +13,7 @@ interface PagamentoPayload {
   providedIn: 'root',
 })
 export class GestionePagamentiService {
-  url = 'http://localhost:9090/rest/tipo_pagamento';
+  url = 'http://localhost:9090/rest/tipo_pagamento/';
 
   pagamenti = signal<TipoPagamento[]>([]);
   constructor(
@@ -21,31 +21,29 @@ export class GestionePagamentiService {
     private snackBar: MatSnackBar
   ) {}
 
-  lista: any;
-
   list(): Observable<TipoPagamento[]> {
-    return this.http.get<TipoPagamento[]>(`${this.url}/list`);
+    return this.http.get<TipoPagamento[]>(`${this.url}list`);
   }
 
   findById(id: number) {
     let params = new HttpParams().set('id', id);
-    return this.http.get<any>(this.url + '/findById', { params });
+    return this.http.get<any>(this.url + 'findById', { params });
   }
 
   create(body: PagamentoPayload) {
     const requestBody = this.toBackendPayload(body);
-    return this.http.post(this.url + '/create', requestBody)
+    return this.http.post(this.url + 'create', requestBody)
       .pipe(tap(() => this.list()));
   }
 
   update(body: PagamentoPayload) {
     const requestBody = this.toBackendPayload(body);
-    return this.http.put(this.url + '/update', requestBody)
+    return this.http.put(this.url + 'update', requestBody)
       .pipe(tap(() => this.list()));
   }
 
   delete(id: number) {
-    return this.http.delete(this.url + '/delete/' + id)
+    return this.http.delete(this.url + 'delete/' + id)
       .pipe(tap(() => this.list()));
   }
 

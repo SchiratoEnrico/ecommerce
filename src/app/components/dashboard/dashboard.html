@@ -1,7 +1,7 @@
 <!-- ── Toolbar ── -->
 <mat-toolbar class="app-toolbar">
 
-  <button mat-icon-button class="toolbar-icon-btn" aria-label="Menu" (click)="drawer.toggle()">
+  <button mat-icon-button class="toolbar-icon-btn" aria-label="Menu" (click)="auth.toggleDrawer()">
     <mat-icon>menu</mat-icon>
   </button>
 
@@ -9,14 +9,15 @@
 
   <span class="toolbar-spacer"></span>
 
-  <button mat-icon-button class="toolbar-icon-btn" aria-label="Login"
-    matTooltip="Login" (click)="login()">
-    <mat-icon>login</mat-icon>
-  </button>
-
-  <button mat-icon-button class="toolbar-icon-btn" aria-label="Logout"
-    matTooltip="Logout" (click)="logout()">
-    <mat-icon>logout</mat-icon>
+  <button mat-icon-button class="toolbar-icon-btn" 
+    aria-label="Carrello" 
+    matTooltip="Carrello" (click)="carrello()">
+    <mat-icon 
+      [matBadge]="gestioneCarrello.numeroElementi()"
+      [matBadgeHidden]="gestioneCarrello.numeroElementi() === 0"
+      >
+      shopping_cart
+    </mat-icon>
   </button>
 
 </mat-toolbar>
@@ -24,32 +25,41 @@
 <!-- ── Layout ── -->
 <mat-drawer-container class="app-container">
 
-  <mat-drawer #drawer class="app-drawer" mode="side" [opened]=auth.isAutentificated()>
-
+  <mat-drawer #drawer class="app-drawer" mode="side" [opened]="auth.isDrawerOpen()" (openedChange)="auth.setDrawerState($event)">
     <!-- ══ MENU UTENTE NORMALE ══ -->
-    @if (!auth.isRoleAdmin()) {
-      <div class="drawer-header">
-        <span class="drawer-label">Menu</span>
-      </div>
-      <mat-nav-list class="drawer-nav">
-        <a mat-list-item routerLink="home" routerLinkActive="nav-active" class="nav-item">
-          <mat-icon matListItemIcon>home</mat-icon>
-          <span matListItemTitle>Home</span>
+    <div class="drawer-header">
+      <span class="drawer-label">Menu</span>
+    </div>
+    <mat-nav-list class="drawer-nav">
+      <a mat-list-item routerLink="home" routerLinkActive="nav-active" class="nav-item">
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Home</span>
+      </a>
+      <a mat-list-item routerLink="carrello" routerLinkActive="nav-active" class="nav-item">
+        <mat-icon matListItemIcon>shopping_cart</mat-icon>
+        <span matListItemTitle>Carrello</span>
+      </a>
+      <a mat-list-item routerLink="ordini" routerLinkActive="nav-active" class="nav-item">
+        <mat-icon matListItemIcon>receipt_long</mat-icon>
+        <span matListItemTitle>I miei ordini</span>
+      </a>
+      <a mat-list-item routerLink="profilo" routerLinkActive="nav-active" class="nav-item">
+        <mat-icon matListItemIcon>person</mat-icon>
+        <span matListItemTitle>Profilo</span>
+      </a>
+      @if(!auth.isAutentificated()){
+        <a mat-list-item routerLink="login" routerLinkActive="nav-active" class="nav-item nav-item-login">
+          <mat-icon matListItemIcon>login</mat-icon>
+          <span matListItemTitle>Login</span>
         </a>
-        <a mat-list-item routerLink="carrello" routerLinkActive="nav-active" class="nav-item">
-          <mat-icon matListItemIcon>shopping_cart</mat-icon>
-          <span matListItemTitle>Carrello</span>
+      }
+      @else {
+        <a mat-list-item (click)="logout()" class="nav-item nav-item-logout">
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle style="color: var(--bs-success-text-emphasis)">Logout</span>
         </a>
-        <a mat-list-item routerLink="ordini" routerLinkActive="nav-active" class="nav-item">
-          <mat-icon matListItemIcon>receipt_long</mat-icon>
-          <span matListItemTitle>I miei ordini</span>
-        </a>
-        <a mat-list-item routerLink="profilo" routerLinkActive="nav-active" class="nav-item">
-          <mat-icon matListItemIcon>person</mat-icon>
-          <span matListItemTitle>Profilo</span>
-        </a>
-      </mat-nav-list>
-    }
+      }
+    </mat-nav-list>
 
     <!-- ══ MENU ADMIN ══ -->
     @if (auth.isRoleAdmin()) {

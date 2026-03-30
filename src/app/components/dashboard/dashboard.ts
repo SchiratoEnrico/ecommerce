@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { afterNextRender, Component, OnInit, signal, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthServices } from '../../auth/auth-services';
+import { GestioneCarrelloServices } from '../../services/gestione-carrello-services';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,10 +9,20 @@ import { AuthServices } from '../../auth/auth-services';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
-  constructor(public auth:AuthServices,
-    private routing:Router
+export class Dashboard implements OnInit{
+  numeroElementi: number = 0;
+
+  constructor(
+    public auth: AuthServices,
+    private routing:Router,
+    public gestioneCarrello: GestioneCarrelloServices
   ){}
+
+  ngOnInit(): void {
+    if(this.auth.isAutentificated()){
+      this.gestioneCarrello.aggiornaDatiCarrello();
+    }
+  }
 
   logout(){
     this.auth.resetAll();
@@ -20,5 +31,9 @@ export class Dashboard {
 
   login(){
     this.routing.navigate(['login']);
+  }
+
+  carrello(){
+    this.routing.navigate(['carrello']);
   }
 }
