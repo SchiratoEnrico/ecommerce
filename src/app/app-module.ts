@@ -41,6 +41,7 @@ import { AccountDialog } from './components/admin/dialogs/account-dialog/account
 import { AutoreDialog } from './components/admin/dialogs/autore-dialog/autore-dialog';
 import { GenereDialog } from './components/admin/dialogs/genere-dialog/genere-dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SpedizioniDialog } from './components/admin/dialogs/spedizioni-dialog/spedizioni-dialog';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     AnagraficaDialog,
     AccountDialog,
     AutoreDialog,
-    GenereDialog
+    GenereDialog,
+    SpedizioniDialog
   ],
   imports: [
     BrowserModule,
@@ -90,7 +92,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatDialogContent,
     MatLabel,
     MatTableModule,
-    MatPaginatorModule,
     MatPaginator,
     MatLabel,
     MatCheckboxModule
