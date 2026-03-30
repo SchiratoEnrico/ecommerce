@@ -1,0 +1,127 @@
+/* 1. VARIABILI E IMPORT */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --brand-dark:     #1a1a2e;
+  --brand-accent:   #f0c040;
+  --brand-accent2:  #f7d96a;
+  --text-primary:   #1a1a2e;
+  --text-secondary: #6b7280;
+  --text-muted:     #9ca3af;
+  --border:         #f0ece6;
+  --surface:         #fdfcfb;
+  --white:          #ffffff;
+  --error:          #ef4444;
+  --success:        #10b981;
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      14px;
+  --transition:     0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* 2. RESET E BASE */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; color: var(--text-primary); }
+
+/* 3. DIALOG STYLE (Compattezza e Pulizia) */
+h2[mat-dialog-title] {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--brand-dark);
+  padding: 1.5rem 1.5rem 0.5rem !important;
+  margin: 0;
+}
+
+mat-dialog-content {
+  padding: 1rem 1.5rem !important;
+}
+
+/* Header informativo grigio chiaro */
+.order-info-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.order-info-header p { margin: 2px 0; color: var(--text-secondary); }
+.order-info-header strong { color: var(--brand-dark); }
+
+/* Form Verticale compatto */
+.form-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Spazio uniforme tra i campi */
+}
+
+/* Forza la larghezza e rimpicciolisce gli input Material */
+mat-form-field {
+  width: 100%;
+}
+
+/* Hack per ridurre l'altezza dei campi Angular Material */
+::ng-deep .mat-mdc-form-field-infix {
+  min-height: 44px !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Divider estetico */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.5rem 0;
+}
+
+/* 4. TABELLE INTERNE (Righe Ordine) */
+.compact-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.compact-table th {
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  padding: 8px;
+  border-bottom: 1.5px solid var(--border);
+  text-align: left;
+}
+
+.compact-table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* 5. BOTTONI */
+.btn-primary {
+  background: var(--brand-dark);
+  color: var(--white);
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-primary:hover {
+  background: #2a2a40;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-primary:disabled {
+  background: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* 6. UTILITY COLUMNS (Per mat-table principale) */
+.mat-column-id { width: 60px; color: var(--text-muted); }
+.mat-column-azioni { width: 120px; text-align: right; }
