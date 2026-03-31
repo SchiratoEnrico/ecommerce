@@ -8,17 +8,16 @@ import { AutoriServices } from '../../../services/autori-services';
 import { AutoreDialog } from '../dialogs/autore-dialog/autore-dialog';
 import { Autore } from '../../../models/autore';
 
-
 @Component({
   selector: 'app-gestione-autori',
   standalone: false,
   templateUrl: './gestione-autori.html',
-  styleUrl: './gestione-autori.css'
+  styleUrl: './gestione-autori.css',
 })
 export class GestioneAutori implements OnInit {
-
   displayedColumns = ['id', 'nome', 'cognome', 'dataNascita', 'descrizione'];
   dataSource = new MatTableDataSource<Autore>([]);
+  private filterTimeout: any;
 
   filters = { nome: '', cognome: '' };
 
@@ -29,7 +28,7 @@ export class GestioneAutori implements OnInit {
     private autoriService: AutoriServices,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -47,36 +46,46 @@ export class GestioneAutori implements OnInit {
         this.dataSource.data = data;
         this.cdr.detectChanges();
       },
-      error: () => this.showSnack('Errore nel caricamento degli autori', true)
+      error: () => this.showSnack('Errore nel caricamento degli autori', true),
     });
   }
 
   onFilterChange(): void {
-
+    clearTimeout(this.filterTimeout);
+    this.filterTimeout = setTimeout(() => {
+      this.autoriService.findByFilters(this.filters.nome, this.filters.cognome).subscribe({
+        next: (data: any) => {
+          this.dataSource.data = data;
+          this.cdr.detectChanges();
+        },
+        error: () => this.showSnack('Errore nel filtro', true),
+      });
+    }, 400); // aspetta 400ms dopo l'ultimo tasto
   }
 
   resetFilters(): void {
     this.filters = { nome: '', cognome: '' };
-    this.dataSource.filter = '';
+    clearTimeout(this.filterTimeout);
+    this.caricaAutori();
   }
 
   openCreateDialog(): void {
     const ref = this.dialog.open(AutoreDialog, { data: null });
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().subscribe((result) => {
       if (!result || result.action !== 'save') return;
       this.autoriService.create(result).subscribe({
         next: (res: any) => {
           this.showSnack(res.msg, false);
           this.caricaAutori();
         },
-        error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+        error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
       });
     });
   }
 
   edit(autore: Autore): void {
     const ref = this.dialog.open(AutoreDialog, { data: { ...autore } });
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().subscribe((result) => {
       if (!result) return;
 
       if (result.action === 'save') {
@@ -85,7 +94,7 @@ export class GestioneAutori implements OnInit {
             this.showSnack(res.msg, false);
             this.caricaAutori();
           },
-          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
         });
       }
 
@@ -95,7 +104,7 @@ export class GestioneAutori implements OnInit {
             this.showSnack(res.msg, false);
             this.caricaAutori();
           },
-          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true)
+          error: (err: any) => this.showSnack(err.error?.msg || 'Errore', true),
         });
       }
     });
@@ -104,7 +113,7 @@ export class GestioneAutori implements OnInit {
   private showSnack(msg: string, isError: boolean): void {
     this.snackBar.open(msg, '✕', {
       duration: 4000,
-      panelClass: isError ? ['snack-error'] : ['snack-success']
+      panelClass: isError ? ['snack-error'] : ['snack-success'],
     });
   }
 }

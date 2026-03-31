@@ -1,0 +1,245 @@
+/* ── PAGE HEADER ─────────────────────────────────────────────────────────────── */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e3dc;
+}
+
+.page-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a09a93;
+  margin: 0 0 4px;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #1a1814;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.badge-count {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f0ece6;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b6560;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── FILTER CARD ─────────────────────────────────────────────────────────────── */
+
+.filter-card {
+  padding: 20px 24px 16px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e8e3dc;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 20px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .filter-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 580px) {
+  .filter-row { grid-template-columns: 1fr; }
+}
+
+.filter-row mat-form-field {
+  width: 100%;
+}
+
+/* ── ACTION BUTTONS ──────────────────────────────────────────────────────────── */
+
+.actions-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid #f0ece6;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  background: #0f0e0c;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary:hover {
+  background: #2a2825;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: #f0ece6;
+  color: #1a1814;
+}
+
+.btn-secondary:hover {
+  background: #e4dfd8;
+}
+
+/* ── SAGA CARD GRID ──────────────────────────────────────────────────────────── */
+/*
+  Plain CSS grid instead of mat-grid-list.
+  mat-grid-list calculates tile positions with JS after view init — during SSR
+  hydration this runs before the DOM is stable, giving tiles height:0 until the
+  next change-detection cycle. CSS grid is resolved by the browser from CSS alone,
+  so cards are visible immediately on first paint, no JS required.
+*/
+
+.saga-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  /* No fixed height — rows size to their content automatically */
+}
+
+@media (max-width: 1100px) {
+  .saga-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 750px) {
+  .saga-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .saga-grid { grid-template-columns: 1fr; }
+}
+
+/* ── SAGA CARD ───────────────────────────────────────────────────────────────── */
+
+.saga-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* No fixed height — card grows to fit its content */
+}
+
+.saga-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Image at top of card */
+.saga-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Placeholder shown when saga has no image */
+.no-image-placeholder {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f2ed;
+  color: #c9a84c;
+}
+
+.no-image-placeholder mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  opacity: 0.5;
+}
+
+/* Text content */
+.saga-nome {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1814;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saga-desc {
+  font-size: 12px;
+  color: #a09a93;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;    /* max 2 lines, then ellipsis */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Empty state */
+.empty-state {
+  grid-column: 1 / -1;     /* span all columns */
+  text-align: center;
+  color: #a09a93;
+  padding: 40px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+}
+.btn-manga {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 0;
+  background: transparent;
+  color: #c9a84c;
+  border: 1px solid #c9a84c;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  letter-spacing: 0.03em;
+}
+ 
+.btn-manga mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+ 
+.btn-manga:hover {
+  background: #c9a84c;
+  color: #ffffff;
+}

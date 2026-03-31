@@ -1,0 +1,74 @@
+<h2 mat-dialog-title>
+  {{ data ? 'Modifica Saga' : 'Nuova Saga' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+  <mat-form-field appearance="outline">
+    <mat-label>Nome</mat-label>
+    <input matInput formControlName="nome">
+    @if (form.get('nome')?.hasError('required')) {
+       <!-- hasError('required') controlla il validatore specifico
+       -->
+      <mat-error>Nome obbligatorio</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Descrizione</mat-label>
+    <textarea matInput formControlName="descrizione" rows="3"></textarea>
+    <!-- con textarea visualizzo testo inserito su più righe
+       -->
+    @if (form.get('descrizione')?.hasError('required')) {
+      <mat-error>Descrizione obbligatoria</mat-error>
+    }
+  </mat-form-field>
+
+  <div class="file-upload-area">
+      @if (preview) {
+            <!-- ho Preview: mostro immagine -->
+            <div class="preview-wrapper">
+              <img [src]="preview" alt="Anteprima immagine" class="preview-img">
+              <small class="preview-label">
+                <!-- se no file: "Immagine attuale" -->
+                <!-- altrimenti nuovo filename -->
+                {{ selectedFile ? selectedFile.name : 'Immagine attuale' }}
+              </small>
+            </div>
+      } @else {
+        <!-- no preview -->
+        <div class="preview-placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" opacity="0.4">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <small>Nessuna immagine</small>
+        </div>
+      }
+  <!--
+    Native HTML file input — no controllo di Angular Material
+    accept="image/*" => filtra file, deve essere image MIME type.
+  -->
+    <input type="file" accept="image/*" (change)="onFileSelected($event)">
+  </div>
+</form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annulla</button>
+  @if (data) {
+    <button mat-button color="warn" (click)="delete()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+      Elimina
+    </button>
+  }
+  <button mat-raised-button color="primary"
+   (click)="save()"
+    [disabled]="!form.valid">Salva</button>
+</mat-dialog-actions>
