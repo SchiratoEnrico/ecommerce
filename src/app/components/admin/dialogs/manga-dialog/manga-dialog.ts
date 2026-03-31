@@ -39,7 +39,7 @@ export class MangaDialog implements OnInit {
       @Inject(MAT_DIALOG_DATA) public data: MangaDialogData
      ) {
       this.form = fb.group({
-        isbn: [{ value: '', disabled: !!data }, Validators.required],
+        isbn: [{ value: '', disabled: !!data.manga }, Validators.required],
         titolo: ['', Validators.required],
         dataPubblicazione:[null, Validators.required],
         immagine: [''],

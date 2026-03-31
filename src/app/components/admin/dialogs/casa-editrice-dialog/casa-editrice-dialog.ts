@@ -21,7 +21,7 @@ export class CasaEditriceDialog {
       descrizione: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       indirizzo: ['', Validators.required],
-      isbns: [[], [Validators.required]]
+      //isbns: [[], [Validators.required]]
     });
 
     if (data) {
