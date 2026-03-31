@@ -1,1 +1,182 @@
-<p>gestione-manga works!</p>
+<div class="page-wrapper">
+ 
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <p class="page-eyebrow">Pannello Admin</p>
+      <h1 class="page-title">Gestione Manga</h1>
+    </div>
+    <div class="page-header-right">
+      <span class="badge-count">{{ dataSource.data.length }} risultati</span>
+    </div>
+  </div>
+ 
+  <!-- Active saga filter badge: visible when navigated from a saga card.
+       Lets the user know the list is filtered and gives a one-click way to clear it. -->
+  @if (filters.sagaId) {
+    <div class="active-filter-bar">
+      <mat-icon>filter_list</mat-icon>
+      <span>Filtrato per saga ID: <strong>{{ filters.sagaId }}</strong></span>
+      <button class="btn-clear-filter" (click)="resetFilters()">
+        <mat-icon>close</mat-icon>
+        Rimuovi filtro
+      </button>
+    </div>
+  }
+ 
+  <!-- FILTRI -->
+  <div class="card filter-card">
+    <div class="filter-row">
+ 
+      <!-- sagaId filter: pre-filled when arriving from saga card button -->
+      <mat-form-field appearance="outline">
+        <mat-label>Titolo</mat-label>
+        <input matInput [(ngModel)]="filters.titolo" (keyup)="onFilterChange()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Id Saga</mat-label>
+        <input matInput type="number" [(ngModel)]="filters.sagaId" (keyup)="onFilterChange()">
+      </mat-form-field>
+ 
+      <mat-form-field appearance="outline">
+        <mat-label>Titolo Saga</mat-label>
+        <input matInput type="text" [(ngModel)]="filters.sagaNome" (keyup)="onFilterChange()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Id autore</mat-label>
+        <input matInput type="number" [(ngModel)]="filters.autoreId" (keyup)="onFilterChange()">
+      </mat-form-field>
+ 
+      <mat-form-field appearance="outline">
+        <mat-label>Nome autore</mat-label>
+        <input matInput type="text" [(ngModel)]="filters.autoreNome" (keyup)="onFilterChange()">
+      </mat-form-field>
+ 
+      <mat-form-field appearance="outline">
+        <mat-label>Cognome autore</mat-label>
+        <input matInput type="text" [(ngModel)]="filters.autoreCognome" (keyup)="onFilterChange()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Id Casa Editrice</mat-label>
+        <input matInput type="number" [(ngModel)]="filters.casaEditriceId" (keyup)="onFilterChange()">
+      </mat-form-field>
+ 
+      <mat-form-field appearance="outline">
+        <mat-label>Nome Casa Editrice</mat-label>
+        <input matInput type="text" [(ngModel)]="filters.casaEditriceNome" (keyup)="onFilterChange()">
+      </mat-form-field>
+ 
+
+    </div>
+    <div class="actions-group">
+      <button class="btn-primary btn-secondary" (click)="resetFilters()">
+        Reset
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+      <button class="btn-primary" type="button">
+        Nuovo Manga
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+ 
+  <!-- TABELLA -->
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+ 
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+ 
+        <ng-container matColumnDef="immagine">
+          <th mat-header-cell *matHeaderCellDef>Immagine</th>
+          <td mat-cell *matCellDef="let e">
+            @if (e.immagine) {
+              <img [src]="e.immagine" [alt]="e.titolo" width="48" height="48"
+                   style="object-fit:cover; border-radius:4px;">
+            } @else {
+              <mat-icon style="color:#e8e3dc">image_not_supported</mat-icon>
+            }
+          </td>
+        </ng-container>
+ 
+        <ng-container matColumnDef="titolo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Titolo</th>
+          <td mat-cell *matCellDef="let e">{{ e.titolo }}</td>
+        </ng-container>
+ 
+        <ng-container matColumnDef="prezzo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Prezzo</th>
+          <td mat-cell *matCellDef="let e">{{ e.prezzo | currency:'EUR' }}</td>
+        </ng-container>
+ 
+        <ng-container matColumnDef="dataPubblicazione">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Pubblicazione</th>
+          <td mat-cell *matCellDef="let e">{{ e.dataPubblicazione }}</td>
+        </ng-container>
+ 
+        <ng-container matColumnDef="numeroCopie">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>N. copie</th>
+          <td mat-cell *matCellDef="let e">{{ e.numeroCopie }}</td>
+        </ng-container>
+ 
+      </table>
+      <mat-paginator [pageSize]="15"></mat-paginator>
+    </div>
+  </div>
+ 
+</div>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
