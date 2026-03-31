@@ -18,6 +18,7 @@ import { Profilo } from './components/profilo/profilo';
 import { authAuthenticatedGuard } from './auth/auth-authenticated-guard';
 import { Registrazione } from './components/registrazione/registrazione';
 import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gestione-anagrafica';
+import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe';
 
 const routes: Routes = [
   {
@@ -42,7 +43,8 @@ const routes: Routes = [
       { path: 'admin/spedizioni',     component: GestioneSpedizioni,    canActivate: [authAdminGuard] },
       { path: 'admin/pagamenti',      component: GestionePagamenti,     canActivate: [authAdminGuard] },
       { path: 'admin/gestione-anagrafica', component: GestioneAnagrafica, canActivate: [authAdminGuard] },
-      { path: 'admin/gestione-ordini', component: GestioneOrdini, canActivate: [authAdminGuard] }
+      { path: 'admin/gestione-ordini', component: GestioneOrdini, canActivate: [authAdminGuard] },
+      { path: 'admin/saghe', component: GestioneSaghe, canActivate: [authAdminGuard] },
     ]
   },
   { path: 'login', component: Login },

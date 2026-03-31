@@ -7,6 +7,10 @@ import { App } from './app';
 import { Dashboard } from './components/dashboard/dashboard';
 import { RouterModule } from '@angular/router';
 
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatFormField, MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,6 +46,10 @@ import { AutoreDialog } from './components/admin/dialogs/autore-dialog/autore-di
 import { GenereDialog } from './components/admin/dialogs/genere-dialog/genere-dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SpedizioniDialog } from './components/admin/dialogs/spedizioni-dialog/spedizioni-dialog';
+import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe';
+import { SagaDialog } from './components/admin/dialogs/saga-dialog/saga-dialog';
+import { MangaDialog } from './components/admin/dialogs/manga-dialog/manga-dialog';
+import { CasaEditriceDialog } from './components/admin/dialogs/casa-editrice-dialog/casa-editrice-dialog';
 
 @NgModule({
   declarations: [
@@ -66,7 +74,11 @@ import { SpedizioniDialog } from './components/admin/dialogs/spedizioni-dialog/s
     AccountDialog,
     AutoreDialog,
     GenereDialog,
-    SpedizioniDialog
+    SpedizioniDialog,
+    GestioneSaghe,
+    SagaDialog,
+    MangaDialog,
+    CasaEditriceDialog,
   ],
   imports: [
     BrowserModule,
@@ -94,7 +106,11 @@ import { SpedizioniDialog } from './components/admin/dialogs/spedizioni-dialog/s
     MatTableModule,
     MatPaginator,
     MatLabel,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatProgressBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatProgressBarModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

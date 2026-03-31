@@ -11,10 +11,6 @@ export class AccountServices {
 
   constructor(private http:HttpClient) {}
 
-  login(body:{}){
-    return this.http.post(this.url + "/login", body);
-  }
-
   create(body:{}){
     return this.http.post(this.url + "/create", body);
   }

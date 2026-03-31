@@ -24,7 +24,7 @@ export class Login {
    onSubmit(){
     console.log(this.loginForm.value);
 
-     this.utenteServices.login(this.loginForm.value).subscribe({
+     this.auth.login(this.loginForm.value).subscribe({
       next: (r:any) => {
         this.msg.set("");
         console.log(r);
