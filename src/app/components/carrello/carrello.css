@@ -1,0 +1,152 @@
+/* Tabella stretta al 96% e centrata */
+.full-width-table {
+    width: 96%;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.cart-row {
+    border-bottom: 1px solid var(--border, #e8e3dc);
+    /* Aggiunta la transizione per l'effetto opacity */
+    transition: background-color 0.2s ease, opacity 0.3s ease; 
+}
+
+.cart-row:hover {
+    background-color: rgba(201, 168, 76, 0.03);
+}
+
+/* L'effetto di quando si cancellano le copie */
+.fading-out {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.col-index {
+    width: 40px;
+    text-align: center;
+}
+
+.index-badge{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: var(--surface, #faf9f7);
+    color: var(--text-muted, #a09a93);
+    border-radius: 50%;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Spazio più largo per l'immagine */
+.col-image {
+    width: 140px;
+    padding: 10px;
+}
+
+/* Immagine più grande (stile Amazon) */
+.manga-thumb{
+    width: 100px;
+    height: 145px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Titolo che prende il resto dello spazio e ha un po' di padding a sinistra */
+.col-title {
+    width: 100%;
+    padding: 15px 15px 15px 40px;
+    vertical-align: middle;
+}
+
+.manga-title {
+    margin: 0 0 4px 0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary, #1a1814);
+    text-align: center;
+}
+
+.text-muted{
+    text-align: center;
+    display: block;
+}
+
+.col-price {
+    padding: 15px;
+    text-align: right;
+    vertical-align: middle;
+}
+
+.price-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.tot-price{
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--brand-accent, #c9a84c);
+}
+
+.cad-price{
+    font-size: 0.8rem;
+}
+
+.col-actions{
+    width: 150px;
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.qty-controls{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: var(--surface, #faf9f7);
+    padding: 6px;
+    border-radius: 30px;
+    border: 1px solid var(--border, #e8e3dc);
+}
+
+.qty-number-input {
+    width: 40px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    outline: none;
+    color: var(--text-primary, #1a1814);
+    -moz-appearance: textfield;
+}
+
+.qty-number-input::-webkit-outer-spin-button,
+.qty-number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.qty-number-input:focus {
+    border-bottom: 2px solid var(--brand-accent, #c9a84c);
+    border-radius: 0;
+}
+
+.btn-qty{
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center; 
+}
+
+.btn-qty .mat-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+}

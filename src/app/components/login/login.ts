@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 import { AuthServices } from '../../auth/auth-services';
 import { AccountServices } from '../../services/account-services';
 import { Router } from '@angular/router';
+import { GestioneCarrelloServices } from '../../services/gestione-carrello-services';
 
 @Component({
   selector: 'app-login',
@@ -18,24 +19,18 @@ export class Login {
 
    constructor(private utenteServices: AccountServices,
       private auth:AuthServices,
-      private routing:Router
+      private routing:Router,
+      public gestioneCarrello: GestioneCarrelloServices
   ){}
 
    onSubmit(){
-    console.log(this.loginForm.value);
-
-     this.auth.login(this.loginForm.value).subscribe({
+     this.utenteServices.login(this.loginForm.value).subscribe({
       next: (r:any) => {
         this.msg.set("");
-        console.log(r);
 
-        this.auth.setAutentificated();
+        this.auth.impostaUtente(r);
 
-        if(r.ruolo === "ADMIN"){
-          this.auth.setAdmin();
-        }else{
-          this.auth.setUser();
-        }
+        this.gestioneCarrello.aggiornaDatiCarrello();
 
         this.routing.navigate(['/home']);
 

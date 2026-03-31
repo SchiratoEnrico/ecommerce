@@ -1,1 +1,56 @@
-<p>gestione-pagamenti works!</p>
+<div class="page-wrapper">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <p class="page-eyebrow">Pannello Admin</p>
+            <h1 class="page-title">Gestione Pagamenti</h1>
+        </div>
+
+        <div class="page-header-right">
+            <span class="badge-count">{{ dataSource.data.length }} risultati</span>
+        </div>
+    </div>
+
+    <!-- Nuovo Tipo di Pagamento-->
+    <button class="btn-primary" type="submit" (click)="openCreateDialog()">
+        Nuovo
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+        <!-- da mettere invece mat icon? -->
+    </button>
+
+    <!-- Tabella Pagamenti -->
+    <div class="card table-card">
+        <div class="table-wrap">
+            <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+                <!-- Header -->
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+                <!-- Clickable rows -->
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="edit(row)"
+                    style="cursor:pointer"></tr>
+
+                <!-- ID -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+                    <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+                </ng-container>
+
+                <!-- Tipo Pagamento -->
+                <ng-container matColumnDef="tipoPagamento">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Pagamento</th>
+                    <td mat-cell *matCellDef="let e">{{ e.tipoPagamento }}</td>
+                </ng-container>
+            </table>
+            @if(dataSource.data.length === 0){
+                <div class="text-center p-5 text-muted">
+                    <p>Nessun tipo di pagamento trovato</p>
+                </div>
+            }
+
+            <mat-paginator [pageSize]="15"></mat-paginator>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>
+    {{ data ? 'Modifica Tipo di Pagamento' : 'Nuovo Tipo di Pagamento' }}
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="form">
+        <mat-form-field appearance="outline">
+            <mat-label>Tipo di Pagamento</mat-label>
+            <input matInput formControlName="tipo_pagamento">
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Annulla</button>
+    @if (data) {
+        <button mat-button color="warn" (click)="delete()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+            Elimina
+        </button>
+    }
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="!form.valid">Salva</button>
+</mat-dialog-actions>

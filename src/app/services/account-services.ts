@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Account } from '../models/account';
-import { Observable } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+import { AuthServices } from '../auth/auth-services';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +8,10 @@ import { Observable } from 'rxjs';
 export class AccountServices {
   private url = 'http://localhost:9090/rest/account';
 
-  constructor(private http:HttpClient) {}
+  constructor(
+    private http:HttpClient,
+    public auth:AuthServices
+  ) {}
 
   create(body:{}){
     return this.http.post(this.url + "/create", body);
