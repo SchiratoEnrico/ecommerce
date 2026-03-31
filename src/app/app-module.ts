@@ -32,7 +32,7 @@ import { GestioneAccount } from './components/admin/gestione-account/gestione-ac
 import { GestioneSpedizioni } from './components/admin/gestione-spedizioni/gestione-spedizioni';
 import { GestionePagamenti } from './components/admin/gestione-pagamenti/gestione-pagamenti';
 import { Registrazione } from './components/registrazione/registrazione';
-import { TipoPagamentoDialog } from './components/dialog/tipo-pagamento-dialog/tipo-pagamento-dialog';
+import { TipoPagamentoDialog } from './components/dialogs/tipo-pagamento-dialog/tipo-pagamento-dialog';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
