@@ -1,0 +1,84 @@
+<h2 mat-dialog-title>
+  {{ data ? 'Modifica Ordine' : 'Nuovo Ordine' }}
+</h2>
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="username" placeholder="es. mario123">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Stato Ordine</mat-label>
+      <input matInput formControlName="stato">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo Pagamento</mat-label>
+      <input matInput formControlName="tipoPagamento" placeholder="es. carta di credito">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo Spedizione</mat-label>
+      <input matInput formControlName="tipoSpedizione" placeholder="es. corriere">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Data</mat-label>
+      <input matInput type="date" formControlName="data">
+    </mat-form-field>
+  </form>
+
+  <!-- RIGHE ORDINE - solo in creazione -->
+  @if (!data) {
+  <div class="righe-section">
+    <div class="righe-header">
+      <h3>Manga Ordinati</h3>
+      <button mat-stroked-button color="primary" (click)="addRigaLocale()">
+        + Aggiungi Manga
+      </button>
+    </div>
+
+    <table mat-table [dataSource]="righeOrdine" class="full-width-table">
+      <tr mat-header-row *matHeaderRowDef="['manga', 'numeroCopie', 'azioni']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['manga', 'numeroCopie', 'azioni'];"></tr>
+
+      <ng-container matColumnDef="manga">
+        <th mat-header-cell *matHeaderCellDef>ISBN Manga</th>
+        <td mat-cell *matCellDef="let r">{{ r.manga }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="numeroCopie">
+        <th mat-header-cell *matHeaderCellDef>Copie</th>
+        <td mat-cell *matCellDef="let r">{{ r.numeroCopie }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="azioni">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let r; let i = index">
+          <button mat-icon-button color="warn" (click)="removeRiga(i)">✕</button>
+        </td>
+      </ng-container>
+    </table>
+
+    @if (righeOrdine.length === 0) {
+      <p class="hint-text">Aggiungi almeno una riga per salvare l'ordine.</p>
+    }
+  </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annulla</button>
+  @if (data) {
+    <button mat-button color="warn" (click)="delete()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+      Elimina
+    </button>
+  }
+  <button mat-raised-button color="primary" (click)="save()"
+    [disabled]="!form.valid || (!data && righeOrdine.length === 0)">
+    Salva
+  </button>
+</mat-dialog-actions>

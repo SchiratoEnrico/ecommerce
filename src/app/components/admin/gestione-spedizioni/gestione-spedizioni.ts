@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SpedizioneServices } from '../../../services/spedizioni-services';
-import { Spedizione } from '../../../models/spedizione.model';
+import { Spedizione } from '../../../models/spedizione';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';

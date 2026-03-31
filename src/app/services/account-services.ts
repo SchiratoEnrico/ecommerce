@@ -34,4 +34,8 @@ export class AccountServices {
   findByFilters(username: string, email: string, ruolo: string): Observable<Account[]> {
       return this.http.get<Account[]>(`${this.url}/findByFilters`, { params: { username, email, ruolo } });
   }
+
+  findByUsername(username: string): Observable<Account> {
+    return this.http.get<Account>(`${this.url}/findByUsername`, { params: { username } });
+  }
 }

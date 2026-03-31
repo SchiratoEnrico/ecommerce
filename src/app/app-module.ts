@@ -38,7 +38,7 @@ import { GestionePagamenti } from './components/admin/gestione-pagamenti/gestion
 import { Registrazione } from './components/registrazione/registrazione';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogActions, MatDialogContent } from '@angular/material/dialog';
-import {  MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gestione-anagrafica';
 import { AnagraficaDialog } from './components/admin/dialogs/anagrafica-dialog/anagrafica-dialog';
 import { AccountDialog } from './components/admin/dialogs/account-dialog/account-dialog';
@@ -50,6 +50,8 @@ import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe'
 import { SagaDialog } from './components/admin/dialogs/saga-dialog/saga-dialog';
 import { MangaDialog } from './components/admin/dialogs/manga-dialog/manga-dialog';
 import { CasaEditriceDialog } from './components/admin/dialogs/casa-editrice-dialog/casa-editrice-dialog';
+import { OrdineDialog } from './components/admin/dialogs/ordine-dialog/ordine-dialog';
+import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/riga-ordine-dialog';
 
 @NgModule({
   declarations: [
@@ -79,6 +81,8 @@ import { CasaEditriceDialog } from './components/admin/dialogs/casa-editrice-dia
     SagaDialog,
     MangaDialog,
     CasaEditriceDialog,
+    OrdineDialog,
+    RigaOrdineDialog,
   ],
   imports: [
     BrowserModule,

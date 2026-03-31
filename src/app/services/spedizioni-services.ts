@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Spedizione } from '../models/spedizione.model';
+import { Spedizione } from '../models/spedizione';
 
 @Injectable({
   providedIn: 'root',
