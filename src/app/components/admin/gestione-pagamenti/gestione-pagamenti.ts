@@ -5,7 +5,7 @@ import { TipoPagamento } from '../../../models/tipo-pagamento.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { TipoPagamentoDialog } from '../../dialogs/tipo-pagamento-dialog/tipo-pagamento-dialog';
+import { TipoPagamentoDialog } from '../dialogs/tipo-pagamento-dialog/tipo-pagamento-dialog';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
@@ -69,7 +69,7 @@ export class GestionePagamenti implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if(!result) return;
-
+      console.log("result: ", result);
       this.gestionePagamentiService.create(result).subscribe({
         next: (res: any) => {
           this.showMsg(res.msg, false);

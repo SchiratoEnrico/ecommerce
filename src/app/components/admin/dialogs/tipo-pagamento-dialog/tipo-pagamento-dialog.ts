@@ -17,7 +17,7 @@ export class TipoPagamentoDialog {
     @Inject(MAT_DIALOG_DATA) public data: any
   ){
     this.form = fb.group({
-      tipo_pagamento: ['', Validators.required]
+      tipoPagamento: ['', Validators.required]
     });
 
     if(data){

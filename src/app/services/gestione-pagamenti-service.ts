@@ -32,6 +32,8 @@ export class GestionePagamentiService {
 
   create(body: PagamentoPayload) {
     const requestBody = this.toBackendPayload(body);
+    console.log("body: ", body);
+    console.log("request: ", requestBody);
     return this.http.post(this.url + 'create', requestBody)
       .pipe(tap(() => this.list()));
   }

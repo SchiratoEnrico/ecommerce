@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { AuthServices } from '../auth/auth-services';
+import { Account } from '../models/account';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +14,10 @@ export class AccountServices {
     private http:HttpClient,
     public auth:AuthServices
   ) {}
+
+  login(body:{}){
+    return this.http.post(this.url + "/login", body);
+  }
 
   create(body:{}){
     return this.http.post(this.url + "/create", body);
