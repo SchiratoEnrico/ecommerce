@@ -9,16 +9,17 @@ import { AuthServices } from '../../auth/auth-services';
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
-  constructor(public auth:AuthServices,
-    private routing:Router
-  ){}
+  constructor(
+    public auth: AuthServices,
+    private routing: Router
+  ) {}
 
-  logout(){
-    this.auth.resetAll();
-    this.routing.navigate(['home']);
+  logout() {
+    this.auth.resetAll(); // Rimuove token e ruolo dal localStorage
+    this.routing.navigate(['/home']); // Ritorna alla home dopo il logout
   }
 
-  login(){
-    this.routing.navigate(['login']);
+  login() {
+    this.routing.navigate(['/login']);
   }
 }
