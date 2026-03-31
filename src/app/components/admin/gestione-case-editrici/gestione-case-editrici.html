@@ -1,1 +1,97 @@
-<p>gestione-case-editrici works!</p>
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <p class="page-eyebrow">Pannello Admin</p>
+      <h1 class="page-title">Gestione Case Editrici</h1>
+    </div>
+
+    <div class="page-header-right">
+      <span class="badge-count">{{ dataSource.data.length }} risultati</span>
+    </div>
+  </div>
+
+  <!-- FILTRI + Aggiunta -->
+  <div class="card filter-card">
+    <div class="filter-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input matInput [(ngModel)]="filters.nome" (keyup)="onFilterChange()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descrizione</mat-label>
+        <input matInput [(ngModel)]="filters.descrizione" (keyup)="onFilterChange()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="filters.email" (keyup)="onFilterChange()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Indirizzo</mat-label>
+        <input matInput [(ngModel)]="filters.indirizzo" (keyup)="onFilterChange()">
+      </mat-form-field>
+    </div>
+    <div class="actions-group">
+      <!-- RESET FILTRI -->
+      <button class="btn-primary" (click)="resetFilters()">
+        Reset
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <!-- NUOVA CASA EDITRICE -->
+       <button class="btn-primary" type="submit" (click)="openCreateDialog()">
+          Nuova
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+    </div>
+  </div>
+
+  <!-- TABELLA -->
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+        <!-- Header -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        
+        <!-- clickable rows -->
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"(click)="edit(row)" 
+            style="cursor:pointer"></tr>
+
+        <!-- NOME -->
+        <ng-container matColumnDef="nome">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+          <td mat-cell *matCellDef="let e">{{ e.nome }}</td>
+        </ng-container>
+
+        <!-- EMAIL -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+          <td mat-cell *matCellDef="let e">{{ e.email }}</td>
+        </ng-container>
+
+        <!-- DESCRIZIONE -->
+        <ng-container matColumnDef="descrizione">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descrizione</th>
+          <td mat-cell *matCellDef="let e">{{ e.descrizione }}</td>
+        </ng-container>
+
+        <!-- INDIRIZZO -->
+        <ng-container matColumnDef="indirizzo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Indirizzo</th>
+          <td mat-cell *matCellDef="let e">{{ e.indirizzo }}</td>
+        </ng-container>
+
+      </table>
+
+      <mat-paginator [pageSize]="15"></mat-paginator>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,187 @@
+/* ── PAGE HEADER ─────────────────────────────────────────────────────────────── */
+
+.page-wrapper {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e3dc;
+}
+
+.page-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a09a93;
+  margin: 0 0 4px;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #1a1814;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.badge-count {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f0ece6;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b6560;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── ACTIVE FILTER BAR ───────────────────────────────────────────────────────── */
+/*
+  Shown only when filters.sagaId is set — i.e. when the user arrived here
+  by clicking the "Manga" button on a saga card. Gives clear visual feedback
+  that the list is pre-filtered, and a one-click way to remove it.
+*/
+
+.active-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  background: #fdf8ee;
+  border: 1px solid #c9a84c;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #1a1814;
+}
+
+.active-filter-bar mat-icon {
+  color: #c9a84c;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.btn-clear-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid #c9a84c;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  color: #c9a84c;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-clear-filter mat-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.btn-clear-filter:hover {
+  background: #c9a84c;
+  color: #ffffff;
+}
+
+/* ── FILTER CARD ─────────────────────────────────────────────────────────────── */
+
+.filter-card {
+  padding: 20px 24px 16px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e8e3dc;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 20px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .filter-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 580px) {
+  .filter-row { grid-template-columns: 1fr; }
+}
+
+.filter-row mat-form-field {
+  width: 100%;
+}
+
+/* ── BUTTONS ─────────────────────────────────────────────────────────────────── */
+
+.actions-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid #f0ece6;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  background: #0f0e0c;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary:hover {
+  background: #2a2825;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #f0ece6;
+  color: #1a1814;
+}
+
+.btn-secondary:hover {
+  background: #e4dfd8;
+}
+
+/* ── TABLE CARD ──────────────────────────────────────────────────────────────── */
+
+.table-card {
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e8e3dc;
+  overflow: hidden;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.full-width-table {
+  width: 100%;
+}

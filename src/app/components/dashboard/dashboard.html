@@ -24,7 +24,7 @@
 <!-- ── Layout ── -->
 <mat-drawer-container class="app-container">
 
-  <mat-drawer #drawer class="app-drawer" mode="side" [opened]=auth.isAutentificated()>
+  <mat-drawer #drawer class="app-drawer" mode="side"> <!--[opened]=auth.isAutentificated()> -->
 
     <!-- ══ MENU UTENTE NORMALE ══ -->
     @if (!auth.isRoleAdmin()) {
@@ -53,7 +53,6 @@
 
     <!-- ══ MENU ADMIN ══ -->
     @if (auth.isRoleAdmin()) {
-
       <div class="drawer-header">
         <div class="drawer-admin-badge">
           <mat-icon>admin_panel_settings</mat-icon>
@@ -69,6 +68,10 @@
         <a mat-list-item routerLink="/admin/manga" routerLinkActive="nav-active" class="nav-item">
           <mat-icon matListItemIcon>menu_book</mat-icon>
           <span matListItemTitle>Manga</span>
+        </a>
+        <a mat-list-item routerLink="/admin/saghe" routerLinkActive="nav-active" class="nav-item">
+          <mat-icon matListItemIcon>playlist_play</mat-icon>
+          <span matListItemTitle>Saghe</span>
         </a>
         <a mat-list-item routerLink="/admin/autori" routerLinkActive="nav-active" class="nav-item">
           <mat-icon matListItemIcon>draw</mat-icon>
