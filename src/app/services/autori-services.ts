@@ -1,0 +1,39 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable, signal } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Autore } from '../models/autore';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AutoriServices {
+  private url = 'http://localhost:9090/rest/autore';
+
+  autori = signal<Autore[]>([]);
+
+  constructor(private http: HttpClient) {}
+
+  list(): Observable<Autore[]> {
+    return this.http.get<Autore[]>(`${this.url}/list`);
+  }
+
+  findById(id: number): Observable<Autore> {
+    return this.http.get<Autore>(`${this.url}/findById`, { params: { id } });
+  }
+
+  findByFilters(nome: string, cognome: string): Observable<Autore[]> {
+    return this.http.get<Autore[]>(`${this.url}/findByFilters`, { params: { nome, cognome } });
+  }
+
+  create(autore: Omit<Autore, 'id'>): Observable<any> {
+    return this.http.post(`${this.url}/create`, autore);
+  }
+
+  update(autore: Autore): Observable<any> {
+    return this.http.put(`${this.url}/update`, autore);
+  }
+
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.url}/delete`, { params: { id } });
+  }
+}

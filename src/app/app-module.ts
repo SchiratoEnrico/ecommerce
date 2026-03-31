@@ -8,10 +8,15 @@ import { Dashboard } from './components/dashboard/dashboard';
 import { RouterModule } from '@angular/router';
 
 import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatFormField, MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatSelectModule } from '@angular/material/select';
+import { MatError, MatLabel, MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -39,6 +44,21 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialogActions, MatDialogContent } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gestione-anagrafica';
+import { AnagraficaDialog } from './components/admin/dialogs/anagrafica-dialog/anagrafica-dialog';
+import { AccountDialog } from './components/admin/dialogs/account-dialog/account-dialog';
+import { AutoreDialog } from './components/admin/dialogs/autore-dialog/autore-dialog';
+import { GenereDialog } from './components/admin/dialogs/genere-dialog/genere-dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SpedizioniDialog } from './components/admin/dialogs/spedizioni-dialog/spedizioni-dialog';
+import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe';
+import { SagaDialog } from './components/admin/dialogs/saga-dialog/saga-dialog';
+import { MangaDialog } from './components/admin/dialogs/manga-dialog/manga-dialog';
+import { CasaEditriceDialog } from './components/admin/dialogs/casa-editrice-dialog/casa-editrice-dialog';
+import { OrdineDialog } from './components/admin/dialogs/ordine-dialog/ordine-dialog';
+import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/riga-ordine-dialog';
 
 @NgModule({
   declarations: [
@@ -59,6 +79,18 @@ import { MatBadgeModule } from '@angular/material/badge';
     GestionePagamenti,
     Registrazione,
     TipoPagamentoDialog,
+    GestioneAnagrafica,
+    AnagraficaDialog,
+    AccountDialog,
+    AutoreDialog,
+    GenereDialog,
+    SpedizioniDialog,
+    GestioneSaghe,
+    SagaDialog,
+    MangaDialog,
+    CasaEditriceDialog,
+    OrdineDialog,
+    RigaOrdineDialog,
   ],
   imports: [
     BrowserModule,
@@ -82,7 +114,19 @@ import { MatBadgeModule } from '@angular/material/badge';
     MatSortModule,
     MatDialogModule,
     MatBadgeModule
-],
+    MatError,
+    MatFormField,
+    MatDialogActions,
+    MatDialogContent,
+    MatLabel,
+    MatPaginator,
+    MatLabel,
+    MatCheckboxModule,
+    MatProgressBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatProgressBarModule,
+  ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),

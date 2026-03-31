@@ -1,0 +1,86 @@
+<!-- HEADER -->
+<div class="page-header">
+  <div class="page-header-left">
+    <p class="page-eyebrow">Pannello Admin</p>
+    <h1 class="page-title">Gestione Saghe</h1>
+  </div>
+  <div class="page-header-right">
+    <span class="badge-count">{{ sagas.length }} risultati</span>
+  </div>
+</div>
+
+@if (loading) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+<div class="card filter-card">
+  <div class="filter-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Id Saga</mat-label>
+      <input matInput [(ngModel)]="filters.sagaId" (keyup)="onFilterChange()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Titolo Saga</mat-label>
+      <input matInput [(ngModel)]="filters.sagaNome" (keyup)="onFilterChange()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Id Casa Editrice</mat-label>
+      <input matInput [(ngModel)]="filters.casaEditriceId" (keyup)="onFilterChange()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Nome Casa Editrice</mat-label>
+      <input matInput [(ngModel)]="filters.casaEditriceNome" (keyup)="onFilterChange()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Id Autore</mat-label>
+      <input matInput [(ngModel)]="filters.autoreId" (keyup)="onFilterChange()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Nome Autore</mat-label>
+      <input matInput [(ngModel)]="filters.autoreNome" (keyup)="onFilterChange()">
+    </mat-form-field>
+  </div>
+  <div class="actions-group">
+    <button class="btn-primary btn-secondary" (click)="resetFilters()">
+      Reset
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+    <button class="btn-primary" (click)="openCreateDialog()">
+      Nuova
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div class="saga-grid">
+  @for (saga of sagas; track saga.id) {
+    <mat-card class="saga-card" (click)="openEditDialog(saga)">
+      @if (saga.immagine) {
+        <img [src]="saga.immagine" [alt]="saga.nome" class="saga-img">
+      } @else {
+        <div class="no-image-placeholder">
+          <mat-icon>auto_stories</mat-icon>
+        </div>
+      }
+      <mat-card-content>
+        <h3 class="saga-nome">{{ saga.nome }}</h3>
+        <p class="saga-desc">{{ saga.descrizione }}</p>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button class="btn-manga" (click)="goToManga(saga, $event)">
+          <mat-icon>menu_book</mat-icon>
+          Vai ai Manga
+        </button>
+      </mat-card-actions>
+
+    </mat-card>
+  }
+  @empty {
+    <p class="empty-state">Nessuna saga trovata.</p>
+  }
+</div>

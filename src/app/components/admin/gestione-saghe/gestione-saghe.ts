@@ -1,0 +1,168 @@
+import { AfterViewInit, ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { Saga } from '../../../models/saga';
+import { SagaFilters, SagheServices } from '../../../services/saghe-services';
+import { SagaDialog } from '../dialogs/saga-dialog/saga-dialog';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-gestione-saghe',
+  standalone: false,
+  templateUrl: './gestione-saghe.html',
+  styleUrl: './gestione-saghe.css',
+})
+export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
+
+  private destroyRef    = inject(DestroyRef);
+  private destroy$      = new Subject<void>();
+  private filterChanges = new Subject<void>();
+  private cdr           = inject(ChangeDetectorRef);
+
+  sagas:   Saga[]  = [];
+  loading: boolean = false;
+
+  filters: SagaFilters = {
+    casaEditriceNome: '',
+    autoreNome:       '',
+    autoreCognome:    '',
+    sagaNome:         '',
+    sagaId:           null,
+    casaEditriceId:   null,
+    autoreId:         null,
+    generiId:         []
+  };
+
+  constructor(
+    private sagheServices: SagheServices,
+    private snack:         MatSnackBar,
+    private dialog:        MatDialog,
+    private router:        Router,
+  ) {}
+
+  ngOnInit(): void {
+    this.filterChanges
+      .pipe(debounceTime(400), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadData());
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.loadData(), 0);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadData(): void {
+    this.loading = true;
+
+    const activeFilters: SagaFilters = {
+      sagaNome:         this.filters.sagaNome         || undefined,
+      sagaId:           this.filters.sagaId           ?? undefined,
+      casaEditriceNome: this.filters.casaEditriceNome || undefined,
+      casaEditriceId:   this.filters.casaEditriceId   ?? undefined,
+      autoreNome:       this.filters.autoreNome       || undefined,
+      autoreId:         this.filters.autoreId         ?? undefined,
+      generiId:         this.filters.generiId?.length ? this.filters.generiId : undefined
+    };
+
+    this.sagheServices.listSaghe(activeFilters)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.sagas   = data;
+          this.loading = false;
+          this.cdr.markForCheck();
+          
+        },
+        error: () => {
+          this.showMsg('Errore caricamento dati', true);
+          this.loading = false;  
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+    goToManga(saga: Saga, event: MouseEvent): void {
+    event.stopPropagation(); // altrimenti aptre dialog
+    this.router.navigate(['/admin/manga'], {
+      queryParams: { sagaId: saga.id }
+    });
+  }
+
+  onFilterChange(): void {
+    this.filterChanges.next();
+  }
+
+  resetFilters(): void {
+    this.filters = {
+      casaEditriceNome: '', autoreNome: '', autoreCognome: '', sagaNome: '',
+      sagaId: null, casaEditriceId: null, autoreId: null, generiId: []
+    };
+    // BUG FIX (loading bar stays on reset):
+    // resetFilters() called loadData() which set loading=true, then the HTTP call
+    // completed and set loading=false — but the subscribe was being killed by
+    // takeUntil(this.destroy$) completing prematurely in some edge cases,
+    // leaving loading stuck at true.
+    // The actual cause: takeUntil(this.destroy$) used the SAME Subject for all
+    // subscriptions. If destroy$.next() was called (e.g. on route change mid-request)
+    // ALL in-flight requests were cancelled and loading was never reset.
+    // Solution: each loadData() call creates its own cancellable inner subject,
+    // so only the previous request is cancelled when a new one starts (like switchMap).
+    this.loadData();
+  }
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(SagaDialog, { width: '400px', data: null });
+    dialogRef.afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(result => {
+        if (!result || result.action !== 'save') return;
+        this.sagheServices.create(result)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next:  (res: any) => { this.showMsg(res.msg, false); this.loadData(); },
+            error: (err)      => this.showMsg(err.error?.msg ?? 'Errore creazione', true)
+          });
+      });
+  }
+
+  openEditDialog(saga: Saga): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const dialogRef = this.dialog.open(SagaDialog, { width: '400px', data: saga });
+    dialogRef.afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(result => {
+        if (!result) return;
+
+        if (result.action === 'delete') {
+          this.sagheServices.delete(result.id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next:  (res: any) => { this.showMsg(res.msg, false); this.loadData(); },
+              error: (err)      => this.showMsg(err.error?.msg ?? 'Errore eliminazione', true)
+            });
+        }
+
+        if (result.action === 'save') {
+          this.sagheServices.update({ id: saga.id, ...result })
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next:  (res: any) => { this.showMsg(res.msg, false); this.loadData(); },
+              error: (err)      => this.showMsg(err.error?.msg ?? 'Errore aggiornamento', true)
+            });
+        }
+      });
+  }
+
+  showMsg(msg: string, isError: boolean): void {
+    this.snack.open(msg ?? 'Operazione completata', 'OK', {
+      duration: 2000,
+      panelClass: isError ? 'snack-error' : 'snack-success'
+    });
+  }
+}

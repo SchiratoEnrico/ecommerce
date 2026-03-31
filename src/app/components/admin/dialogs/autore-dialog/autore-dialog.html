@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>
+  {{ data ? 'Modifica Autore' : 'Nuovo Autore' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="nome">
+      @if (form.get('nome')?.invalid && form.get('nome')?.touched) {
+        <mat-error>Nome obbligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cognome</mat-label>
+      <input matInput formControlName="cognome">
+      @if (form.get('cognome')?.invalid && form.get('cognome')?.touched) {
+        <mat-error>Cognome obbligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Data di nascita</mat-label>
+      <input matInput type="date" formControlName="dataNascita">
+      @if (form.get('dataNascita')?.invalid && form.get('dataNascita')?.touched) {
+        <mat-error>Data obbligatoria</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descrizione</mat-label>
+      <textarea matInput formControlName="descrizione" rows="3"></textarea>
+      @if (form.get('descrizione')?.invalid && form.get('descrizione')?.touched) {
+        <mat-error>Descrizione obbligatoria</mat-error>
+      }
+    </mat-form-field>
+
+  </form>
+
+  <!-- Link a gestione manga — work in progress -->
+  <div class="manga-link-row">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+    </svg>
+    <a class="manga-link" href="javascript:void(0)" title="Work in progress">
+      Vai alla lista dei manga →
+    </a>
+    <span class="wip-badge">WIP</span>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annulla</button>
+  @if (data) {
+    <button mat-button color="warn" (click)="delete()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+      Elimina
+    </button>
+  }
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="!form.valid">Salva</button>
+</mat-dialog-actions>

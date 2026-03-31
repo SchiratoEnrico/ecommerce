@@ -1,0 +1,75 @@
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <p class="page-eyebrow">Pannello Admin</p>
+      <h1 class="page-title">Gestione Anagrafiche di {{username}}</h1>
+    </div>
+    <div class="page-header-right">
+      <span class="badge-count">{{ dataSource.data.length }} risultati</span>
+    </div>
+  </div>
+
+  <!-- FILTRI -->
+  <div class="card filter-card">
+    <div class="actions-group">
+      <button class="btn-primary" (click)="openCreateDialog()">
+        Nuova anagrafica
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- TABELLA -->
+  <div class="card table-card">
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="edit(row)" style="cursor:pointer"></tr>
+
+        <!-- ID -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+          <td mat-cell *matCellDef="let e" class="td-id">{{ e.id }}</td>
+        </ng-container>
+
+        <!-- NOMINATIVO -->
+        <ng-container matColumnDef="nominativo">
+          <th mat-header-cell *matHeaderCellDef>Nome e Cognome</th>
+          <td mat-cell *matCellDef="let e" class="td-bold">{{ e.nome }} {{ e.cognome }}</td>
+        </ng-container>
+
+        <!-- INDIRIZZO -->
+        <ng-container matColumnDef="indirizzo">
+          <th mat-header-cell *matHeaderCellDef>Indirizzo</th>
+          <td mat-cell *matCellDef="let e" class="td-desc">{{ e.via }}, {{ e.citta }} {{ e.cap }} ({{ e.provincia }})</td>
+        </ng-container>
+
+        <!-- STATO -->
+        <ng-container matColumnDef="stato">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Stato</th>
+          <td mat-cell *matCellDef="let e">{{ e.stato }}</td>
+        </ng-container>
+
+        <!-- PREDEFINITO -->
+        <ng-container matColumnDef="predefinito">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Predefinito</th>
+          <td mat-cell *matCellDef="let e">
+            @if (e.predefinito) {
+              <span class="badge-predefinito">✓ Sì</span>
+            } @else {
+              <span class="badge-no">No</span>
+            }
+          </td>
+        </ng-container>
+
+      </table>
+      <mat-paginator [pageSize]="15"></mat-paginator>
+    </div>
+  </div>
+
+</div>
