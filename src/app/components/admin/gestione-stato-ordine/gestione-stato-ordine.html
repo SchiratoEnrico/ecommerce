@@ -4,28 +4,31 @@
   <div class="page-header">
     <div class="page-header-left">
       <p class="page-eyebrow">Pannello Admin</p>
-      <h1 class="page-title">Gestione Spedizioni</h1>
+      <h1 class="page-title">Gestione Stato Ordine</h1>
     </div>
     <div class="page-header-right">
       <span class="badge-count">{{ dataSource.data.length }} risultati</span>
     </div>
   </div>
- <!-- AZIONI -->
+
+  <!-- AZIONI -->
   <button class="btn-primary" type="button" (click)="openCreateDialog()">
-        Nuova
+        Nuovo
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </button>
+      </svg>
+    </button>
 
   <!-- TABELLA -->
   <div class="card table-card">
     <div class="table-wrap">
       <table mat-table [dataSource]="dataSource" class="full-width-table">
-
+         <!-- Header -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+         <!-- Clickable rows -->
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-            (click)="modificaSpedizione(row)"
+            (click)="modificaStatoOrdine(row)"
             style="cursor:pointer"></tr>
 
         <!-- ID -->
@@ -34,18 +37,17 @@
           <td mat-cell *matCellDef="let s">{{ s.id }}</td>
         </ng-container>
 
-        <!-- TIPO SPEDIZIONE -->
-        <ng-container matColumnDef="tipoSpedizione">
-          <th mat-header-cell *matHeaderCellDef>Tipo Spedizione</th>
-          <td mat-cell *matCellDef="let s">{{ s.tipoSpedizione }}</td>
+        <!-- STATO ORDINE -->
+        <ng-container matColumnDef="statoOrdine">
+          <th mat-header-cell *matHeaderCellDef>Stato Ordine</th>
+          <td mat-cell *matCellDef="let s">{{ s.statoOrdine }}</td>
         </ng-container>
       </table>
        @if(dataSource.data.length === 0){
                 <div class="text-center p-5 text-muted">
-                    <p>Nessun tipo di spedizione trovato</p>
+                    <p>Nessun stato di ordine trovato</p>
                 </div>
             }
-
             <mat-paginator [pageSize]="15"></mat-paginator>
     </div>
   </div>
