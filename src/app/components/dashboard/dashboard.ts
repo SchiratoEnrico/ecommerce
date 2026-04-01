@@ -9,7 +9,6 @@ import { GestioneCarrelloServices } from '../../services/gestione-carrello-servi
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-
 export class Dashboard implements OnInit{
   numeroElementi: number = 0;
 
@@ -24,14 +23,14 @@ export class Dashboard implements OnInit{
       this.gestioneCarrello.aggiornaDatiCarrello();
     }
   }
- 
-  logout() {
-    this.auth.resetAll(); // Rimuove token e ruolo dal localStorage
-    this.routing.navigate(['/home']); // Ritorna alla home dopo il logout
+
+  logout(){
+    this.auth.resetAll();
+    this.routing.navigate(['home']);
   }
 
-  login() {
-    this.routing.navigate(['/login']);
+  login(){
+    this.routing.navigate(['login']);
   }
 
   carrello(){

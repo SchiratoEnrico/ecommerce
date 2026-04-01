@@ -1,3 +1,4 @@
+<!-- ── Toolbar ── -->
 <mat-toolbar class="app-toolbar">
 
   <button mat-icon-button class="toolbar-icon-btn" aria-label="Menu" (click)="auth.toggleDrawer()">
@@ -13,69 +14,56 @@
     matTooltip="Carrello" (click)="carrello()">
     <mat-icon 
       [matBadge]="gestioneCarrello.numeroElementi()"
-      [matBadgeHidden]="gestioneCarrello.numeroElementi() === 0">
+      [matBadgeHidden]="gestioneCarrello.numeroElementi() === 0"
+      >
       shopping_cart
     </mat-icon>
   </button>
 
-  @if (!auth.isAuthenticated()) {
-    <button mat-icon-button class="toolbar-icon-btn" aria-label="Login"
-      matTooltip="Login" (click)="login()">
-      <mat-icon>login</mat-icon>
-    </button>
-  } @else {
-    <button mat-icon-button class="toolbar-icon-btn" aria-label="Logout"
-      matTooltip="Logout" (click)="logout()">
-      <mat-icon>logout</mat-icon>
-    </button>
-  }
-
 </mat-toolbar>
 
+<!-- ── Layout ── -->
 <mat-drawer-container class="app-container">
 
   <mat-drawer #drawer class="app-drawer" mode="side" [opened]="auth.isDrawerOpen()" (openedChange)="auth.setDrawerState($event)">
-    
-    @if (!auth.isRoleAdmin()) {
-      <div class="drawer-header">
-        <span class="drawer-label">Menu</span>
-      </div>
-      <mat-nav-list class="drawer-nav">
-        <a mat-list-item routerLink="home" routerLinkActive="nav-active" class="nav-item">
-          <mat-icon matListItemIcon>home</mat-icon>
-          <span matListItemTitle>Home</span>
+    <!-- ══ MENU UTENTE NORMALE ══ -->
+    <div class="drawer-header">
+      <span class="drawer-label">Menu</span>
+    </div>
+    <mat-nav-list class="drawer-nav">
+      <a mat-list-item routerLink="home" routerLinkActive="nav-active" class="nav-item">
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Home</span>
+      </a>
+      <a mat-list-item routerLink="carrello" routerLinkActive="nav-active" class="nav-item">
+        <mat-icon matListItemIcon>shopping_cart</mat-icon>
+        <span matListItemTitle>Carrello</span>
+      </a>
+      <a mat-list-item routerLink="ordini" routerLinkActive="nav-active" class="nav-item">
+        <mat-icon matListItemIcon>receipt_long</mat-icon>
+        <span matListItemTitle>I miei ordini</span>
+      </a>
+      <a mat-list-item routerLink="profilo" routerLinkActive="nav-active" class="nav-item">
+        <mat-icon matListItemIcon>person</mat-icon>
+        <span matListItemTitle>Profilo</span>
+      </a>
+      @if(!auth.isAutentificated()){
+        <a mat-list-item routerLink="login" routerLinkActive="nav-active" class="nav-item nav-item-login">
+          <mat-icon matListItemIcon>login</mat-icon>
+          <span matListItemTitle>Login</span>
         </a>
-        
-        @if (auth.isAuthenticated()) {
-          <a mat-list-item routerLink="carrello" routerLinkActive="nav-active" class="nav-item">
-            <mat-icon matListItemIcon>shopping_cart</mat-icon>
-            <span matListItemTitle>Carrello</span>
-          </a>
-          <a mat-list-item routerLink="ordini" routerLinkActive="nav-active" class="nav-item">
-            <mat-icon matListItemIcon>receipt_long</mat-icon>
-            <span matListItemTitle>I miei ordini</span>
-          </a>
-          <a mat-list-item routerLink="profilo" routerLinkActive="nav-active" class="nav-item">
-            <mat-icon matListItemIcon>person</mat-icon>
-            <span matListItemTitle>Profilo</span>
-          </a>
-        }
+      }
+      @else {
+        <a mat-list-item (click)="logout()" class="nav-item nav-item-logout">
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle style="color: var(--bs-success-text-emphasis)">Logout</span>
+        </a>
+      }
+    </mat-nav-list>
 
-        @if(!auth.isAuthenticated()){
-          <a mat-list-item (click)="login()" class="nav-item nav-item-login">
-            <mat-icon matListItemIcon>login</mat-icon>
-            <span matListItemTitle>Login</span>
-          </a>
-        } @else {
-          <a mat-list-item (click)="logout()" class="nav-item nav-item-logout">
-            <mat-icon matListItemIcon>logout</mat-icon>
-            <span matListItemTitle style="color: var(--bs-success-text-emphasis)">Logout</span>
-          </a>
-        }
-      </mat-nav-list>
-    }
-
+    <!-- ══ MENU ADMIN ══ -->
     @if (auth.isRoleAdmin()) {
+
       <div class="drawer-header">
         <div class="drawer-admin-badge">
           <mat-icon>admin_panel_settings</mat-icon>
@@ -84,12 +72,8 @@
       </div>
 
       <mat-nav-list class="drawer-nav">
-        <a mat-list-item routerLink="home" routerLinkActive="nav-active" class="nav-item">
-          <mat-icon matListItemIcon>store</mat-icon>
-          <span matListItemTitle>Vai al Sito</span>
-        </a>
 
-        <div class="nav-divider"></div>
+        <!-- Catalogo -->
         <p class="nav-section-label">Catalogo</p>
 
         <a mat-list-item routerLink="/admin/manga" routerLinkActive="nav-active" class="nav-item">
@@ -110,6 +94,8 @@
         </a>
 
         <div class="nav-divider"></div>
+
+        <!-- Vendite -->
         <p class="nav-section-label">Vendite</p>
 
         <a mat-list-item routerLink="/admin/ordini" routerLinkActive="nav-active" class="nav-item">
@@ -118,6 +104,8 @@
         </a>
 
         <div class="nav-divider"></div>
+
+        <!-- Configurazione -->
         <p class="nav-section-label">Configurazione</p>
 
         <a mat-list-item routerLink="/admin/account" routerLinkActive="nav-active" class="nav-item">
@@ -132,16 +120,11 @@
           <mat-icon matListItemIcon>payments</mat-icon>
           <span matListItemTitle>Pagamenti</span>
         </a>
-        
         <a mat-list-item routerLink="/admin/stato-ordine" routerLinkActive="nav-active" class="nav-item">
           <mat-icon matListItemIcon>pending_actions</mat-icon>
           <span matListItemTitle>Stato Ordine</span>
         </a>
 
-        <a mat-list-item (click)="logout()" class="nav-item nav-item-logout">
-          <mat-icon matListItemIcon>logout</mat-icon>
-          <span matListItemTitle>Logout</span>
-        </a>
       </mat-nav-list>
     }
 
