@@ -1,1 +1,80 @@
-<p>carrello works!</p>
+<div class="page-wrapper">
+
+	<div class="page-header">
+		<div class="page-header-left ms-3">
+			<h1 class="page-title">Il Mio Carrello</h1>
+		</div>
+
+		<div class="page-header-right ms-5 mb-3">
+			@if(chartEl?.length === 0){
+				<span class="badge-count fs-5">Nessun articolo nel carrello</span>
+			}
+			@else if(chartEl?.length === 1){
+				<span class="badge-count fs-5">1 articolo</span>
+			}
+			@else{
+				<span class="badge-count fs-5">{{ chartEl?.length }} articoli</span>
+			}
+		</div>
+	</div>
+
+	<div class="card table-card">
+		<div class="table-wrap">
+			<table class="full-width-table">
+				<tbody>
+					@for (riga of chartEl; track riga.id; let i = $index) {
+						<tr class="cart-row" [class.fading-out]="riga.numeroCopie <= 0">
+							
+							<td class="col-index">
+								<span class="index-badge">{{ i + 1 }}</span>
+							</td>
+
+							<td class="col-image">
+								<img [src]="riga.manga.immagine" [alt]="riga.manga.titolo" class="manga-thumb">
+							</td>
+
+							<td class="col-title">
+								<h3 class="manga-title">{{ riga.manga.titolo }}</h3>
+								@if(riga.manga.sagaVol){
+									<span class="text-muted">Vol. {{ riga.manga.sagaVol }}</span>
+								}
+							</td>
+
+							<td class="col-price">
+								<div class="price-container">
+									<span class="tot-price">{{ formattaEuro(riga.manga.prezzo * riga.numeroCopie) }}</span>
+									<span class="cad-price text-muted">({{ formattaEuro(riga.manga.prezzo) }} cad.)</span>
+								</div>
+							</td>
+
+							<td class="col-actions">
+								<div class="qty-controls">
+									<button mat-mini-fab class="btn-qty" color="primary" (click)="updateQty(riga, riga.numeroCopie - 1)">
+										<mat-icon>remove</mat-icon>
+									</button>
+									
+									<input 
+										type="number" 
+										min="0"
+										class="qty-number-input" 
+										[value]="riga.numeroCopie" 
+										(change)="cambioDaTastiera(riga, $event)">
+									
+									<button mat-mini-fab class="btn-qty" color="primary" (click)="updateQty(riga, riga.numeroCopie + 1)">
+										<mat-icon>add</mat-icon>
+									</button>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+
+			@if ((chartEl?.length) === 0) {
+				<div class="text-center p-5 text-muted">
+					<p>Il carrello e' vuoto</p>
+				</div>
+			}
+		</div>
+	</div>
+</div>

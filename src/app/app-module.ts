@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Dashboard } from './components/dashboard/dashboard';
 import { RouterModule } from '@angular/router';
-
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -36,9 +35,14 @@ import { GestioneAccount } from './components/admin/gestione-account/gestione-ac
 import { GestioneSpedizioni } from './components/admin/gestione-spedizioni/gestione-spedizioni';
 import { GestionePagamenti } from './components/admin/gestione-pagamenti/gestione-pagamenti';
 import { Registrazione } from './components/registrazione/registrazione';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatDialogActions, MatDialogContent } from '@angular/material/dialog';
+import { TipoPagamentoDialog } from './components/admin/dialogs/tipo-pagamento-dialog/tipo-pagamento-dialog';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialogActions, MatDialogContent } from '@angular/material/dialog';
 import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gestione-anagrafica';
 import { AnagraficaDialog } from './components/admin/dialogs/anagrafica-dialog/anagrafica-dialog';
 import { AccountDialog } from './components/admin/dialogs/account-dialog/account-dialog';
@@ -71,6 +75,7 @@ import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/
     GestioneSpedizioni,
     GestionePagamenti,
     Registrazione,
+    TipoPagamentoDialog,
     GestioneAnagrafica,
     AnagraficaDialog,
     AccountDialog,
@@ -87,7 +92,7 @@ import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/
   imports: [
     BrowserModule,
     AppRoutingModule,
-    MatFormField,
+    MatFormFieldModule,
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
@@ -102,19 +107,22 @@ import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/
     MatTooltipModule,
     RouterModule,
     MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MatDialogModule,
+    MatBadgeModule,
     MatError,
     MatFormField,
     MatDialogActions,
     MatDialogContent,
     MatLabel,
-    MatTableModule,
-    MatPaginator,
     MatLabel,
     MatCheckboxModule,
     MatProgressBarModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

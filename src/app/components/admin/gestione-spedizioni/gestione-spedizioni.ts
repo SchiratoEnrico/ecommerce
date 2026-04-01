@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { SpedizioneServices } from '../../../services/spedizioni-services';
 import { Spedizione } from '../../../models/spedizione';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SpedizioniDialog } from '../dialogs/spedizioni-dialog/spedizioni-dialog';
+import { MatPaginator } from '@angular/material/paginator';
 
 
 
@@ -17,6 +18,7 @@ import { SpedizioniDialog } from '../dialogs/spedizioni-dialog/spedizioni-dialog
 
 export class GestioneSpedizioni implements OnInit {
 
+   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: string[] = ['id', 'tipoSpedizione'];
   dataSource = new MatTableDataSource<Spedizione>();
 
@@ -29,6 +31,9 @@ export class GestioneSpedizioni implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+  }
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   loadData() {
@@ -99,7 +104,4 @@ export class GestioneSpedizioni implements OnInit {
       panelClass: errore ? 'snack-errore' : 'snack-success'
     });
   }
-
-
-
 } 

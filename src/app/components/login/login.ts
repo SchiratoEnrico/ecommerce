@@ -17,9 +17,9 @@ export class Login {
   @ViewChild('loginForm') loginForm!: NgForm; // ! per dire a TypeScript che verrà inizializzato
 
   constructor(
-    private utenteServices: AccountServices,
     private auth: AuthServices,
-    private routing: Router
+    private routing: Router,
+    public gestioneCarrello: GestioneCarrelloServices
   ) {}
 
   onSubmit() {
@@ -38,12 +38,14 @@ export class Login {
 
         // 2. Salviamo Token e Ruolo in un colpo solo 
         this.auth.setSession(r.token, isAdmin);
+        
+         this.gestioneCarrello.aggiornaDatiCarrello();
 
         // 3. Reindirizziamo l'utente
         this.routing.navigate(['/home']);
       },
       error: (err: any) => {
-        // Gestione degli errori migliorata: Spring Security spesso restituisce 401/403 senza un 'msg' custom.
+        // Gestione degli errori : Spring Security spesso restituisce 401/403 senza un 'msg' custom.
         // Usiamo un messaggio di fallback generico.
         const errorText = err.error?.msg || err.error?.message || "Credenziali non valide. Riprova.";
         this.msg.set(errorText);

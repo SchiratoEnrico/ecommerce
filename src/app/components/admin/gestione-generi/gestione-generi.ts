@@ -51,9 +51,6 @@ export class GestioneGeneri implements OnInit {
     });
   }
 
-  onFilterChange(): void {
-
-  }
 
   resetFilters(): void {
     this.filters = { descrizione: '' };

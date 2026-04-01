@@ -1,6 +1,6 @@
 <mat-toolbar class="app-toolbar">
 
-  <button mat-icon-button class="toolbar-icon-btn" aria-label="Menu" (click)="drawer.toggle()">
+  <button mat-icon-button class="toolbar-icon-btn" aria-label="Menu" (click)="auth.toggleDrawer()">
     <mat-icon>menu</mat-icon>
   </button>
 
@@ -8,14 +8,22 @@
 
   <span class="toolbar-spacer"></span>
 
+  <button mat-icon-button class="toolbar-icon-btn" 
+    aria-label="Carrello" 
+    matTooltip="Carrello" (click)="carrello()">
+    <mat-icon 
+      [matBadge]="gestioneCarrello.numeroElementi()"
+      [matBadgeHidden]="gestioneCarrello.numeroElementi() === 0">
+      shopping_cart
+    </mat-icon>
+  </button>
+
   @if (!auth.isAuthenticated()) {
     <button mat-icon-button class="toolbar-icon-btn" aria-label="Login"
       matTooltip="Login" (click)="login()">
       <mat-icon>login</mat-icon>
     </button>
-  }
-
-  @if (auth.isAuthenticated()) {
+  } @else {
     <button mat-icon-button class="toolbar-icon-btn" aria-label="Logout"
       matTooltip="Logout" (click)="logout()">
       <mat-icon>logout</mat-icon>
@@ -26,8 +34,8 @@
 
 <mat-drawer-container class="app-container">
 
-  <mat-drawer #drawer class="app-drawer" mode="side"> 
-
+  <mat-drawer #drawer class="app-drawer" mode="side" [opened]="auth.isDrawerOpen()" (openedChange)="auth.setDrawerState($event)">
+    
     @if (!auth.isRoleAdmin()) {
       <div class="drawer-header">
         <span class="drawer-label">Menu</span>
@@ -52,6 +60,18 @@
             <span matListItemTitle>Profilo</span>
           </a>
         }
+
+        @if(!auth.isAuthenticated()){
+          <a mat-list-item (click)="login()" class="nav-item nav-item-login">
+            <mat-icon matListItemIcon>login</mat-icon>
+            <span matListItemTitle>Login</span>
+          </a>
+        } @else {
+          <a mat-list-item (click)="logout()" class="nav-item nav-item-logout">
+            <mat-icon matListItemIcon>logout</mat-icon>
+            <span matListItemTitle style="color: var(--bs-success-text-emphasis)">Logout</span>
+          </a>
+        }
       </mat-nav-list>
     }
 
@@ -70,16 +90,11 @@
         </a>
 
         <div class="nav-divider"></div>
-
         <p class="nav-section-label">Catalogo</p>
 
         <a mat-list-item routerLink="/admin/manga" routerLinkActive="nav-active" class="nav-item">
           <mat-icon matListItemIcon>menu_book</mat-icon>
           <span matListItemTitle>Manga</span>
-        </a>
-        <a mat-list-item routerLink="/admin/saghe" routerLinkActive="nav-active" class="nav-item">
-          <mat-icon matListItemIcon>playlist_play</mat-icon>
-          <span matListItemTitle>Saghe</span>
         </a>
         <a mat-list-item routerLink="/admin/autori" routerLinkActive="nav-active" class="nav-item">
           <mat-icon matListItemIcon>draw</mat-icon>
@@ -95,7 +110,6 @@
         </a>
 
         <div class="nav-divider"></div>
-
         <p class="nav-section-label">Vendite</p>
 
         <a mat-list-item routerLink="/admin/ordini" routerLinkActive="nav-active" class="nav-item">
@@ -104,7 +118,6 @@
         </a>
 
         <div class="nav-divider"></div>
-
         <p class="nav-section-label">Configurazione</p>
 
         <a mat-list-item routerLink="/admin/account" routerLinkActive="nav-active" class="nav-item">
@@ -119,7 +132,16 @@
           <mat-icon matListItemIcon>payments</mat-icon>
           <span matListItemTitle>Pagamenti</span>
         </a>
+        
+        <a mat-list-item routerLink="/admin/stato-ordine" routerLinkActive="nav-active" class="nav-item">
+          <mat-icon matListItemIcon>pending_actions</mat-icon>
+          <span matListItemTitle>Stato Ordine</span>
+        </a>
 
+        <a mat-list-item (click)="logout()" class="nav-item nav-item-logout">
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle>Logout</span>
+        </a>
       </mat-nav-list>
     }
 
