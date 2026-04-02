@@ -15,10 +15,6 @@ export class AccountServices {
     public auth:AuthServices
   ) {}
 
-  login(body:{}){
-    return this.http.post(this.url + "/login", body);
-  }
-
   create(body:{}){
     return this.http.post(this.url + "/create", body);
   }

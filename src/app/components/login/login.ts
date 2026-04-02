@@ -17,14 +17,14 @@ export class Login {
 
   @ViewChild('loginForm') loginForm:NgForm;
 
-   constructor(private utenteServices: AccountServices,
+   constructor(
       private auth:AuthServices,
       private routing:Router,
       public gestioneCarrello: GestioneCarrelloServices
   ){}
 
    onSubmit(){
-     this.utenteServices.login(this.loginForm.value).subscribe({
+     this.auth.login(this.loginForm.value).subscribe({
       next: (r:any) => {
         this.msg.set("");
 

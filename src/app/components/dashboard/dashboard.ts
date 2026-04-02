@@ -19,7 +19,7 @@ export class Dashboard implements OnInit{
   ){}
 
   ngOnInit(): void {
-    if(this.auth.isAutentificated()){
+    if(this.auth.isAuthenticated()){
       this.gestioneCarrello.aggiornaDatiCarrello();
     }
   }

@@ -15,6 +15,7 @@
     <mat-icon 
       [matBadge]="gestioneCarrello.numeroElementi()"
       [matBadgeHidden]="gestioneCarrello.numeroElementi() === 0"
+      aria-hidden="false"
       >
       shopping_cart
     </mat-icon>
@@ -47,7 +48,7 @@
         <mat-icon matListItemIcon>person</mat-icon>
         <span matListItemTitle>Profilo</span>
       </a>
-      @if(!auth.isAutentificated()){
+      @if(!auth.isAuthenticated()){
         <a mat-list-item routerLink="login" routerLinkActive="nav-active" class="nav-item nav-item-login">
           <mat-icon matListItemIcon>login</mat-icon>
           <span matListItemTitle>Login</span>
@@ -79,6 +80,10 @@
         <a mat-list-item routerLink="/admin/manga" routerLinkActive="nav-active" class="nav-item">
           <mat-icon matListItemIcon>menu_book</mat-icon>
           <span matListItemTitle>Manga</span>
+        </a>
+        <a mat-list-item routerLink="/admin/saghe" routerLinkActive="nav-active" class="nav-item">
+          <mat-icon matListItemIcon>menu_book</mat-icon>
+          <span matListItemTitle>Saghe</span>
         </a>
         <a mat-list-item routerLink="/admin/autori" routerLinkActive="nav-active" class="nav-item">
           <mat-icon matListItemIcon>draw</mat-icon>

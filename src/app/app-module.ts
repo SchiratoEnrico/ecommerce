@@ -1,11 +1,11 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Dashboard } from './components/dashboard/dashboard';
-import { RouterModule } from '@angular/router';
+import { provideRouter, RouterModule, withHashLocation } from '@angular/router';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -56,6 +56,9 @@ import { MangaDialog } from './components/admin/dialogs/manga-dialog/manga-dialo
 import { CasaEditriceDialog } from './components/admin/dialogs/casa-editrice-dialog/casa-editrice-dialog';
 import { OrdineDialog } from './components/admin/dialogs/ordine-dialog/ordine-dialog';
 import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/riga-ordine-dialog';
+import { GestioneStatoOrdine } from './components/admin/gestione-stato-ordine/gestione-stato-ordine';
+import { StatoOrdineDialog } from './components/admin/dialogs/stato-ordine-dialog/stato-ordine-dialog';
+import { jwtInterceptor } from './auth/jwt-interceptor';
 
 @NgModule({
   declarations: [
@@ -88,6 +91,8 @@ import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/
     CasaEditriceDialog,
     OrdineDialog,
     RigaOrdineDialog,
+    GestioneStatoOrdine,
+    StatoOrdineDialog
   ],
   imports: [
     BrowserModule,
@@ -115,19 +120,19 @@ import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/
     MatFormField,
     MatDialogActions,
     MatDialogContent,
-    MatLabel,
-    MatLabel,
     MatCheckboxModule,
     MatProgressBarModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatProgressBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatLabel,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withInterceptors([jwtInterceptor]), withFetch()),
+
   ],
   bootstrap: [App],
 })
