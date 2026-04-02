@@ -4,5 +4,6 @@ export interface Account {
     email: string,
     ruolo: string,
     id_carrello: number,
-    anagrafica:{}
+    anagrafica:{},
+    password?: string;
 }
