@@ -59,6 +59,10 @@ import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/
 import { GestioneStatoOrdine } from './components/admin/gestione-stato-ordine/gestione-stato-ordine';
 import { StatoOrdineDialog } from './components/admin/dialogs/stato-ordine-dialog/stato-ordine-dialog';
 import { jwtInterceptor } from './auth/jwt-interceptor';
+import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-carrello';
+import { Footer } from './components/footer/footer';
+import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettaglio-carrello';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -92,7 +96,10 @@ import { jwtInterceptor } from './auth/jwt-interceptor';
     OrdineDialog,
     RigaOrdineDialog,
     GestioneStatoOrdine,
-    StatoOrdineDialog
+    StatoOrdineDialog,
+    GestioneCarrello,
+    Footer,
+    DettaglioCarrello,
   ],
   imports: [
     BrowserModule,
@@ -127,12 +134,12 @@ import { jwtInterceptor } from './auth/jwt-interceptor';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatLabel,
+    CommonModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptors([jwtInterceptor]), withFetch()),
-
   ],
   bootstrap: [App],
 })

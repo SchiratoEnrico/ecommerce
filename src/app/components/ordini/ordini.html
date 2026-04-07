@@ -1,1 +1,102 @@
-<p>ordini works!</p>
+<div class="container mt-5 mb-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="fw-bold">I Miei Ordini</h1>
+            <p class="text-muted">Consulta lo storico dei tuoi acquisti e lo stato delle spedizioni.</p>
+        </div>
+    </div>
+
+    @if (isLoading) {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Caricamento...</span>
+            </div>
+        </div>
+    }
+
+    @if (!isLoading && ordini.length === 0) {
+        <div class="alert alert-info text-center py-5 shadow-sm border-0">
+            <mat-icon class="display-4 mb-3 d-block mx-auto text-info" style="opacity: 0.5;">receipt_long</mat-icon>
+            <h4 class="alert-heading">Non hai ancora effettuato ordini.</h4>
+            <p class="mb-0">Inizia a riempire il tuo carrello con i migliori manga!</p>
+        </div>
+    }
+
+    @if (!isLoading && ordini.length > 0) {
+        @for (ordine of ordini; track ordine.id) {
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center py-3">
+                    <div>
+                        <h5 class="mb-0 fw-bold">Ordine #{{ ordine.id }}</h5>
+                        <small class="text-muted">Effettuato il {{ ordine.data | date:'dd/MM/yyyy' }}</small>
+                    </div>
+                    <div class="text-end mt-2 mt-md-0">
+                        <span class="badge rounded-pill px-3 py-2 fs-6" 
+                              [ngClass]="{
+                                'bg-success': ordine.stato?.statoOrdine === 'CONSEGNATO',
+                                'bg-primary': ordine.stato?.statoOrdine === 'SPEDITO',
+                                'bg-warning text-dark': ordine.stato?.statoOrdine === 'IN LAVORAZIONE'
+                              }">
+                            {{ ordine.stato?.statoOrdine || 'Stato Sconosciuto' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3 border-bottom pb-3">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Metodo di Pagamento:</strong> {{ ordine.pagamento?.tipoPagamento || 'N/D' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Spedizione:</strong> {{ ordine.spedizione?.tipoSpedizione || 'N/D' }}</p>
+                        </div>
+                    </div>
+                    <h6 class="fw-bold mb-3">Articoli Acquistati:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-borderless align-middle mb-0">
+                            <thead class="border-bottom">
+                                <tr>
+                                    <th scope="col" class="text-muted ps-2">Prodotto</th>
+                                    <th scope="col" class="text-center text-muted">Prezzo Cad.</th>
+                                    <th scope="col" class="text-center text-muted">Quantità</th>
+                                    <th scope="col" class="text-end text-muted pe-2">Totale Riga</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (riga of ordine.righeOrdine; track riga.id) {
+                                    <tr class="border-bottom-dashed">
+                                        <td class="py-3">
+                                            <div class="d-flex align-items-center">
+                                                <img [src]="mangaCache[riga.manga]?.immagine || 'https://via.placeholder.com/50x70/faf9f7/1a1814?text=N/A'" 
+                                                     alt="Cover" 
+                                                     class="rounded shadow-sm me-3" 
+                                                     style="width: 50px; height: 70px; object-fit: cover;">
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold">{{ mangaCache[riga.manga]?.titolo || 'Caricamento in corso...' }}</h6>
+                                                    <small class="text-muted">ISBN: {{ riga.manga }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            € {{ mangaCache[riga.manga]?.prezzo || '0.00' }}
+                                        </td>
+                                        <td class="text-center align-middle fw-semibold">
+                                            x{{ riga.numeroCopie }}
+                                        </td>
+                                        <td class="text-end align-middle fw-bold text-primary pe-2">
+                                            € {{ ((mangaCache[riga.manga]?.prezzo || 0) * riga.numeroCopie) | number:'1.2-2' }}
+                                        </td>
+                                    </tr>
+                                } 
+                                @empty {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">Nessun articolo trovato per questo ordine.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

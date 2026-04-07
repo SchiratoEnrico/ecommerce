@@ -1,0 +1,110 @@
+.site-footer {
+    background-color: var(--text-primary, #1a1814); 
+    color: var(--surface, #faf9f7);
+    font-family: 'DM Sans', sans-serif;
+}
+
+.footer-brand {
+    color: var(--brand-accent, #c9a84c);
+    font-weight: bold;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.footer-text {
+    color: var(--text-muted, #a09a93);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.footer-title {
+    color: var(--surface, #faf9f7);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2px;
+    background-color: var(--brand-accent, #c9a84c);
+}
+
+.footer-links, .footer-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: var(--text-muted, #a09a93);
+    text-decoration: none;
+    transition: color 0.3s ease, padding-left 0.3s ease; 
+}
+
+.footer-links a:hover {
+    color: var(--brand-accent, #c9a84c);
+    padding-left: 8px;
+}
+
+.footer-contact li {
+    color: var(--text-muted, #a09a93);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.footer-contact mat-icon {
+    color: var(--brand-accent, #c9a84c);
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--surface, #faf9f7);
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: var(--brand-accent, #c9a84c);
+    color: var(--text-primary, #1a1814);
+    transform: translateY(-3px); 
+}
+
+.footer-bottom {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px 0;
+}
+
+.footer-bottom p {
+    margin: 0;
+    color: var(--text-muted, #a09a93);
+    font-size: 0.85rem;
+}
