@@ -7,7 +7,7 @@ import { AuthServices } from '../auth/auth-services';
   providedIn: 'root',
 })
 export class GestioneCarrelloServices {
-  url = 'http://localhost:9090/rest/'; 
+  url = 'http://localhost:9090/rest/';
 
   carrello = signal<any[]>([]);
   numeroElementi = computed(() => this.carrello().length);
