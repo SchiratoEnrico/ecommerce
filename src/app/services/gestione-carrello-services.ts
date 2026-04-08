@@ -17,6 +17,10 @@ export class GestioneCarrelloServices {
     private auth: AuthServices
   ){}
 
+  listAll(): Observable<any[]>{
+    return this.http.get<any[]>('http://localhost:9090/rest/carrello/list');
+  }
+
   list(params?: any): Observable<any[]> {
     const user = this.auth.currentUser();
 

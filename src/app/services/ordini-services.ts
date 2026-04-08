@@ -25,6 +25,10 @@ export class OrdiniServices {
     return this.http.get<Ordine>(`${this.url}/findById`, { params: { id } });
   }
 
+  findByAccountId(accountId: number): Observable<Ordine[]>{
+    return this.http.get<Ordine[]>(`${this.url}/findByAccountId`, { params: { accountId } });
+  }
+
   // Crea un nuovo ordine (Omit rimuove l'id perché è generato dal DB)
   create(ordine: Omit<Ordine, 'id'>): Observable<any> {
     return this.http.post(`${this.url}/create`, ordine);

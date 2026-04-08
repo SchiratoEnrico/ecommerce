@@ -1,7 +1,7 @@
 <!-- ── Toolbar ── -->
 <mat-toolbar class="app-toolbar">
 
-  <button mat-icon-button class="toolbar-icon-btn" aria-label="Menu" (click)="auth.toggleDrawer()">
+  <button mat-icon-button class="toolbar-icon-btn" aria-label="Menu" (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
 
@@ -26,7 +26,7 @@
 <!-- ── Layout ── -->
 <mat-drawer-container class="app-container">
 
-  <mat-drawer #drawer class="app-drawer" mode="side" [opened]="auth.isDrawerOpen()" (openedChange)="auth.setDrawerState($event)">
+  <mat-drawer #drawer class="app-drawer" mode="side" (openedChange)="onDrawerChange($event)">
     <!-- ══ MENU UTENTE NORMALE ══ -->
     <div class="drawer-header">
       <span class="drawer-label">Menu</span>
@@ -107,6 +107,10 @@
           <mat-icon matListItemIcon>receipt_long</mat-icon>
           <span matListItemTitle>Ordini</span>
         </a>
+        <a mat-list-item routerLink="/admin/gestione-carrello" routerLinkActive="nav-active" class="nav-item">
+          <mat-icon matListItemIcon>shopping_cart</mat-icon>
+          <span matListItemTitle>Carrello</span>
+        </a>
 
         <div class="nav-divider"></div>
 
@@ -136,7 +140,7 @@
   </mat-drawer>
 
   <mat-drawer-content class="app-content">
-    <router-outlet></router-outlet>
+    <ng-content></ng-content>
   </mat-drawer-content>
 
 </mat-drawer-container>
