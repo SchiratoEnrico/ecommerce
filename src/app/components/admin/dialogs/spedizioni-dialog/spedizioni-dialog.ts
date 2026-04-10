@@ -18,10 +18,11 @@ export class SpedizioniDialog {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
 
-    this.form = this.fb.group({
-      tipoSpedizione: ['', Validators.required]
-    });
-
+  this.form = this.fb.group({
+    tipoSpedizione: [data?.tipoSpedizione ?? '', Validators.required],
+    costoSpedizione: [data?.costoSpedizione ?? 0, [Validators.required, Validators.min(0)]]
+  });
+    
     if (data) {
       this.form.patchValue(data);
     }

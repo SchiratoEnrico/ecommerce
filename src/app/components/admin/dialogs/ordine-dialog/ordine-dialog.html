@@ -9,16 +9,31 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Stato Ordine</mat-label>
-      <input matInput formControlName="stato">
+      <mat-select formControlName="stato" multiple>
+        @for (stato of statoOrdine; track stato) {
+      <mat-option [value]="stato">{{ stato }}</mat-option>
+          }
+      </mat-select>
+
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Tipo Pagamento</mat-label>
-      <input matInput formControlName="tipoPagamento" placeholder="es. carta di credito">
+      <mat-select formControlName="tipoPagamento" multiple>
+        @for (stato of tipoPagamento; track stato) {
+      <mat-option [value]="stato">{{ stato }}</mat-option>
+          }
+      </mat-select>
     </mat-form-field>
+    
     <mat-form-field appearance="outline">
       <mat-label>Tipo Spedizione</mat-label>
-      <input matInput formControlName="tipoSpedizione" placeholder="es. corriere">
+      <mat-select formControlName="tipoSpedizione" multiple>
+        @for (stato of tipoSpedizione; track stato) {
+      <mat-option [value]="stato">{{ stato }}</mat-option>
+          }
+      </mat-select>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Data</mat-label>
       <input matInput type="date" formControlName="data">

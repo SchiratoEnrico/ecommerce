@@ -1,0 +1,609 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+ 
+/* ======= VARIABILI ======= */
+:root {
+  --brand-dark:     #0f0e0c;
+  --brand-accent:   #c9a84c;
+  --text-primary:   #1a1814;
+  --text-secondary: #6b6560;
+  --text-muted:     #a09a93;
+  --border:         #e8e3dc;
+  --surface:        #faf9f7;
+  --white:          #ffffff;
+  --error:          #c0392b;
+  --success:        #27ae60;
+  --radius-sm:      8px;
+  --radius-md:      14px;
+  --radius-lg:      20px;
+  --transition:     0.18s cubic-bezier(0.4,0,0.2,1);
+}
+ 
+/* ======= HOST ======= */
+:host {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  padding: 2rem 2.5rem;
+  background: var(--surface);
+  min-height: 100vh;
+}
+ 
+/* ======= HEADER ======= */
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+ 
+.page-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  margin-bottom: 0.3rem;
+}
+ 
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+ 
+/* ======= CARD FILTRI ======= */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 1.75rem;
+}
+ 
+.filter-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+ 
+.filter-field {
+  width: 100%;
+}
+ 
+.filter-field--narrow {
+  min-width: 130px;
+}
+ 
+.actions-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+ 
+/* ======= BOTTONI ======= */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--brand-dark);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+ 
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(15,14,12,0.2);
+  transform: translateY(-1px);
+}
+ 
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+ 
+.btn-ghost {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+ 
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+ 
+.btn-ghost:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+ 
+.btn-ghost--danger {
+  color: var(--error);
+  border-color: rgba(192, 57, 43, 0.3);
+}
+ 
+.btn-ghost--danger:hover:not(:disabled) {
+  background: rgba(192, 57, 43, 0.06);
+  border-color: var(--error);
+}
+ 
+/* ======= SPLIT LAYOUT ======= */
+.split-layout {
+  display: flex;
+  gap: 0;
+  min-height: 600px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+ 
+/* ======= MASTER PANE ======= */
+.master-pane {
+  width: 300px;
+  min-width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+}
+ 
+.master-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+ 
+.master-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+ 
+.master-header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+ 
+.master-header-count {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+ 
+.master-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+ 
+.master-body::-webkit-scrollbar { width: 3px; }
+.master-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+ 
+.master-paginator {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+ 
+/* ── List item ── */
+.fattura-list-item .list-item-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+}
+ 
+.fattura-list-item .list-item-content:hover {
+  background: rgba(201, 168, 76, 0.06);
+}
+ 
+.fattura-list-item.active .list-item-content {
+  background: rgba(201, 168, 76, 0.09);
+  border-left: 2px solid var(--brand-accent);
+}
+ 
+.person-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+ 
+.person-avatar svg { display: block; }
+ 
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+ 
+.item-nome {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.item-num {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: 'Courier New', monospace;
+}
+ 
+.item-totale-badge {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+ 
+.empty-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+ 
+.empty-list mat-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+ 
+/* ======= DETAIL PANE ======= */
+.detail-pane {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+}
+ 
+/* ── Empty state ── */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 40px;
+}
+ 
+.empty-state-icon-wrap {
+  width: 68px;
+  height: 68px;
+  background: var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+ 
+.empty-state-icon-wrap mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: var(--text-muted);
+}
+ 
+.empty-state h3 {
+  margin: 0 0 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+ 
+.empty-state p {
+  margin: 0;
+  font-size: 0.82rem;
+  max-width: 260px;
+  color: var(--text-muted);
+}
+ 
+/* ── Detail toolbar ── */
+.detail-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 20px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+ 
+.detail-toolbar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+ 
+.detail-eyebrow {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  margin-bottom: 1px;
+}
+ 
+.detail-numero {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+ 
+.detail-data {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+ 
+.detail-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+ 
+/* ── Stato chip ── */
+.stato-chip {
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+ 
+.stato-chip--creato        { background: #eef3fc; color: #2c4d8a; border: 1px solid #c5d5f2; }
+.stato-chip--pagato        { background: #e8f4f5; color: #1a6070; border: 1px solid #b2dde2; }
+.stato-chip--lavorazione   { background: #fdf4e7; color: #8a5c1a; border: 1px solid #f0d9ab; }
+.stato-chip--spedito       { background: #e8f4f5; color: #1a6070; border: 1px solid #b2dde2; }
+.stato-chip--consegnato    { background: #eaf5ec; color: #2a6b3f; border: 1px solid #c3e6c9; }
+.stato-chip--richiesta_reso { background: #fdf4e7; color: #8a5c1a; border: 1px solid #f0d9ab; }
+.stato-chip--restituito    { background: #fcedf0; color: #8a2a3a; border: 1px solid #f0bcc6; }
+.stato-chip--rimborsato    { background: #f5eefa; color: #6a3a8a; border: 1px solid #dbbff0; }
+.stato-chip--rifiutato     { background: #f5f0e8; color: #7a5c2a; border: 1px solid #e0d0b0; }
+.stato-chip--annullata     { background: var(--surface); color: var(--text-secondary); border: 1px solid var(--border); }
+ 
+/* ── Banner stato ── */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  text-align: center;
+}
+ 
+.banner--warn    { background: #fdf4e7; color: #8a5c1a; border-bottom: 1px solid #f0d9ab; }
+.banner--info    { background: #fcedf0; color: #8a2a3a; border-bottom: 1px solid #f0bcc6; }
+.banner--success { background: #eaf5ec; color: #2a6b3f; border-bottom: 1px solid #c3e6c9; }
+.banner--error   { background: #f5f0e8; color: #7a5c2a; border-bottom: 1px solid #e0d0b0; }
+.banner--neutral { background: var(--surface); color: var(--text-secondary); border-bottom: 1px solid var(--border); }
+ 
+/* ── Corpo dettaglio ── */
+.detail-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+ 
+.detail-body::-webkit-scrollbar { width: 3px; }
+.detail-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+ 
+.doc-section { margin-bottom: 18px; }
+ 
+.section-tag {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--brand-accent);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+ 
+.voci-count { font-weight: 400; color: var(--text-muted); }
+ 
+/* ── Info card ── */
+.info-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+ 
+.info-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+ 
+.info-card-row:last-child { border-bottom: none; }
+ 
+.info-cell {
+  flex: 1;
+  min-width: 160px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-right: 1px solid var(--border);
+}
+ 
+.info-cell:last-child { border-right: none; }
+ 
+.info-label {
+  font-size: 0.62rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+ 
+.info-value {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 400;
+}
+ 
+.info-value--link { color: var(--brand-accent); font-weight: 500; }
+ 
+/* ── Tabella righe ── */
+.righe-table {
+  width: 100%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border-collapse: collapse;
+}
+ 
+.righe-table th {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 500;
+  background: var(--surface);
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+ 
+.righe-table td {
+  font-size: 0.8rem;
+  padding: 10px 12px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+ 
+.righe-table tr:last-child td { border-bottom: none; }
+.righe-table .riga-row:hover td { background: rgba(201, 168, 76, 0.05); }
+ 
+.isbn-mono { font-family: 'Courier New', monospace; font-size: 0.7rem; color: var(--text-muted); }
+.cell-right  { text-align: right !important; }
+.cell-center { text-align: center !important; }
+.cell-totale { font-weight: 500; color: var(--text-primary); }
+ 
+.empty-righe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 12px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+ 
+/* ── Totali ── */
+.totali-block {
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+ 
+.totale-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 32px;
+  padding: 3px 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+ 
+.totale-row span:last-child { min-width: 100px; text-align: right; }
+ 
+.totale-row--grand {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+  padding-top: 8px;
+}
+ 
+/* ── Nota fattura ── */
+.nota-fattura {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+ 
+.nota-label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); flex-shrink: 0; }
+.nota-sep   { color: var(--border); flex-shrink: 0; }
+.nota-value { color: var(--text-secondary); font-weight: 500; font-family: 'Courier New', monospace; font-size: 0.78rem; }
+.nota-text  { color: var(--text-muted); font-style: italic; }
+ 
+/* ======= RESPONSIVE ======= */
+@media (max-width: 768px) {
+  :host           { padding: 1.25rem 1rem; }
+  .split-layout   { flex-direction: column; }
+  .master-pane    { width: 100%; }
+  .info-card-row  { flex-direction: column; }
+  .filter-field--narrow { min-width: 100px; }
+}

@@ -1,0 +1,371 @@
+<!-- HEADER -->
+<div class="page-header">
+  <div class="page-header-left">
+    <p class="page-eyebrow">Pannello Admin</p>
+    <h1 class="page-title">Gestione Fatture</h1>
+  </div>
+  <div class="page-header-right">
+    <button class="btn-primary" (click)="openCreateDialog()">
+      Nuova Fattura
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- FILTRI -->
+<div class="card filter-card">
+  <div class="filter-row">
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>N° Fattura</mat-label>
+      <input matInput [(ngModel)]="filters.numeroFattura" (ngModelChange)="onFilterChange()" placeholder="FAT-2024-...">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Nome cliente</mat-label>
+      <input matInput [(ngModel)]="filters.clienteNome" (ngModelChange)="onFilterChange()">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Cognome cliente</mat-label>
+      <input matInput [(ngModel)]="filters.clienteCognome" (ngModelChange)="onFilterChange()">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" [(ngModel)]="filters.clienteEmail"
+             (ngModelChange)="onFilterChange()" placeholder="esempio@dominio.com">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>From Anno</mat-label>
+      <input matInput type="number" [(ngModel)]="filters.annoFrom" (ngModelChange)="onFilterChange()" placeholder="2024">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>To Anno</mat-label>
+      <input matInput type="number" [(ngModel)]="filters.annoTo" (ngModelChange)="onFilterChange()" placeholder="2024">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>Tipo Spedizione</mat-label>
+      <mat-select [(ngModel)]="filters.tipoSpedizione" (ngModelChange)="onFilterChange()">
+        <mat-option *ngFor="let ts of tipiSpedizione" [value]="ts.tipoSpedizione">{{ ts.tipoSpedizione }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>Tipo Pagamento</mat-label>
+      <mat-select [(ngModel)]="filters.tipoPagamento" (ngModelChange)="onFilterChange()">
+        <mat-option *ngFor="let tp of tipiPagamento" [value]="tp.tipoPagamento">{{ tp.tipoPagamento }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>Stato Fattura</mat-label>
+      <mat-select [(ngModel)]="filters.statoFattura" (ngModelChange)="onFilterChange()">
+        <mat-option value="CREATO">Creato</mat-option>
+        <mat-option value="PAGATO">Pagato</mat-option>
+        <mat-option value="LAVORAZIONE">Lavorazione</mat-option>
+        <mat-option value="SPEDITO">Spedito</mat-option>
+        <mat-option value="CONSEGNATO">Consegnato</mat-option>
+        <mat-option value="RICHIESTA_RESO">Richiesta reso</mat-option>
+        <mat-option value="RESTITUITO">Restituito</mat-option>
+        <mat-option value="RIMBORSATO">Rimborsato</mat-option>
+        <mat-option value="RIFIUTATO">Rifiutato</mat-option>
+        <mat-option value="ANNULLATA">Annullata</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>ID Ordine</mat-label>
+      <input matInput type="number" [(ngModel)]="filters.id_ordine" (ngModelChange)="onFilterChange()" placeholder="12345">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>ISBN</mat-label>
+      <input matInput [(ngModel)]="filters.isbn" (ngModelChange)="onFilterChange()" placeholder="978-0-123456-78-9">
+    </mat-form-field>
+
+  </div>
+  <div class="actions-group">
+    <button class="btn-primary" (click)="resetFilters()">
+      Reset
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="split-layout">
+
+  <!-- MASTER PANE (sinistra) -->
+  <div class="master-pane">
+    <div class="master-header">
+      <div class="master-header-text">
+        <span class="master-header-title">Fatture</span>
+        <span class="master-header-count">{{ dataSource.data.length }}&nbsp;documenti</span>
+      </div>
+    </div>
+
+    <mat-progress-bar *ngIf="loading" mode="indeterminate" color="accent"></mat-progress-bar>
+
+    <div class="master-body">
+      <mat-selection-list [multiple]="false" hideSingleSelectionIndicator class="fatture-list">
+        <mat-list-option
+          *ngFor="let fattura of dataSource.filteredData"
+          [value]="fattura"
+          (click)="selectFattura(fattura)"
+          [selected]="selectedFattura?.id === fattura.id"
+          class="fattura-list-item">
+          <div class="list-item-content">
+            <div class="person-avatar">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="5.5" r="2.8" fill="#a09e99"/>
+                <path d="M2 15c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#a09e99" stroke-width="1.4"/>
+              </svg>
+            </div>
+            <div class="item-info">
+              <span class="item-nome">{{ fattura.clienteNome }} {{ fattura.clienteCognome }}</span>
+              <span class="item-num">{{ fattura.numeroFattura }}</span>
+            </div>
+            <span class="item-totale-badge">
+              {{ fattura.totale | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+          </div>
+        </mat-list-option>
+      </mat-selection-list>
+
+      <div *ngIf="!loading && dataSource.data.length === 0" class="empty-list">
+        <mat-icon>search_off</mat-icon>
+        <p>Nessuna fattura trovata</p>
+      </div>
+    </div>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons class="master-paginator"></mat-paginator>
+  </div>
+
+  <!-- DETAIL PANE (destra) -->
+  <div class="detail-pane">
+
+    <!-- Empty state -->
+    <div *ngIf="!selectedFattura" class="empty-state">
+      <div class="empty-state-icon-wrap">
+        <mat-icon>touch_app</mat-icon>
+      </div>
+      <h3>Nessuna fattura selezionata</h3>
+      <p>Seleziona una fattura dall'elenco a sinistra per visualizzarne i dettagli</p>
+    </div>
+
+    <!-- Dettaglio fattura -->
+    <ng-container *ngIf="selectedFattura as fattura">
+
+      <!-- Toolbar dettaglio -->
+      <div class="detail-toolbar">
+        <div class="detail-toolbar-info">
+          <span class="detail-eyebrow">Fattura</span>
+          <span class="detail-numero">{{ fattura.numeroFattura }}</span>
+          <span class="detail-data">{{ fattura.dataEmissione | date:'dd MMMM yyyy' }}</span>
+        </div>
+
+        <div class="detail-toolbar-actions">
+
+          <span [ngClass]="'stato-chip stato-chip--' + fattura.statoFattura.toLowerCase()">
+            {{ fattura.statoFattura }}
+          </span>
+
+          <button class="btn-ghost" (click)="edit(fattura)" [disabled]="!canEdit(fattura)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Modifica
+          </button>
+
+          <ng-container *ngIf="canConfermaReso(fattura)">
+            <button class="btn-primary" (click)="confermaReso(fattura)" [disabled]="processing">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Conferma Reso
+            </button>
+            <button class="btn-ghost btn-ghost--danger" (click)="rifiutaReso(fattura)" [disabled]="processing">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+              Rifiuta
+            </button>
+          </ng-container>
+
+          <button class="btn-primary" *ngIf="canRimborsa(fattura)" (click)="rimborsa(fattura)" [disabled]="processing">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            Effettua Rimborso
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Banner stato -->
+      <div *ngIf="fattura.statoFattura === 'RICHIESTA_RESO'" class="banner banner--warn">Richiesta di reso in attesa</div>
+      <div *ngIf="fattura.statoFattura === 'RESTITUITO'"     class="banner banner--info">Prodotto restituito</div>
+      <div *ngIf="fattura.statoFattura === 'RIMBORSATO'"     class="banner banner--success">Rimborso completato</div>
+      <div *ngIf="fattura.statoFattura === 'RIFIUTATO'"      class="banner banner--error">Reso rifiutato</div>
+      <div *ngIf="fattura.statoFattura === 'ANNULLATA'"      class="banner banner--neutral">Fattura annullata</div>
+
+      <!-- Corpo documento -->
+      <div class="detail-body">
+
+        <div class="doc-section">
+          <div class="section-tag">Cliente</div>
+          <div class="info-card">
+            <div class="info-card-row">
+              <div class="info-cell">
+                <span class="info-label">Nome e Cognome</span>
+                <span class="info-value">{{ fattura.clienteNome }} {{ fattura.clienteCognome }}</span>
+              </div>
+              <div class="info-cell">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ fattura.clienteEmail }}</span>
+              </div>
+            </div>
+            <div class="info-card-row">
+              <div class="info-cell">
+                <span class="info-label">Indirizzo</span>
+                <span class="info-value">{{ fattura.clienteIndirizzo }}</span>
+              </div>
+              <div class="info-cell">
+                <span class="info-label">Città</span>
+                <span class="info-value">{{ fattura.clienteCap }} {{ fattura.clienteCitta }}</span>
+              </div>
+            </div>
+            <div class="info-card-row">
+              <div class="info-cell">
+                <span class="info-label">Provincia</span>
+                <span class="info-value">{{ fattura.clienteProvincia || '—' }}</span>
+              </div>
+              <div class="info-cell">
+                <span class="info-label">CAP</span>
+                <span class="info-value">{{ fattura.clienteCap || '—' }}</span>
+              </div>
+              <div class="info-cell">
+                <span class="info-label">Stato</span>
+                <span class="info-value">{{ fattura.clienteStato }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="doc-section">
+          <div class="section-tag">Pagamento &amp; Spedizione</div>
+          <div class="info-card">
+            <div class="info-card-row">
+              <div class="info-cell">
+                <span class="info-label">Tipo Pagamento</span>
+                <span class="info-value">{{ fattura.tipoPagamento }}</span>
+              </div>
+              <div class="info-cell">
+                <span class="info-label">Tipo Spedizione</span>
+                <span class="info-value">{{ fattura.tipoSpedizione }}</span>
+              </div>
+              <div class="info-cell">
+                <span class="info-label">Costo Spedizione</span>
+                <span class="info-value">{{ fattura.costoSpedizione | currency:'EUR':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="info-cell" *ngIf="fattura.ordineId">
+                <span class="info-label">Ordine collegato</span>
+                <span class="info-value info-value--link">#{{ fattura.ordineId }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="section-tag" style="display:flex; align-items:center; justify-content:space-between;">
+            <span>Voci&nbsp;<span class="voci-count">({{ fattura.righeFattura?.length ?? 0 }})</span></span>
+            <button class="btn-ghost" (click)="toggleRighe(fattura, $event)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  [style.transform]="righeVisibili[fattura.id] ? 'rotate(180deg)' : 'rotate(0)'"
+                  style="transition: transform 0.2s">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+              {{ righeVisibili[fattura.id] ? 'Nascondi Voci' : 'Mostra Voci' }}
+            </button>
+          </div>
+
+          <div *ngIf="righeLoading" style="padding: 12px; color: #9ca3af; font-size:0.85rem;">
+            Caricamento...
+          </div>
+
+          <ng-container *ngIf="righeVisibili[fattura.id] && !righeLoading">
+            <table mat-table [dataSource]="fattura.righeFattura" class="righe-table">
+              <ng-container matColumnDef="isbn">
+                <th mat-header-cell *matHeaderCellDef>ISBN</th>
+                <td mat-cell *matCellDef="let r"><span class="isbn-mono">{{ r.isbn || '—' }}</span></td>
+              </ng-container>
+              <ng-container matColumnDef="prezzoUnitario">
+                <th mat-header-cell *matHeaderCellDef class="cell-right">Prezzo Unit.</th>
+                <td mat-cell *matCellDef="let r" class="cell-right">{{ r.prezzoUnitario | currency:'EUR':'symbol':'1.2-2' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="numeroCopie">
+                <th mat-header-cell *matHeaderCellDef class="cell-center">Qt.</th>
+                <td mat-cell *matCellDef="let r" class="cell-center">{{ r.numeroCopie }}</td>
+              </ng-container>
+              <ng-container matColumnDef="totaleRiga">
+                <th mat-header-cell *matHeaderCellDef class="cell-right">Totale</th>
+                <td mat-cell *matCellDef="let r" class="cell-right cell-totale">{{ r.totaleRiga | currency:'EUR':'symbol':'1.2-2' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="righeColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: righeColumns;" class="riga-row"></tr>
+            </table>
+
+            <div *ngIf="(fattura.righeFattura?.length ?? 0) === 0" class="empty-righe">
+              <mat-icon>inventory_2</mat-icon>
+              <span>Nessuna riga presente</span>
+            </div>
+          </ng-container>
+        </div>
+
+
+        <!-- Totali -->
+        <div class="totali-block">
+          <div class="totale-row">
+            <span>Subtotale voci</span>
+            <span>{{ getTotaleVoci(fattura) | currency:'EUR':'symbol':'1.2-2' }}</span>
+          </div>
+          <div class="totale-row">
+            <span>Spedizione</span>
+            <span>{{ fattura.costoSpedizione | currency:'EUR':'symbol':'1.2-2' }}</span>
+          </div>
+          <div class="totale-row totale-row--grand">
+            <span>TOTALE</span>
+            <span>{{ fattura.totale | currency:'EUR':'symbol':'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Note -->
+        <div *ngIf="fattura.note" class="nota-fattura">
+          <span class="nota-label">Nota</span>
+          <span class="nota-sep">·</span>
+          <span class="nota-value">{{ fattura.numeroFattura }}</span>
+          <span class="nota-sep">·</span>
+          <span class="nota-value">{{ fattura.dataEmissione | date:'dd/MM/yyyy' }}</span>
+          <span class="nota-sep">·</span>
+          <span class="nota-text">{{ fattura.note }}</span>
+        </div>
+
+      </div><!-- /detail-body -->
+
+    </ng-container>
+
+  </div><!-- /detail-pane -->
+
+</div><!-- /split-layout -->
