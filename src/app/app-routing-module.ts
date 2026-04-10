@@ -20,11 +20,11 @@ import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gesti
 import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe';
 import { GestioneStatoOrdine } from './components/admin/gestione-stato-ordine/gestione-stato-ordine';
 import { GestioneFatture } from './components/admin/gestione-fatture/gestione-fatture';
+import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-carrello';
 
 const routes: Routes = [
   {
     path: '',
-    component: Dashboard,
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
 
