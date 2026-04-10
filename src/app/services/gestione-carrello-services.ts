@@ -10,6 +10,7 @@ export class GestioneCarrelloServices {
   url = 'http://localhost:9090/rest/';
 
   carrello = signal<any[]>([]);
+  chartId = signal<number | null>(null);
   numeroElementi = computed(() => this.carrello().length);
 
   constructor(
@@ -26,6 +27,7 @@ export class GestioneCarrelloServices {
 
     if (!user || !user.id) {
       this.carrello.set([]);
+      this.chartId.set(null);
       return of([]);
     }
 
@@ -35,6 +37,9 @@ export class GestioneCarrelloServices {
         if (!carrelloDto || !carrelloDto.id) {
           return of([]);
         }
+
+        this.chartId.set(carrelloDto.id);
+
         //  Chiediamo al backend ( le righe di  carrello specifico
         const finalParams = {
           ...params,
@@ -55,6 +60,23 @@ export class GestioneCarrelloServices {
 
   aggiornaDatiCarrello() {
     this.list().subscribe();
+  }
+
+  addRow(manga: any){
+    const chartId = this.chartId();
+
+    if (!chartId) {
+       console.error("ID del carrello mancante!");
+       throw new Error("Carrello non inizializzato");
+    }
+    
+    return this.http.put(`${this.url}carrello/addRow`, null, {
+      params: {
+        chartId: chartId?.toString(),
+        isbn: manga.isbn,
+        nCopie: '1'
+      }
+    });
   }
 
   updateQty(idRiga: number, numeroCopie: number) {

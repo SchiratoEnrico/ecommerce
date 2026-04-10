@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Spedizione } from '../models/spedizione';
@@ -16,6 +16,32 @@ export class OrdiniServices {
   ordini = signal<Ordine[]>([]);
 
   constructor(private http: HttpClient) {}
+
+  createOrdineFromCarrello(
+    carrelloId: number, 
+    anagraficaId: number, 
+    tipoPagamentoId: number, 
+    tipoSpedizioneId: number
+  ): Observable<any> {
+    const params = new HttpParams()
+      .set('carrelloId', carrelloId)
+      .set('anagraficaId', anagraficaId)
+      .set('tipoPagamentoId', tipoPagamentoId)
+      .set('tipoSpedizioneId', tipoSpedizioneId);
+      
+    return this.http.post<any>(`${this.url}/create_ordine_from_carrello`, null, { params });
+  }
+
+  getLastCreated(){
+    return this.http.get<any>(`${this.url}/last_created`);
+  }
+
+  avanzaStatoOrdine(ordineId: number, statoId: number){
+    const params = new HttpParams()
+      .set('ordineId', ordineId)
+      .set('statoId', statoId);
+    return this.http.put<any>(`${this.url}/avanza_stato_ordine`, null, { params });
+  }
 
   list(params?: any): Observable<Ordine[]> {
     return this.http.get<Ordine[]>(`${this.url}/list`, { params });

@@ -63,6 +63,8 @@ import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-
 import { Footer } from './components/footer/footer';
 import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettaglio-carrello';
 import { CommonModule } from '@angular/common';
+import { MangaImgPipe } from './pipes/manga-img-pipe';
+import { CheckoutDialog } from './components/checkout-dialog/checkout-dialog';
 
 @NgModule({
   declarations: [
@@ -100,6 +102,8 @@ import { CommonModule } from '@angular/common';
     GestioneCarrello,
     Footer,
     DettaglioCarrello,
+    MangaImgPipe,
+    CheckoutDialog,
   ],
   imports: [
     BrowserModule,
@@ -134,7 +138,7 @@ import { CommonModule } from '@angular/common';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatLabel,
-    CommonModule
+    CommonModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
