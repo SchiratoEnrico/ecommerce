@@ -25,14 +25,30 @@
             <mat-label>Email</mat-label>
             <input matInput type="email" [(ngModel)]="accountLoggato.email" />
           </mat-form-field>
-        </div>
+
+          @if (!accountLoggato.validated) {
+            <div style="background-color: #fff3cd; color: #856404; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border: 1px solid #ffeeba;">
+              <span style="font-size: 0.9rem;">
+                <mat-icon style="vertical-align: middle; margin-right: 5px; font-size: 20px;">warning</mat-icon>
+                La tua email non è ancora verificata.
+              </span>
+              <button mat-button color="warn" (click)="richiediNuovaVerifica()">Reinvia Link</button>
+            </div>
+            @if (msgVerificaMail) {
+              <div class="text-success" style="font-size: 0.85rem; margin-bottom: 10px;">{{ msgVerificaMail }}</div>
+            }
+          } @else {
+            <div style="color: #155724; background-color: #d4edda; padding: 8px 12px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; border: 1px solid #c3e6cb; display: inline-flex; align-items: center;">
+              <mat-icon style="margin-right: 5px; font-size: 18px; width: 18px; height: 18px;">check_circle</mat-icon>
+              Email verificata
+            </div>
+          }
+          </div>
 
         <div class="card-actions">
           <span class="msg-feedback text-success">{{ msgAccount }}</span>
           <button class="btn-primary" (click)="salvaDatiPersonali()">Salva Modifiche</button>
         </div>
-      } @else {
-        <div class="loading-state text-muted p-3">Caricamento dati in corso...</div>
       }
     </div>
 

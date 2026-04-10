@@ -1,0 +1,31 @@
+<div class="container text-center mt-5">
+  
+  @if (status === 'loading') {
+    <div>
+      <h2 class="mb-3">Verifica in corso...</h2>
+      <p>Stiamo confermando il tuo account, attendi un istante.</p>
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  } 
+  
+  @else if (status === 'success') {
+    <div class="alert alert-success">
+      <h2 class="alert-heading">Email confermata! 🎉</h2>
+      <p>Il tuo account è stato attivato con successo. Ora puoi accedere al tuo profilo.</p>
+      <hr>
+      <a routerLink="/login" class="btn btn-success mt-2">Vai al Login</a>
+    </div>
+  } 
+  
+  @else {
+    <div class="alert alert-danger">
+      <h2 class="alert-heading">Ops, qualcosa è andato storto</h2>
+      <p>Non è stato possibile validare la tua email. Il link potrebbe essere errato, oppure l'account è già stato confermato.</p>
+      <hr>
+      <a routerLink="/home" class="btn btn-danger mt-2">Torna alla Home</a>
+    </div>
+  }
+
+</div>

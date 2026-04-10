@@ -23,6 +23,7 @@ export class Profilo implements OnInit {
   msgAccount = '';
   msgPassword = '';
   msgAnagrafica = '';
+  msgVerificaMail = ''; 
 
   // Anagrafiche
   indirizzi: any[] = [];
@@ -98,6 +99,26 @@ export class Profilo implements OnInit {
       },
       error: (err) => {
         this.msgPassword = "Errore: " + (err.error?.msg || "Impossibile aggiornare");
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  richiediNuovaVerifica() {
+    if (!this.accountLoggato) return;
+
+    this.accountService.resendValidationMail(this.accountLoggato.username).subscribe({
+      next: (res: any) => {
+        this.msgVerificaMail = "Link di verifica inviato! Controlla la tua casella di posta.";
+        this.cdr.detectChanges();
+        
+        setTimeout(() => {
+          this.msgVerificaMail = '';
+          this.cdr.detectChanges();
+        }, 5000); // Il messaggio scompare dopo 5 secondi
+      },
+      error: (err) => {
+        this.msgVerificaMail = "Errore durante l'invio della mail di verifica.";
         this.cdr.detectChanges();
       }
     });

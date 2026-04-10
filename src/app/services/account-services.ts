@@ -19,6 +19,14 @@ export class AccountServices {
     return this.http.post(this.url + "/create", body);
   }
 
+  validate(username: string): Observable<any> {
+    return this.http.get<any>(`${this.url}/validateEmail`, { params: { username } });
+  }
+
+  resendValidationMail(username: string): Observable<any> {
+    return this.http.get<any>(`${this.url}/resendValidation`, {params: { username } });
+  }
+
   update(body: Account): Observable<any> {
     return this.http.put(`${this.url}/update`, body);
   }
