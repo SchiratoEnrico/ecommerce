@@ -1,1 +1,126 @@
-<p>home works!</p>
+<div class="container mt-5 pt-4 mb-5">
+
+  <div class="row justify-content-center mb-5">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="input-group input-group-lg shadow-sm">
+        <input type="text" class="form-control border-0" placeholder="Cerca manga, autori, generi..." aria-label="Cerca manga">
+        <button class="search-btn btn px-4" type="button">
+          <mat-icon class="search-icon">search</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="carouselBanner" class="carousel slide mb-5 shadow rounded overflow-hidden position-relative" data-bs-ride="carousel">
+    
+    <div class="position-absolute top-50 start-50 translate-middle w-100 text-center discover-banner">
+      <div class="d-inline-block py-4 discover-banner-content">
+        <h3 class="discover-banner-title">Scopri le nuove uscite</h3>
+        <p class="mb-0">Tutti i nuovi volumi delle tue serie preferite.</p>
+      </div>
+    </div>
+
+    <div class="carousel-inner">
+      @for (manga of newArrives(); track $index; let i = $index) {
+        <div class="carousel-item" [class.active]="i === 0" data-bs-interval="4000">
+          <img [src]="manga.immagineCopertina || 'https://via.placeholder.com/1200x400/0f0e0c/e8c97a?text=Nuovo+Arrivo'" 
+               class="d-block w-100 carousel-hero-img" 
+               [alt]="manga.titolo">
+        </div>
+      } 
+      @empty {
+        <div class="carousel-item active" data-bs-interval="4000">
+            <img src="https://via.placeholder.com/1200x400/0f0e0c/e8c97a?text=Banner+di+Test+(Nessun+Arrivo)" 
+               class="d-block w-100 carousel-hero-img" 
+               alt="Banner Dummy">
+        </div>
+      }
+    </div>
+  </div>
+
+
+  <div class="d-flex justify-content-between align-items-end mb-3 border-bottom pb-2">
+    <h2 class="m-0 section-title">I più venduti</h2>
+    <a href="#" class="section-link">Vedi tutti &rarr;</a>
+  </div>
+  
+  <div class="row mb-5">
+    @for (manga of bestSellers(); track $index) {
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 manga-card">
+                <img [src]="manga.immagineCopertina || 'https://via.placeholder.com/300x420/faf9f7/1a1814?text=Cover'" class="card-img-top manga-card-img" [alt]="manga.titolo">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-truncate manga-card-title">{{ manga.titolo }}</h5>
+                    <p class="card-text small mb-2 manga-card-author">{{ manga.autore }}</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-5 manga-card-price">€ {{ manga.prezzo }}</span>
+                        <button mat-mini-fab class="add-to-cart-btn" aria-label="Aggiungi al carrello" matTooltip="Aggiungi al carrello">
+                            <mat-icon>add_shopping_cart</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+      </div>
+    } 
+    @empty {
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 manga-card">
+                <img src="https://via.placeholder.com/300x420/faf9f7/1a1814?text=Best+Seller+Dummy" class="card-img-top manga-card-img" alt="Dummy">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-truncate manga-card-title">Manga di Test</h5>
+                    <p class="card-text small mb-2 manga-card-author">Autore Sconosciuto</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-5 manga-card-price">€ 0.00</span>
+                        <button mat-mini-fab class="add-to-cart-btn" aria-label="Aggiungi al carrello" matTooltip="Aggiungi al carrello" disabled>
+                            <mat-icon>add_shopping_cart</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+  </div>
+
+  <div class="d-flex justify-content-between align-items-end mb-3 border-bottom pb-2">
+    <h2 class="m-0 section-title">Consigliati per te</h2>
+    <a href="#" class="section-link">Vedi tutti &rarr;</a>
+  </div>
+  
+  <div class="row mb-5">
+    @for (manga of advice(); track $index) {
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 manga-card">
+            <img [src]="manga.immagineCopertina || 'https://via.placeholder.com/300x420/faf9f7/1a1814?text=Cover'" class="card-img-top manga-card-img" [alt]="manga.titolo">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-truncate manga-card-title">{{ manga.titolo }}</h5>
+                <p class="card-text small mb-2 manga-card-author">{{ manga.autore }}</p>
+                <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="fw-bold fs-5 manga-card-price">€ {{ manga.prezzo }}</span>
+                <button mat-mini-fab class="add-to-cart-btn" aria-label="Aggiungi al carrello" matTooltip="Aggiungi al carrello">
+                    <mat-icon>add_shopping_cart</mat-icon>
+                </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    } 
+    @empty {
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 manga-card">
+                <img src="https://via.placeholder.com/300x420/faf9f7/1a1814?text=Consigliato+Dummy" class="card-img-top manga-card-img" alt="Dummy">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-truncate manga-card-title">Titolo Consigliato</h5>
+                    <p class="card-text small mb-2 manga-card-author">Autore di Test</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-5 manga-card-price">€ 0.00</span>
+                        <button mat-mini-fab class="add-to-cart-btn" aria-label="Aggiungi al carrello" matTooltip="Aggiungi al carrello" disabled>
+                            <mat-icon>add_shopping_cart</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+  </div>
+
+</div>

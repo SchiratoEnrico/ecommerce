@@ -1,0 +1,96 @@
+.search-btn {
+    background-color: #f1e0a4;
+    color: var(--white);
+    transition: opacity 0.2s;
+}
+
+.search-btn:hover {
+    opacity: 0.8;
+    background-color: var(--brand-accent);
+}
+
+.search-icon {
+    vertical-align: middle;
+}
+
+/* ── Banner Scopri le Nuove Uscite ── */
+.discover-banner {
+    z-index: 10; 
+    pointer-events: none;
+}
+
+.discover-banner-content {
+    background: #f1e0a4; 
+    border-radius: 8px; 
+    pointer-events: auto;
+    padding-left: 7.5rem;
+    padding-right: 7.5rem;
+}
+
+.discover-banner-title {
+    font-family: 'Cormorant Garamond', serif; 
+    color: var(--brand-accent2);
+}
+
+.carousel-hero-img {
+    object-fit: cover; 
+    height: 350px; 
+    filter: brightness(0.7); 
+    object-position: center 20%;
+}
+
+/* ── Titoli Sezioni ── */
+.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.section-link {
+    color: var(--brand-accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.section-link:hover {
+    text-decoration: underline;
+}
+
+/* ── Card Manga ── */
+.manga-card {
+    background-color: var(--white);
+    transition: transform 0.2s ease-in-out;
+}
+
+.manga-card:hover {
+    transform: translateY(-5px);
+}
+
+.manga-card-img {
+    object-fit: cover;
+    height: 300px;
+    padding: 10px;
+}
+
+.manga-card-title {
+    color: var(--text-primary);
+}
+
+.manga-card-author {
+    color: var(--text-muted);
+}
+
+.manga-card-price {
+    color: var(--text-primary);
+}
+
+/* Override per il bottone del carrello di Angular Material */
+.add-to-cart-btn {
+    background-color: var(--brand-accent) !important;
+    color: var(--white) !important;
+}
+
+.badge-novita {
+    background-color: var(--brand-accent2);
+    color: var(--brand-dark);
+}

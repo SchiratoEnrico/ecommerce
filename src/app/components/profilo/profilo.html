@@ -1,1 +1,180 @@
-<p>profilo works!</p>
+<div class="page-wrapper" style="max-width: 700px;"> <div class="page-header">
+    <div class="page-header-left">
+      <p class="page-eyebrow">Area Personale</p>
+      <h1 class="page-title">Il Mio Profilo</h1>
+    </div>
+    <div class="page-header-right">
+      <span class="badge-role">Ruolo: {{ accountLoggato?.ruolo }}</span>
+    </div>
+  </div>
+
+  <div class="profile-col">
+
+    <div class="card">
+      <h2 class="card-title">Dati Account</h2>
+      <p class="card-subtitle">Aggiorna le tue informazioni di base.</p>
+
+      @if (accountLoggato) {
+        <div class="form-body">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput [(ngModel)]="accountLoggato.username" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" [(ngModel)]="accountLoggato.email" />
+          </mat-form-field>
+        </div>
+
+        <div class="card-actions">
+          <span class="msg-feedback text-success">{{ msgAccount }}</span>
+          <button class="btn-primary" (click)="salvaDatiPersonali()">Salva Modifiche</button>
+        </div>
+      } @else {
+        <div class="loading-state text-muted p-3">Caricamento dati in corso...</div>
+      }
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Sicurezza</h2>
+      <p class="card-subtitle">Modifica la tua password di accesso.</p>
+
+      @if (accountLoggato) {
+        <div class="form-body mt-3">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nuova Password</mat-label>
+            <input matInput type="password" [(ngModel)]="nuovaPassword" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Conferma Password</mat-label>
+            <input matInput type="password" [(ngModel)]="confermaPassword" />
+          </mat-form-field>
+        </div>
+
+        <div class="card-actions">
+          <span class="msg-feedback" [class.text-error]="msgPassword.includes('non coincidono')" [class.text-success]="!msgPassword.includes('non coincidono')">{{ msgPassword }}</span>
+          
+          <button class="btn-primary" (click)="salvaNuovaPassword()" [disabled]="!nuovaPassword || !confermaPassword">
+            Aggiorna Password
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="card">
+      <div class="address-header">
+        <div>
+          <h2 class="card-title">I Miei Indirizzi</h2>
+          <p class="card-subtitle">Gestisci gli indirizzi di spedizione.</p>
+        </div>
+        @if (!mostraFormAnagrafica) {
+          <button mat-mini-fab color="primary" class="btn-add-address" matTooltip="Aggiungi indirizzo" (click)="toggleFormAnagrafica()">
+            <mat-icon>add</mat-icon>
+          </button>
+        }
+      </div>
+
+      @if (mostraFormAnagrafica) {
+        <div class="address-form border-bottom pb-3 mb-3">
+          
+          <div style="display: flex; gap: 12px;">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nome</mat-label>
+              <input matInput [(ngModel)]="nuovoIndirizzo.nome" placeholder="Es. Mario" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Cognome</mat-label>
+              <input matInput [(ngModel)]="nuovoIndirizzo.cognome" placeholder="Es. Rossi" />
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Via e Civico</mat-label>
+            <input matInput [(ngModel)]="nuovoIndirizzo.via" placeholder="Es. Via Roma, 10" />
+          </mat-form-field>
+
+          <div style="display: flex; gap: 12px;">
+            <mat-form-field appearance="outline" style="flex: 2;">
+              <mat-label>Città</mat-label>
+              <input matInput [(ngModel)]="nuovoIndirizzo.citta" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" style="flex: 1;">
+              <mat-label>Provincia</mat-label>
+              <input matInput [(ngModel)]="nuovoIndirizzo.provincia" placeholder="Es. MI" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" style="flex: 1;">
+              <mat-label>CAP</mat-label>
+              <input matInput [(ngModel)]="nuovoIndirizzo.cap" />
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Stato</mat-label>
+            <input matInput [(ngModel)]="nuovoIndirizzo.stato" placeholder="Es. Italia" />
+          </mat-form-field>
+
+          <div class="mt-2 mb-3">
+            <mat-checkbox [(ngModel)]="nuovoIndirizzo.predefinito" color="primary">
+              Imposta come indirizzo di spedizione predefinito
+            </mat-checkbox>
+          </div>
+          
+          <div class="card-actions mt-2">
+            <button mat-button (click)="toggleFormAnagrafica()">Annulla</button>
+            <button class="btn-primary" (click)="salvaIndirizzo()" 
+              [disabled]="!nuovoIndirizzo.via || !nuovoIndirizzo.citta || !nuovoIndirizzo.nome || !nuovoIndirizzo.cognome">
+              Salva Indirizzo
+            </button>
+          </div>
+        </div>
+      }
+
+      <div class="address-list mt-3">
+        @if (indirizzi.length === 0) {
+          <div class="empty-state text-muted text-center p-3">
+            <mat-icon style="opacity: 0.5; font-size: 32px; width: 32px; height: 32px;">location_off</mat-icon>
+            <p>Nessun indirizzo salvato.</p>
+          </div>
+        } @else {
+          @for (ind of indirizzi; track ind.id) {
+            <div class="address-item p-3 mb-2" 
+                 [style.border]="ind.predefinito ? '2px solid var(--brand-accent)' : '1px solid var(--border)'"
+                 [style.backgroundColor]="ind.predefinito ? 'rgba(201,168,76,0.03)' : 'var(--white)'"
+                 style="border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; position: relative; transition: all 0.2s ease;">
+              
+              <div>
+                <strong style="display: flex; align-items: center; color: var(--text-primary); font-size: 1.1rem;">
+                  {{ ind.nome }} {{ ind.cognome }}
+                  
+                  @if (ind.predefinito) {
+                    <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; background: var(--brand-accent); color: white; padding: 3px 8px; border-radius: 12px; margin-left: 10px;">
+                      <mat-icon style="font-size: 14px; width: 14px; height: 14px; line-height: 14px;">check_circle</mat-icon>
+                      PREDEFINITO
+                    </span>
+                  }
+                </strong>
+                <span class="text-muted" style="font-size: 0.9rem; display: block; margin-top: 6px;">
+                  {{ ind.via }}
+                </span>
+                <span class="text-muted" style="font-size: 0.85rem;">
+                  {{ ind.cap }} {{ ind.citta }} ({{ ind.provincia }}) - {{ ind.stato }}
+                </span>
+              </div>
+
+              <button mat-icon-button color="warn" matTooltip="Elimina indirizzo" (click)="eliminaIndirizzo(ind.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        }
+        <div class="text-success mt-2 font-weight-bold">{{ msgAnagrafica }}</div>
+      </div>
+    </div>
+
+  </div>
+</div>

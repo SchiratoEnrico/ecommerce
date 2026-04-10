@@ -54,11 +54,19 @@ import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe'
 import { SagaDialog } from './components/admin/dialogs/saga-dialog/saga-dialog';
 import { MangaDialog } from './components/admin/dialogs/manga-dialog/manga-dialog';
 import { CasaEditriceDialog } from './components/admin/dialogs/casa-editrice-dialog/casa-editrice-dialog';
-import { OrdineDialog } from './components/admin/dialogs/ordine-dialog/ordine-dialog';
 import { RigaOrdineDialog } from './components/admin/dialogs/riga-ordine-dialog/riga-ordine-dialog';
 import { GestioneStatoOrdine } from './components/admin/gestione-stato-ordine/gestione-stato-ordine';
 import { StatoOrdineDialog } from './components/admin/dialogs/stato-ordine-dialog/stato-ordine-dialog';
 import { jwtInterceptor } from './auth/jwt-interceptor';
+import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-carrello';
+import { Footer } from './components/footer/footer';
+import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettaglio-carrello';
+import { CommonModule } from '@angular/common';
+import { GestioneFatture } from './components/admin/gestione-fatture/gestione-fatture';
+import { OrdineDialog } from './components/admin/dialogs/ordine-dialog/ordine-dialog';
+import { RigaFatturaDialog } from './components/admin/dialogs/riga-fattura-dialog/riga-fattura-dialog';
+import { FatturaDialog } from './components/admin/dialogs/fattura-dialog/fattura-dialog';
+
 
 @NgModule({
   declarations: [
@@ -92,7 +100,13 @@ import { jwtInterceptor } from './auth/jwt-interceptor';
     OrdineDialog,
     RigaOrdineDialog,
     GestioneStatoOrdine,
-    StatoOrdineDialog
+    StatoOrdineDialog,
+    GestioneCarrello,
+    Footer,
+    DettaglioCarrello,
+    GestioneFatture,
+    RigaFatturaDialog,
+    FatturaDialog,
   ],
   imports: [
     BrowserModule,
@@ -127,12 +141,12 @@ import { jwtInterceptor } from './auth/jwt-interceptor';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatLabel,
+    CommonModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptors([jwtInterceptor]), withFetch()),
-
   ],
   bootstrap: [App],
 })

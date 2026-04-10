@@ -83,6 +83,7 @@
 .app-container {
   margin-top: var(--toolbar-h);
   height: calc(100vh - var(--toolbar-h));
+  flex: 1;
 }
 
 /* ══════════════════════════════════════
@@ -178,6 +179,10 @@
    MAIN CONTENT
 ══════════════════════════════════════ */
 .app-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%; 
+  
   background: var(--surface) !important;
   background-image:
     radial-gradient(ellipse 70% 50% at 80% 10%, rgba(201,168,76,0.05) 0%, transparent 70%) !important;
@@ -229,10 +234,4 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-.app-container {
-  margin-top: var(--toolbar-h);
-  height: calc(100vh - var(--toolbar-h));
-  flex: 1;
 }

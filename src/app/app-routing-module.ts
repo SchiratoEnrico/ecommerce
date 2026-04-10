@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { Login } from './components/login/login';
-import { Dashboard } from './components/dashboard/dashboard';
 import { authAdminGuard } from './auth/auth-admin-guard';
 import { GestioneAccount } from './components/admin/gestione-account/gestione-account';
 import { GestioneAutori } from './components/admin/gestione-autori/gestione-autori';
@@ -19,6 +18,8 @@ import { authAuthenticatedGuard } from './auth/auth-authenticated-guard';
 import { Registrazione } from './components/registrazione/registrazione';
 import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gestione-anagrafica';
 import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe';
+import { GestioneStatoOrdine } from './components/admin/gestione-stato-ordine/gestione-stato-ordine';
+import { GestioneFatture } from './components/admin/gestione-fatture/gestione-fatture';
 
 const routes: Routes = [
   {
@@ -45,15 +46,32 @@ const routes: Routes = [
       { path: 'admin/gestione-anagrafica', component: GestioneAnagrafica, canActivate: [authAdminGuard] },
       { path: 'admin/gestione-ordini', component: GestioneOrdini, canActivate: [authAdminGuard] },
       { path: 'admin/saghe', component: GestioneSaghe, canActivate: [authAdminGuard] },
+      { path: 'admin/stato-ordine', component: GestioneStatoOrdine, canActivate: [authAdminGuard] },
+      { path: 'admin/gestione-carrello',   component: GestioneCarrello,      canActivate: [authAdminGuard] },
+      { path: 'admin/fatture', component: GestioneFatture, canActivate: [authAdminGuard] },
     ]
   },
   { path: 'login', component: Login },
   { path: 'registrazione', component: Registrazione },
-  { path: '**', redirectTo: '' },
+
+  // ── Admin (protette dal guard) ──
+  { path: 'admin/manga',          component: GestioneManga,         canActivate: [authAuthenticatedGuard, authAdminGuard] },
+  { path: 'admin/autori',         component: GestioneAutori,        canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/generi',         component: GestioneGeneri,        canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/case-editrici',  component: GestioneCaseEditrici,  canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/ordini',         component: GestioneOrdini,        canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/account',        component: GestioneAccount,       canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/spedizioni',     component: GestioneSpedizioni,    canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/pagamenti',      component: GestionePagamenti,     canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/gestione-anagrafica', component: GestioneAnagrafica, canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/gestione-ordini', component: GestioneOrdini, canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/stato-ordine', component: GestioneStatoOrdine, canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/saghe', component: GestioneSaghe, canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/gestione-carrello', component: GestioneCarrello, canActivate: [authAuthenticatedGuard,authAdminGuard] }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
