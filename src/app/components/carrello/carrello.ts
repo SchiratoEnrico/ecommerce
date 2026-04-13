@@ -47,7 +47,7 @@ export class Carrello implements OnInit {
 
       const { anagraficaId, tipoPagamentoId, tipoSpedizioneId } = result;
 
-      const carrelloId = this.user.carrelloId;
+      const carrelloId = this.gestioneCarrello.chartId();
 
       if(!carrelloId){
         this.snackBar.open("Errore: ID Carrello non trovato.", "Chiudi", { duration: 3000 });
@@ -62,12 +62,23 @@ export class Carrello implements OnInit {
           tipoSpedizioneId
         )
       );
+
+      const completeOrder = await firstValueFrom(
+        this.ordineService.getLastCreated()
+      );
+
+      let total = 0;
+      this.chartEl.forEach((item: any) => {
+        total += (item.prezzo * item.numeroCopie);
+      });
+      completeOrder.totale = total;
+
+      console.log("DATI COMPLETI DELL'ORDINE DAL BACKEND:", completeOrder);
       
       this.snackBar.open('Ordine creato! Preparazione al pagamento...', 'Chiudi', { duration: 3000 });
 
-      this.gestioneCarrello.carrello.set([]);
-
-      this.router.navigate(['/pagamento']);
+      // 3. Navighiamo verso /pagamento PASSANDO I DATI REALI dell'ordine
+      this.router.navigate(['/pagamento'], { state: { ordine: completeOrder } });
     }
     catch (err: any) {
       console.error('Errore durante la creazione dell\'ordine:', err);

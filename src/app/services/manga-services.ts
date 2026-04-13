@@ -50,7 +50,7 @@ export class MangaServices {
     return this.http.get<Manga[]>(`${this.url}/list`,  {params});
   }
 
-  findMangaByIsbn(isbn: string): Observable<Manga> {
+  findMangaByIsbn(isbn: string): Observable<any> {
     return this.http.get<Manga>(`${this.url}/findByIsbn`, { params: { id: isbn } });
   }
 

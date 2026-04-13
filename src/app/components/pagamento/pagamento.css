@@ -1,0 +1,148 @@
+.pagamento-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f5f5f5; /* Sfondo leggero per far risaltare la card */
+  min-height: calc(100vh - 64px);
+}
+
+.riepilogo-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem;
+}
+
+.sezione {
+  margin-bottom: 1.5rem;
+}
+
+.sezione h3 {
+  color: var(--brand-primary, #3f51b5);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.lista-voci {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.lista-voci li {
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.lista-voci li:last-child {
+  border-bottom: none;
+}
+
+.totale-sezione {
+  margin-top: 1.5rem;
+  text-align: right;
+  color: #2e7d32; /* Verde per il totale */
+}
+
+.mt-3 { margin-top: 1rem; }
+.m-0 { margin: 0; }
+.text-muted { color: #757575; }
+
+/* === SLIDE TO PAY CSS === */
+.azione-pagamento {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.slide-container {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  background-color: #2196f3; /* Blu/Azzurro di base */
+  border-radius: 25px;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+/* La barra verde che cresce da sinistra */
+.slide-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #4caf50; /* Verde */
+  z-index: 0;
+  /* transition rimossa per farla scattare fluidamente col dito */
+}
+
+/* Quando il pagamento è completato, tutto il contenitore diventa verde */
+.slide-container.success {
+  background-color: #4caf50; 
+}
+
+.slide-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #ffffff; /* Testo bianco */
+  z-index: 1;
+  pointer-events: none;
+}
+
+.custom-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  outline: none;
+  position: relative;
+  z-index: 2;
+  margin: 0;
+}
+
+/* Il "pallino" - WebKit (Chrome, Safari, Edge) */
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #ffffff; /* Bottone bianco */
+  
+  /* Disegniamo la freccia grigia usando un SVG (il colore #757575 è convertito in %23757575) */
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23757575"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px;
+  
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+}
+
+/* Il "pallino" - Firefox */
+.custom-slider::-moz-range-thumb {
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  background-color: #ffffff; 
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23757575"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* (Opzionale) Se vuoi che la freccia sparisca e il bottone diventi verde quando hai finito: */
+.slide-container.success .custom-slider::-webkit-slider-thumb {
+  background-image: none;
+}
+.slide-container.success .custom-slider::-moz-range-thumb {
+  background-image: none;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -19,13 +19,13 @@ export class CheckoutDialog implements OnInit {
   tipiPagamento: any[] = [];
   tipiSpedizione: any[] = [];
 
-  // Variabile per mostrare un loader mentre scarichiamo i dati dal DB
   isLoading: boolean = true;
 
   constructor(
     public dialogRef: MatDialogRef<CheckoutDialog>,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -35,7 +35,6 @@ export class CheckoutDialog implements OnInit {
   async caricaDatiCheckout() {
     this.isLoading = true;
     try {
-      // Eseguiamo le 3 chiamate in parallelo per non far aspettare l'utente
       const [anagraficheRes, pagamentiRes, spedizioniRes] = await Promise.all([
         firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/anagrafica/list')),
         firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/tipo_pagamento/list')),
@@ -46,7 +45,6 @@ export class CheckoutDialog implements OnInit {
       this.tipiPagamento = pagamentiRes;
       this.tipiSpedizione = spedizioniRes;
 
-      // UX Boost: Se c'è un indirizzo predefinito, selezionalo in automatico!
       const indirizzoDefault = this.anagrafiche.find(a => a.predefinito === true);
       if (indirizzoDefault) {
         this.anagraficaId = indirizzoDefault.id;
@@ -56,6 +54,7 @@ export class CheckoutDialog implements OnInit {
       console.error("Errore nel recupero dei dati per il checkout:", error);
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges(); 
     }
   }
 
@@ -74,11 +73,19 @@ export class CheckoutDialog implements OnInit {
   }
 
   vaiAlProfilo() {
-    this.dialogRef.close(); // Chiudiamo il dialog
-    this.router.navigate(['/profilo']); // Navighiamo al profilo per fargli creare l'indirizzo
+    this.dialogRef.close(); 
+    this.router.navigate(['/profilo']); 
   }
 
   annulla() {
     this.dialogRef.close();
+  }
+
+  onAnagraficaChange(value: number) {
+    if (value === -1) {
+      this.anagraficaId = undefined as any; 
+      
+      this.vaiAlProfilo(); 
+    }
   }
 }

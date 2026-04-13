@@ -23,13 +23,21 @@
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Indirizzo di Spedizione</mat-label>
-        <mat-select [(ngModel)]="anagraficaId" required>
+        <mat-select [(ngModel)]="anagraficaId" (ngModelChange)="onAnagraficaChange($event)" required>
+          
           @for (a of anagrafiche; track a.id) {
             <mat-option [value]="a.id">
               <strong>{{ a.nome }} {{ a.cognome }}</strong> - {{ a.via }}, {{ a.citta }} ({{ a.provincia }})
               <span *ngIf="a.predefinito" style="color: var(--brand-accent); font-size: 0.8em; margin-left: 8px;">[Predefinito]</span>
             </mat-option>
           }
+
+          <mat-divider></mat-divider>
+
+          <mat-option [value]="-1" style="color: var(--brand-primary);">
+            <mat-icon color="primary">add_circle</mat-icon> Aggiungi nuovo indirizzo...
+          </mat-option>
+
         </mat-select>
       </mat-form-field>
 

@@ -22,6 +22,10 @@ export class GestioneCarrelloServices {
     return this.http.get<any[]>('http://localhost:9090/rest/carrello/list');
   }
 
+  empty(id: number){
+    return this.http.delete(this.url + 'carrello/empty', {params: { id: id } });
+  }
+
   list(params?: any): Observable<any[]> {
     const user = this.auth.currentUser();
 

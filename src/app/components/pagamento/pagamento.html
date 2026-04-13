@@ -1,0 +1,77 @@
+<div class="pagamento-container">
+  <mat-card class="riepilogo-card">
+    
+    <mat-card-header>
+      <mat-icon mat-card-avatar color="primary">receipt_long</mat-icon>
+      <mat-card-title>Riepilogo Ordine</mat-card-title>
+      <mat-card-subtitle>Ordine #{{ currentOrder?.id }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="mt-3">
+      
+      <div class="sezione">
+        <h3>Contenuto:</h3>
+        <ul class="lista-voci">
+          @for (voce of currentOrder?.righeOrdine; track voce.id) {
+            <li>
+              <strong>{{ voce.numeroCopie }}x</strong> {{ voce.manga }}
+            </li>
+          }
+        </ul>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="sezione mt-3">
+        <h3>Spedizione:</h3>
+        <p class="m-0"><mat-icon inline>local_shipping</mat-icon> {{ currentOrder?.spedizione?.tipoSpedizione || 'Non specificato' }}</p>
+        
+        <p class="m-0 text-muted">
+          <mat-icon inline>location_on</mat-icon> 
+          @if (currentOrder?.anagrafica) {
+            {{ currentOrder.anagrafica.via }}, {{ currentOrder.anagrafica.citta }} ({{ currentOrder.anagrafica.provincia }})
+          } @else {
+            Indirizzo non disponibile
+          }
+        </p>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="sezione totale-sezione">
+        <h2>Totale: {{ currentOrder?.totale | currency:'EUR' }}</h2>
+      </div>
+
+    </mat-card-content>
+
+    <mat-card-actions class="azione-pagamento flex-column">
+  
+        <div class="slide-container" [class.success]="checkout">
+          
+          <div class="slide-fill" [style.width.%]="slideValue"></div>
+
+          <div class="slide-text">
+              @if (checkout) {
+                  Pagamento Completato
+              } @else {
+                  Scorri per confermare &gt;
+              }
+          </div>
+          
+          <input type="range" min="0" max="100" value="0" 
+                class="custom-slider" 
+                [disabled]="checkout" 
+                (input)="onSlide($event)" 
+                (change)="onSlideEnd($event)"
+                #sliderInput>
+        </div>
+
+        @if (!checkout) {
+            <button mat-button color="warn" class="mt-3" (click)="annullaPagamento()">
+            <mat-icon>close</mat-icon> Annulla l'ordine e torna al carrello
+            </button>
+        }
+
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -20,6 +20,7 @@ import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gesti
 import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe';
 import { GestioneStatoOrdine } from './components/admin/gestione-stato-ordine/gestione-stato-ordine';
 import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-carrello';
+import { Pagamento } from './components/pagamento/pagamento';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -29,6 +30,8 @@ const routes: Routes = [
   { path: 'profilo',  component: Profilo, canActivate:[authAuthenticatedGuard] },
   { path: 'login',    component: Login },
   { path: 'registrazione', component: Registrazione },
+  { path: 'pagamento', component: Pagamento, canActivate:[authAuthenticatedGuard] },
+
 
   // ── Admin (protette dal guard) ──
   { path: 'admin/manga',          component: GestioneManga,         canActivate: [authAuthenticatedGuard, authAdminGuard] },

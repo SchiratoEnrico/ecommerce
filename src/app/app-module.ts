@@ -65,6 +65,7 @@ import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettagl
 import { CommonModule } from '@angular/common';
 import { MangaImgPipe } from './pipes/manga-img-pipe';
 import { CheckoutDialog } from './components/checkout-dialog/checkout-dialog';
+import { Pagamento } from './components/pagamento/pagamento';
 
 @NgModule({
   declarations: [
@@ -104,6 +105,7 @@ import { CheckoutDialog } from './components/checkout-dialog/checkout-dialog';
     DettaglioCarrello,
     MangaImgPipe,
     CheckoutDialog,
+    Pagamento,
   ],
   imports: [
     BrowserModule,

@@ -36,6 +36,10 @@ export class OrdiniServices {
     return this.http.get<any>(`${this.url}/last_created`);
   }
 
+  getNextAllowedStates(idOrdine: number) {
+    return this.http.get<any[]>(`${this.url}/get_next_allowed_states`, { params: { idOrdine: idOrdine.toString() } });
+  }
+
   avanzaStatoOrdine(ordineId: number, statoId: number){
     const params = new HttpParams()
       .set('ordineId', ordineId)
