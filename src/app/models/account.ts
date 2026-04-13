@@ -6,4 +6,5 @@ export interface Account {
     id_carrello: number,
     anagrafica:{},
     password?: string;
+    validated: boolean;
 }

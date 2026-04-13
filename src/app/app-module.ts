@@ -63,6 +63,7 @@ import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-
 import { Footer } from './components/footer/footer';
 import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettaglio-carrello';
 import { CommonModule } from '@angular/common';
+import { MailValidation } from './components/mail-validation/mail-validation';
 
 @NgModule({
   declarations: [
@@ -100,6 +101,7 @@ import { CommonModule } from '@angular/common';
     GestioneCarrello,
     Footer,
     DettaglioCarrello,
+    MailValidation,
   ],
   imports: [
     BrowserModule,
@@ -134,7 +136,7 @@ import { CommonModule } from '@angular/common';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatLabel,
-    CommonModule
+    CommonModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
