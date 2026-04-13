@@ -21,6 +21,7 @@ import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe'
 import { GestioneStatoOrdine } from './components/admin/gestione-stato-ordine/gestione-stato-ordine';
 import { GestioneFatture } from './components/admin/gestione-fatture/gestione-fatture';
 import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-carrello';
+import { MailValidation } from './components/mail-validation/mail-validation';
 
 const routes: Routes = [
   {
@@ -53,6 +54,7 @@ const routes: Routes = [
   },
   { path: 'login', component: Login },
   { path: 'registrazione', component: Registrazione },
+  { path: 'emailValidation/:username', component: MailValidation },
 
   // ── Admin (protette dal guard) ──
   { path: 'admin/manga',          component: GestioneManga,         canActivate: [authAuthenticatedGuard, authAdminGuard] },

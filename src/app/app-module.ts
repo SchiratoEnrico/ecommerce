@@ -62,11 +62,15 @@ import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-
 import { Footer } from './components/footer/footer';
 import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettaglio-carrello';
 import { CommonModule } from '@angular/common';
+
+// Import da feature/gestioni-fattura
 import { GestioneFatture } from './components/admin/gestione-fatture/gestione-fatture';
 import { OrdineDialog } from './components/admin/dialogs/ordine-dialog/ordine-dialog';
 import { RigaFatturaDialog } from './components/admin/dialogs/riga-fattura-dialog/riga-fattura-dialog';
 import { FatturaDialog } from './components/admin/dialogs/fattura-dialog/fattura-dialog';
 
+// Import da develop
+import { MailValidation } from './components/mail-validation/mail-validation';
 
 @NgModule({
   declarations: [
@@ -107,6 +111,7 @@ import { FatturaDialog } from './components/admin/dialogs/fattura-dialog/fattura
     GestioneFatture,
     RigaFatturaDialog,
     FatturaDialog,
+    MailValidation,
   ],
   imports: [
     BrowserModule,
@@ -138,10 +143,9 @@ import { FatturaDialog } from './components/admin/dialogs/fattura-dialog/fattura
     MatProgressBarModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatProgressBarModule,
     MatProgressSpinnerModule,
     MatLabel,
-    CommonModule
+    CommonModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
