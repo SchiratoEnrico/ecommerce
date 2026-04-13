@@ -20,44 +20,44 @@
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>N° Fattura</mat-label>
-      <input matInput [(ngModel)]="filters.numeroFattura" (keyup)="onFilterChange()" placeholder="FAT-2024-...">
+      <input matInput [(ngModel)]="filters.numeroFattura" (ngModelChange)="onFilterChange()" placeholder="FAT-2024-...">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Nome cliente</mat-label>
-      <input matInput [(ngModel)]="filters.clienteNome" (keyup)="onFilterChange()">
+      <input matInput [(ngModel)]="filters.clienteNome" (ngModelChange)="onFilterChange()">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Cognome cliente</mat-label>
-      <input matInput [(ngModel)]="filters.clienteCognome" (keyup)="onFilterChange()">
+      <input matInput [(ngModel)]="filters.clienteCognome" (ngModelChange)="onFilterChange()">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Email</mat-label>
-      <input matInput type="email" [(ngModel)]="filters.clienteEmail" (keyup)="onFilterChange()" placeholder="esempio@dominio.com">
+      <input matInput type="email" [(ngModel)]="filters.clienteEmail" (ngModelChange)="onFilterChange()" placeholder="esempio@dominio.com">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>From Anno</mat-label>
-      <input matInput type="number" [(ngModel)]="filters.annoFrom" (change)="onFilterChange()" placeholder="2024">
+      <input matInput type="number" [(ngModel)]="filters.annoFrom" (ngModelChange)="onFilterChange()" placeholder="2024">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>To Anno</mat-label>
-      <input matInput type="number" [(ngModel)]="filters.annoTo" (change)="onFilterChange()" placeholder="2024">
+      <input matInput type="number" [(ngModel)]="filters.annoTo" (ngModelChange)="onFilterChange()" placeholder="2024">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Tipo Spedizione</mat-label>
-      <mat-select [(ngModel)]="filters.tipoSpedizione" (keyup)="onFilterChange()">
+      <mat-select [(ngModel)]="filters.tipoSpedizione" (ngModelChange)="onFilterChange()">
         <mat-option *ngFor="let ts of tipiSpedizione" [value]="ts.tipoSpedizione">{{ ts.tipoSpedizione }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Tipo Pagamento</mat-label>
-      <mat-select [(ngModel)]="filters.tipoPagamento" (keyup)="onFilterChange()">
+      <mat-select [(ngModel)]="filters.tipoPagamento" (ngModelChange)="onFilterChange()">
         <mat-option *ngFor="let tp of tipiPagamento" [value]="tp.tipoPagamento">{{ tp.tipoPagamento }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -80,12 +80,12 @@
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>ID Ordine</mat-label>
-      <input matInput type="number" [(ngModel)]="filters.id_ordine" (change)="onFilterChange()" placeholder="12345">
+      <input matInput type="number" [(ngModel)]="filters.id_ordine" (ngModelChange)="onFilterChange()" placeholder="12345">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>ISBN</mat-label>
-      <input matInput [(ngModel)]="filters.isbn" (keyup)="onFilterChange()" placeholder="978-0-123456-78-9">
+      <input matInput [(ngModel)]="filters.isbn" (ngModelChange)="onFilterChange()" placeholder="978-0-123456-78-9">
     </mat-form-field>
 
   </div>
