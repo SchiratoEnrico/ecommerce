@@ -48,7 +48,7 @@
                     @for (riga of datiCarrello?.righe; track riga.id) {
                         <tr>
                             <td class="ps-4">
-                                <img [src]="riga.manga?.immagine || 'https://via.placeholder.com/60x90/faf9f7/1a1814?text=N/A'" 
+                                <img [src]="riga.manga?.immagine | mangaImg" 
                                      alt="Cover" 
                                      class="rounded shadow-sm" 
                                      style="width: 60px; height: 90px; object-fit: cover;">

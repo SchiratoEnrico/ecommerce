@@ -67,9 +67,12 @@
 }
 
 .manga-card-img {
-    object-fit: cover;
-    height: 300px;
-    padding: 10px;
+    width: 100%;                  
+    aspect-ratio: 3 / 4;          
+    object-fit: cover;            
+    object-position: center;      
+    padding: 10px;                
+    transition: transform 0.3s ease; 
 }
 
 .manga-card-title {
@@ -93,4 +96,37 @@
 .badge-novita {
     background-color: var(--brand-accent2);
     color: var(--brand-dark);
+}
+.bg-dark.bg-opacity-75 {
+    backdrop-filter: blur(5px); /* Effetto vetro sfocato */
+    border-left: 4px solid #ffc107; /* Una linea gialla/warning per richiamare il brand */
+}
+
+.manga-card:hover .manga-card-img {
+    transform: scale(1.05);
+}
+
+.manga-title-marquee-container {
+    container-type: inline-size; 
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.marquee-text {
+  display: inline-block;
+  /* Animazione di 5 secondi, scorrevole, infinita e in "alternate" (ping-pong) */
+  animation: scroll-manga-title 5s ease-in-out infinite alternate;
+}
+
+@keyframes scroll-manga-title {
+  0%, 15% { 
+    transform: translateX(0); /* Parte fermo per 15% del tempo */
+  }
+  85%, 100% { 
+    /* LA MAGIA: 
+       calc(-100% + 100cqi) calcola l'esatta quantità di testo in eccesso rispetto al contenitore.
+       min(0px, ...) garantisce che se il testo è CORTO, il risultato è 0 e non si muove di un millimetro! */
+    transform: translateX(min(0px, calc(-100% + 100cqi))); 
+  }
 }

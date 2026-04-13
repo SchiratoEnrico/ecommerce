@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-import { RigaFattura } from '../models/riga-fattura';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -7,32 +6,25 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class RigaFatturaServices {
+  private url = 'http://localhost:9090/rest/riga_fattura';
 
-   private url = 'http://localhost:9090/rest/riga_fattura';
-
-  fatture = signal<RigaFattura[]>([]);
+  fatture = signal<any[]>([]);
 
   constructor(private http: HttpClient) {}
 
-  list(): Observable<RigaFattura[]> {
-    return this.http.get<RigaFattura[]>(`${this.url}/list`);
+  list(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.url}/list`);
   }
 
-  findById(id: number): Observable<RigaFattura> {
-    return this.http.get<RigaFattura>(`${this.url}/findById`, { params: { id } });
+  findById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.url}/findById`, { params: { id } });
   }
 
-  create(fattura: Omit<RigaFattura, 'id'>): Observable<any> {
+  create(fattura: any): Observable<any> {
     return this.http.post(`${this.url}/create`, fattura);
   }
 
-  update(fattura: RigaFattura): Observable<any> {
+  update(fattura: any): Observable<any> {
     return this.http.put(`${this.url}/update`, fattura);
   }
-
-  delete(id: number): Observable<any> {
-  return this.http.delete(`${this.url}/delete/${id}`); // ← path variable
-}
-
-
 }

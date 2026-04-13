@@ -1,22 +1,33 @@
 <div class="page-wrapper">
 
-	<div class="page-header">
-		<div class="page-header-left ms-3">
-			<h1 class="page-title">Il Mio Carrello</h1>
-		</div>
+	<div class="page-header d-flex justify-content-between align-items-center mb-4 ms-3 me-3">
+    
+    <div class="page-header-left d-flex flex-column">
+        <h1 class="page-title mb-1">Il Mio Carrello</h1>
+        
+        <div class="badge-container text-muted">
+            @if(chartEl!==null && chartEl.length === 0){
+                <span class="badge-count fs-5">Nessun articolo nel carrello</span>
+            }
+            @else if(chartEl!==null && chartEl.length === 1){
+                <span class="badge-count fs-5">1 articolo</span>
+            }
+            @else{
+                <span class="badge-count fs-5">{{ chartEl!==null ? chartEl.length : 0 }} articoli</span>
+            }
+        </div>
+    </div>
 
-		<div class="page-header-right ms-5 mb-3">
-			@if(chartEl!==null && chartEl.length === 0){
-				<span class="badge-count fs-5">Nessun articolo nel carrello</span>
-			}
-			@else if(chartEl!==null && chartEl.length === 1){
-				<span class="badge-count fs-5">1 articolo</span>
-			}
-			@else{
-				<span class="badge-count fs-5">{{ chartEl!==null ? chartEl.length : 0 }} articoli</span>
-			}
-		</div>
-	</div>
+    <div class="page-header-right">
+        <button mat-raised-button color="primary" 
+                [disabled]="!chartEl || chartEl.length === 0" 
+                (click)="effettuaOrdine()">
+            <mat-icon>shopping_cart_checkout</mat-icon>
+            Ordina
+        </button>
+    </div>
+    
+</div>
 
 	<div class="card table-card">
 		<div class="table-wrap">
@@ -30,7 +41,7 @@
 							</td>
 
 							<td class="col-image">
-								<img [src]="riga.manga.immagine" [alt]="riga.manga.titolo" class="manga-thumb">
+								<img [src]="riga.manga.immagine | mangaImg" [alt]="riga.manga.titolo" class="manga-thumb">
 							</td>
 
 							<td class="col-title">

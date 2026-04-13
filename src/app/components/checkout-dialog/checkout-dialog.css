@@ -1,0 +1,24 @@
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Spazio tra gli input */
+  min-width: 400px;
+  padding-top: 10px;
+}
+
+.dialog-subtitle {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Modifiche opzionali per schermi piccoli */
+@media (max-width: 600px) {
+  .dialog-container {
+    min-width: auto;
+    width: 100%;
+  }
+}

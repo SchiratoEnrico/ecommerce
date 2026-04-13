@@ -62,6 +62,9 @@ import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-
 import { Footer } from './components/footer/footer';
 import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettaglio-carrello';
 import { CommonModule } from '@angular/common';
+import { MangaImgPipe } from './pipes/manga-img-pipe';
+import { CheckoutDialog } from './components/checkout-dialog/checkout-dialog';
+import { Pagamento } from './components/pagamento/pagamento';
 
 // Import da feature/gestioni-fattura
 import { GestioneFatture } from './components/admin/gestione-fatture/gestione-fatture';
@@ -108,6 +111,9 @@ import { MailValidation } from './components/mail-validation/mail-validation';
     GestioneCarrello,
     Footer,
     DettaglioCarrello,
+    MangaImgPipe,
+    CheckoutDialog,
+    Pagamento,
     GestioneFatture,
     RigaFatturaDialog,
     FatturaDialog,

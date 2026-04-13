@@ -50,8 +50,8 @@ export class MangaServices {
     return this.http.get<Manga[]>(`${this.url}/list`,  {params});
   }
 
-  findMangaByIsbn(isbn: string): Observable<Manga> {
-    return this.http.get<Manga>(`${this.url}/find_by_isbn`, { params: { isbn } });
+  findMangaByIsbn(isbn: string): Observable<any> {
+    return this.http.get<Manga>(`${this.url}/findByIsbn`, { params: { id: isbn } });
   }
 
   listAllByIsbns(isbns: string[]): Observable<Manga[]> {
@@ -70,5 +70,20 @@ export class MangaServices {
   delete(id: string): Observable<any> {
     return this.http.delete(`${this.url}/delete`, { params: { id: id.toString() } });
   }
-  
+
+  getAdvices(userId?: number): Observable<Manga[]> {
+    let params = new HttpParams();
+    if (userId) {
+      params = params.set('accountId', userId);
+    }
+    return this.http.get<Manga[]>(`${this.url}/advices`, { params });
+  }
+
+  getBestSellers(): Observable<Manga[]> {
+    return this.http.get<Manga[]>(`${this.url}/bestSellers`);
+  }
+
+  getLatestArrives(): Observable<Manga[]> {
+    return this.http.get<Manga[]>(`${this.url}/latestArrives`);
+  }
 }

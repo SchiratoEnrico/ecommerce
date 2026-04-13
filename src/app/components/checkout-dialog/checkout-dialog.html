@@ -1,0 +1,79 @@
+<h2 mat-dialog-title>Dettagli Ordine</h2>
+
+<mat-dialog-content class="dialog-container">
+  
+  @if (isLoading) {
+    <div style="display: flex; justify-content: center; padding: 2rem;">
+      <p>Caricamento dati in corso...</p>
+    </div>
+  } @else {
+    
+    @if (anagrafiche.length === 0) {
+      <div style="text-align: center; padding: 1rem 0;">
+        <mat-icon color="warn" style="font-size: 40px; height: 40px; width: 40px; margin-bottom: 10px;">location_off</mat-icon>
+        <h3>Nessun indirizzo trovato</h3>
+        <p class="text-muted">Per poter completare l'ordine devi avere almeno un indirizzo di spedizione salvato.</p>
+        <button mat-flat-button color="primary" class="mt-3" (click)="vaiAlProfilo()">
+          Vai al Profilo per aggiungerlo
+        </button>
+      </div>
+    } 
+    @else {
+      <p class="dialog-subtitle">Seleziona i dati necessari per procedere con l'ordine.</p>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Indirizzo di Spedizione</mat-label>
+        <mat-select [(ngModel)]="anagraficaId" (ngModelChange)="onAnagraficaChange($event)" required>
+          
+          @for (a of anagrafiche; track a.id) {
+            <mat-option [value]="a.id">
+              <strong>{{ a.nome }} {{ a.cognome }}</strong> - {{ a.via }}, {{ a.citta }} ({{ a.provincia }})
+              <span *ngIf="a.predefinito" style="color: var(--brand-accent); font-size: 0.8em; margin-left: 8px;">[Predefinito]</span>
+            </mat-option>
+          }
+
+          <mat-divider></mat-divider>
+
+          <mat-option [value]="-1" style="color: var(--brand-primary);">
+            <mat-icon color="primary">add_circle</mat-icon> Aggiungi nuovo indirizzo...
+          </mat-option>
+
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Metodo di Spedizione</mat-label>
+        <mat-select [(ngModel)]="tipoSpedizioneId" required>
+          @for (s of tipiSpedizione; track s.id) {
+            <mat-option [value]="s.id">
+              {{ s.tipoSpedizione }} 
+              @if (s.costoSpedizione) { (+{{ s.costoSpedizione | currency:'EUR' }}) }
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Metodo di Pagamento</mat-label>
+        <mat-select [(ngModel)]="tipoPagamentoId" required>
+          @for (p of tipiPagamento; track p.id) {
+            <mat-option [value]="p.id">
+              {{ p.tipoPagamento }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+  }
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="annulla()">Annulla</button>
+  
+  @if (!isLoading && anagrafiche.length > 0) {
+    <button mat-flat-button color="primary" [disabled]="!isFormValido" (click)="confermaDati()">
+      Procedi
+    </button>
+  }
+</mat-dialog-actions>
