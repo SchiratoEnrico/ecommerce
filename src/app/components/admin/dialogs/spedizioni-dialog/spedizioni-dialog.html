@@ -8,6 +8,12 @@
       <mat-label>Tipo Spedizione</mat-label>
       <input matInput formControlName="tipoSpedizione">
     </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Costo Spedizione</mat-label>
+      <input matInput type="number" formControlName="costoSpedizione" min="0">
+      <span matPrefix>€&nbsp;</span>
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 

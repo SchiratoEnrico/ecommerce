@@ -1,4 +1,5 @@
 import { Account } from "./account";
+import { Anagrafica } from "./anagrafica";
 import { Pagamento } from "./pagamento";
 import { RigaOrdine } from "./riga-ordine";
 import { Spedizione } from "./spedizione";
@@ -14,4 +15,5 @@ export interface Ordine {
     giorno: number;
     stato: StatoOrdine;
     righeOrdine: RigaOrdine[];
+    anagrafica: Anagrafica;
 }

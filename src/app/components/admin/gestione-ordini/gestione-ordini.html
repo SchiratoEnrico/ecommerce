@@ -17,14 +17,20 @@
         <mat-label>Username</mat-label>
         <input matInput [(ngModel)]="filters.username" (keyup)="onFilterChange()">
       </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Tipo Pagamento</mat-label>
-        <input matInput [(ngModel)]="filters.tipoPagamento" (keyup)="onFilterChange()">
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Tipo Spedizione</mat-label>
-        <input matInput [(ngModel)]="filters.tipoSpedizione" (keyup)="onFilterChange()">
-      </mat-form-field>
+         <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>Tipo Spedizione</mat-label>
+      <mat-select [(ngModel)]="filters.tipoSpedizione" (ngModelChange)="onFilterChange()">
+        <mat-option *ngFor="let ts of tipiSpedizione" [value]="ts.tipoSpedizione"> {{ ts.tipoSpedizione }} </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>Tipo Pagamento</mat-label>
+      <mat-select [(ngModel)]="filters.tipoPagamento" (ngModelChange)="onFilterChange()">
+        <mat-option *ngFor="let tp of tipiPagamento" [value]="tp.tipoPagamento">  {{ tp.tipoPagamento }} </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
       <mat-form-field appearance="outline">
         <mat-label>Stato Ordine</mat-label>
         <input matInput [(ngModel)]="filters.statoOrdine" (keyup)="onFilterChange()">
@@ -104,14 +110,13 @@
         <ng-container matColumnDef="righeOrdine">
           <th mat-header-cell *matHeaderCellDef>Manga</th>
           <td mat-cell *matCellDef="let o">
-            <button class="btn-articoli" (click)="toggleExpand(o, $event)">
-              {{ o.righeOrdine?.length ?? 0 }} manga
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  [style.transform]="expandedOrdine === o ? 'rotate(180deg)' : 'rotate(0)'"
-                  style="transition: transform 0.2s">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
+            <button class="btn-articoli" (click)="toggleExpand(o, $event)">Manga
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                [style.transform]="expandedOrdine === o ? 'rotate(180deg)' : 'rotate(0)'"
+                style="transition: transform 0.2s">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+</button>
           </td>
         </ng-container>
 

@@ -19,7 +19,7 @@ import { MatPaginator } from '@angular/material/paginator';
 export class GestioneSpedizioni implements OnInit {
 
    @ViewChild(MatPaginator) paginator!: MatPaginator;
-  displayedColumns: string[] = ['id', 'tipoSpedizione'];
+  displayedColumns: string[] = ['id', 'tipoSpedizione', 'costoSpedizione'];
   dataSource = new MatTableDataSource<Spedizione>();
 
   constructor(

@@ -1,0 +1,110 @@
+<h2 mat-dialog-title>{{ data ? 'Fattura ' + data.numeroFattura : 'Nuova Fattura' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+
+    <!-- STATO BADGE (solo in modifica) -->
+    <div *ngIf="data" class="stato-header">
+      <span class="stato-label">Stato</span>
+      <span [ngClass]="'stato-chip stato-chip--' + data.statoFattura?.toLowerCase()">
+        {{ data.statoFattura }}
+      </span>
+    </div>
+
+    <!-- INTESTAZIONE -->
+    <div class="section-title">Intestazione</div>
+    <div class="form-grid-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Numero Fattura</mat-label>
+        <input matInput formControlName="numeroFattura">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>ID Ordine</mat-label>
+        <input matInput formControlName="ordineId" type="number">
+      </mat-form-field>
+    </div>
+    <div class="form-grid-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Data Emissione</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dataEmissione">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo Pagamento</mat-label>
+        <mat-select formControlName="tipoPagamentoId">
+          @for (tipo of tipoPagamentoList; track tipo.id) {
+            <mat-option [value]="tipo.id">{{ tipo.tipoPagamento }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="form-grid-1">
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo Spedizione</mat-label>
+        <mat-select formControlName="tipoSpedizioneId">
+          @for (tipo of tipoSpedizioneList; track tipo.id) {
+            <mat-option [value]="tipo.id">{{ tipo.tipoSpedizione }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- ANAGRAFICA -->
+    <div class="section-title">Anagrafica Cliente</div>
+    <div class="form-grid-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="clienteNome">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Cognome</mat-label>
+        <input matInput formControlName="clienteCognome">
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email Cliente</mat-label>
+      <input matInput formControlName="clienteEmail" type="email">
+    </mat-form-field>
+    <div class="form-grid-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Città</mat-label>
+        <input matInput formControlName="clienteCitta">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Provincia</mat-label>
+        <input matInput formControlName="clienteProvincia">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>CAP</mat-label>
+        <input matInput formControlName="clienteCap">
+      </mat-form-field>
+    </div>
+    <div class="form-grid-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Stato</mat-label>
+        <input matInput formControlName="clienteStato">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Indirizzo</mat-label>
+        <input matInput formControlName="clienteIndirizzo">
+      </mat-form-field>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annulla</button>
+  <button *ngIf="data" mat-button color="warn" (click)="delete()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+      <path d="M10 11v6M14 11v6"/>
+      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+    </svg>
+    Elimina Fattura
+  </button>
+  <button mat-raised-button color="primary" (click)="save()"
+    [disabled]="form.invalid">Salva Fattura</button>
+</mat-dialog-actions>

@@ -11,6 +11,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { RigaOrdineDialog } from '../dialogs/riga-ordine-dialog/riga-ordine-dialog';
 import { OrdineDialog } from '../dialogs/ordine-dialog/ordine-dialog';
 import { RigaOrdineServices } from '../../../services/riga-ordine-services';
+import { GestionePagamentiService } from '../../../services/gestione-pagamenti-service';
+import { SpedizioneServices } from '../../../services/spedizioni-services';
 
 @Component({
   selector: 'app-gestione-ordini',
@@ -27,6 +29,8 @@ export class GestioneOrdini implements OnInit {
   dataSource = new MatTableDataSource<Ordine>();
   righeOrdine: { [idOrdine: number]: RigaOrdine[] } = {};
   loadingRighe: { [idOrdine: number]: boolean } = {};
+  tipiSpedizione: any[] = []; 
+  tipiPagamento: any[] = [];
 
   filters = {
     username: '',
@@ -46,6 +50,8 @@ export class GestioneOrdini implements OnInit {
     private ordineServices: OrdiniServices,
     private rigaOrdineServices: RigaOrdineServices,
     private accountServices: AccountServices,
+    private tipoPagamentoServices: GestionePagamentiService,
+    private tipoSpedizioneServices: SpedizioneServices,
     private snack: MatSnackBar,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef
@@ -53,6 +59,8 @@ export class GestioneOrdini implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.loadTipoSpedizione();
+    this.loadTipoPagamento();
   }
 
   ngAfterViewInit() {
@@ -271,6 +279,20 @@ export class GestioneOrdini implements OnInit {
     if (!riga.manga) return '-';
     if (typeof riga.manga === 'string') return riga.manga;
     return (riga.manga as any).isbn ?? '-';
+  }
+  
+  private loadTipoSpedizione(): void {
+    this.tipoSpedizioneServices.list().subscribe({
+      next: (data) => this.tipiSpedizione = data,
+      error: () => this.showMsg('Errore caricamento tipi spedizione', true)
+    });
+  }
+ 
+  private loadTipoPagamento(): void {
+    this.tipoPagamentoServices.list().subscribe({
+      next: (data) => this.tipiPagamento = data,
+      error: () => this.showMsg('Errore caricamento tipi pagamento', true)
+    });
   }
 
 
