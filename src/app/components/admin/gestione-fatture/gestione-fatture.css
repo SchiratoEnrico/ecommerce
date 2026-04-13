@@ -607,3 +607,21 @@
   .info-card-row  { flex-direction: column; }
   .filter-field--narrow { min-width: 100px; }
 }
+
+.riga-row .mat-column-azioni {
+  width: 80px;
+  padding: 0;
+  text-align: right;
+}
+
+.riga-row .mat-column-azioni button {
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+}
+
+.riga-row .mat-column-azioni mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}

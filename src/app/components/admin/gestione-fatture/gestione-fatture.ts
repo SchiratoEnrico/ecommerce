@@ -9,6 +9,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { FatturaDialog } from '../dialogs/fattura-dialog/fattura-dialog';
 import { SpedizioneServices } from '../../../services/spedizioni-services';
 import { GestionePagamentiService } from '../../../services/gestione-pagamenti-service';
+import { RigaFatturaServices } from '../../../services/riga-fattura-services';
+import { RigaFattura } from '../../../models/riga-fattura';
+import { RigaFatturaDialog } from '../dialogs/riga-fattura-dialog/riga-fattura-dialog';
 
 @Component({
   selector: 'app-gestione-fatture',
@@ -20,15 +23,16 @@ export class GestioneFatture implements OnInit {
  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  righeColumns: string[] = ['isbn', 'prezzoUnitario', 'numeroCopie', 'totaleRiga'];
+  righeColumns: string[] = ['isbn', 'prezzoUnitario', 'numeroCopie', 'totaleRiga', 'azioni'];
  
   dataSource = new MatTableDataSource<Fattura>();
   loading = false;
   processing = false;
   selectedFattura: Fattura | null = null;
 
+  righeFattura: { [idFattura: number]: RigaFattura[] } = {};
+  loadingRighe: { [id: number]: boolean } = {};
   righeVisibili: { [id: number]: boolean } = {};
-  righeLoading = false;
  
   tipiSpedizione: any[] = [];
   tipiPagamento: any[] = [];
@@ -50,6 +54,8 @@ export class GestioneFatture implements OnInit {
   constructor(
     private fattureService: FattureServices,
     private tipoSpedizioneServices: SpedizioneServices,
+    private rigaFatturaServices: RigaFatturaServices,
+    private fattureServices: FattureServices,
     private tipoPagamentoServices: GestionePagamentiService,
     private snack: MatSnackBar,
     private dialog: MatDialog,
@@ -129,6 +135,7 @@ export class GestioneFatture implements OnInit {
  
       if (result.action === 'save') {
         const fatturaData = { id: fattura.id, ...result.payload };
+        console.log('payload update:', JSON.stringify(fatturaData));
         this.fattureService.update(fatturaData as Fattura).subscribe({
           next: () => {
             this.showMsg('Fattura aggiornata', false);
@@ -225,45 +232,87 @@ export class GestioneFatture implements OnInit {
   }
  
   selectFattura(fattura: Fattura): void {
-  this.selectedFattura = fattura;
-  // reset visibilità righe quando cambi fattura
-  this.righeVisibili = {};
-}
-toggleRighe(fattura: Fattura, event: Event): void {
-  event.stopPropagation();
-  const id = fattura.id;
-
-  if (this.righeVisibili[id]) {
-    this.righeVisibili[id] = false;
-    return;
+    this.fattureServices.findById(fattura.id).subscribe((fatturaCompleta: any) => {
+    this.selectedFattura = fatturaCompleta;
+    this.righeVisibili[fattura.id] = false;});
   }
 
-  // se già caricate in precedenza, mostra subito
-  if (fattura.righeFattura?.length) {
-    this.righeVisibili[id] = true;
-    return;
+  toggleRighe(fattura: Fattura, event: Event): void {
+    event.stopPropagation();
+    const id = Number(fattura.id);
+    if (!id || isNaN(id)) return;
+    if (this.righeVisibili[id]) {this.righeVisibili = { ...this.righeVisibili, [id]: false };return;}
+    if (fattura.righeFattura?.length) {this.righeVisibili = { ...this.righeVisibili, [id]: true };return;}
+    this.loadingRighe = { ...this.loadingRighe, [id]: true };
+
+    this.fattureService.findById(id).subscribe({
+      next: (dettaglio) => {
+        fattura.righeFattura = [...(dettaglio.righeFattura ?? [])];
+        this.righeVisibili  = { ...this.righeVisibili,  [id]: true };
+        this.loadingRighe   = { ...this.loadingRighe,   [id]: false };
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.showMsg('Errore caricamento voci', true);
+        this.loadingRighe = { ...this.loadingRighe, [id]: false };
+        this.cdr.detectChanges();
+        }
+      });
+    }
+  getTotaleVoci(fattura: Fattura): number {return (fattura.righeFattura ?? []).reduce((sum, r) => sum + r.totaleRiga, 0);}
+
+  editRigaFattura(fattura: Fattura, riga: RigaFattura, index: number): void {
+    const ref = this.dialog.open(RigaFatturaDialog, {width: '400px',data: { riga: { ...riga } }});
+    ref.afterClosed().subscribe(result => {
+      if (result?.action === 'save') {fattura.righeFattura = fattura.righeFattura!.map((r, i) =>i === index ? result.riga : r );
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  // altrimenti carica via findById
-  this.righeLoading = true;
-  this.fattureService.findById(fattura.id).subscribe({
-    next: (dettaglio) => {
-      fattura.righeFattura = dettaglio.righeFattura;
-      this.righeVisibili[id] = true;
-      this.righeLoading = false;
+deleteRigaFattura(fattura: Fattura, riga: RigaFattura, index: number): void {
+  if (!riga.id) return;
+  if (!confirm(`Rimuovere la riga con ISBN ${riga.isbn}?`)) return;
+
+  this.rigaFatturaServices.delete(riga.id).subscribe({
+    next: () => {
+      fattura.righeFattura = fattura.righeFattura!.filter((_, i) => i !== index);
+      this.showMsg('Riga eliminata', false);
       this.cdr.detectChanges();
     },
-    error: () => {
-      this.showMsg('Errore caricamento voci', true);
-      this.righeLoading = false;
+    error: (err) => this.showMsg(err.error?.msg || 'Errore eliminazione riga', true)
+  });
+}
+
+addRigaFattura(fattura: any): void {
+  const dialogRef = this.dialog.open(RigaFatturaDialog, { width: '480px', data: { riga: null } });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result?.action === 'save') {
+      const nuovaRiga: RigaFattura = {
+        ...result.riga,
+        idFattura: fattura.id
+      };
+      this.rigaFatturaServices.create(nuovaRiga).subscribe({
+        next: () => {
+          this.fattureServices.findById(fattura.id).subscribe((fatturaAggiornata: any) => {
+            const index = this.dataSource.data.findIndex(f => f.id === fattura.id);
+            if (index !== -1) {
+              this.dataSource.data[index] = fatturaAggiornata;
+              this.dataSource.data = [...this.dataSource.data];
+            }
+            this.selectedFattura = fatturaAggiornata;
+            this.righeVisibili[fattura.id] = true;
+          });
+        },
+        error: (err) => {
+          console.error('Errore creazione riga:', err);
+        }
+      });
     }
   });
 }
- 
-  getTotaleVoci(fattura: Fattura): number {
-    return (fattura.righeFattura ?? []).reduce((sum, r) => sum + r.totaleRiga, 0);
-  }
- 
+
   showMsg(msg: string, isError: boolean): void {
     this.snack.open(msg, 'OK', {
       duration: 3000,

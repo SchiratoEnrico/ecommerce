@@ -18,9 +18,10 @@ export class FattureServices {
       return this.http.get<Fattura[]>(`${this.url}/list`, { params });
     }
 
+  
   findById(id: number): Observable<Fattura> {
-    return this.http.get<Fattura>(`${this.url}/findById`, { params: { id } });
-  }
+  return this.http.get<Fattura>(`${this.url}/findById`, { params: { idFattura: id } });
+}
 
   create(fattura: Omit<Fattura, 'id'>): Observable<number> { 
   return this.http.post<number>(`${this.url}/create`, fattura);

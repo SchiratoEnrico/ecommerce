@@ -29,8 +29,15 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">Chiudi</button>
-  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">
-    Conferma
+  <button mat-button (click)="cancel()" [disabled]="loading">Chiudi</button>
+
+  <!-- Pulsante elimina: solo in modifica -->
+  <button *ngIf="isEdit" mat-button color="warn" (click)="delete()" [disabled]="loading">
+    Elimina
+  </button>
+
+  <button mat-raised-button color="primary" (click)="save()"
+    [disabled]="form.invalid || loading">
+    {{ loading ? 'Salvataggio...' : 'Conferma' }}
   </button>
 </mat-dialog-actions>

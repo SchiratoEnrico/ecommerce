@@ -91,58 +91,6 @@
       </mat-form-field>
     </div>
 
-    <!-- PRODOTTI -->
-    <div class="section-title righe-header">
-      <span>Prodotti in Fattura</span>
-      <button mat-stroked-button color="primary" type="button" (click)="addRigaLocale()">
-        + Aggiungi Riga
-      </button>
-    </div>
-    <div class="righe-container">
-      <table mat-table [dataSource]="righe()" class="righe-table-mini">
-        <ng-container matColumnDef="isbn">
-          <th mat-header-cell *matHeaderCellDef>ISBN</th>
-          <td mat-cell *matCellDef="let r">{{ r.isbn }}</td>
-        </ng-container>
-        <ng-container matColumnDef="prezzo">
-          <th mat-header-cell *matHeaderCellDef>Prezzo Unit.</th>
-          <td mat-cell *matCellDef="let r">{{ r.prezzoUnitario | currency:'EUR' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="numeroCopie">
-          <th mat-header-cell *matHeaderCellDef>Qtà</th>
-          <td mat-cell *matCellDef="let r">{{ r.numeroCopie }}</td>
-        </ng-container>
-        <ng-container matColumnDef="totale">
-          <th mat-header-cell *matHeaderCellDef>Subtotale</th>
-          <td mat-cell *matCellDef="let r">{{ r.totaleRiga | currency:'EUR' }}</td>
-        </ng-container>
-        <ng-container matColumnDef="azioni">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let r; let i = index">
-            <button mat-icon-button type="button" (click)="editRiga(i)"><mat-icon>edit</mat-icon></button>
-            <button mat-icon-button type="button" color="warn" (click)="removeRiga(i)"><mat-icon>delete_outline</mat-icon></button>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="['isbn', 'prezzo', 'numeroCopie', 'totale', 'azioni']"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['isbn', 'prezzo', 'numeroCopie', 'totale', 'azioni'];"></tr>
-      </table>
-      <div *ngIf="righe().length === 0" class="no-data-hint">Nessun prodotto inserito.</div>
-    </div>
-
-    <!-- TOTALI + NOTE -->
-    <div class="totals-section">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Note</mat-label>
-        <textarea matInput formControlName="note" rows="2"></textarea>
-      </mat-form-field>
-      <div class="totals-row"><span>Subtotale</span><span>{{ totaleRighe() | currency:'EUR' }}</span></div>
-      <div class="totals-row"><span>Spedizione</span><span>{{ form.get('costoSpedizione')?.value | currency:'EUR' }}</span></div>
-      <div class="totals-row grand-total">
-        <strong>Totale fattura</strong>
-        <strong>{{ (totaleRighe() + (form.get('costoSpedizione')?.value || 0)) | currency:'EUR' }}</strong>
-      </div>
-    </div>
-
   </form>
 </mat-dialog-content>
 
@@ -158,5 +106,5 @@
     Elimina Fattura
   </button>
   <button mat-raised-button color="primary" (click)="save()"
-    [disabled]="form.invalid || righe().length === 0">Salva Fattura</button>
+    [disabled]="form.invalid">Salva Fattura</button>
 </mat-dialog-actions>

@@ -20,45 +20,44 @@
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>N° Fattura</mat-label>
-      <input matInput [(ngModel)]="filters.numeroFattura" (ngModelChange)="onFilterChange()" placeholder="FAT-2024-...">
+      <input matInput [(ngModel)]="filters.numeroFattura" (keyup)="onFilterChange()" placeholder="FAT-2024-...">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Nome cliente</mat-label>
-      <input matInput [(ngModel)]="filters.clienteNome" (ngModelChange)="onFilterChange()">
+      <input matInput [(ngModel)]="filters.clienteNome" (keyup)="onFilterChange()">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Cognome cliente</mat-label>
-      <input matInput [(ngModel)]="filters.clienteCognome" (ngModelChange)="onFilterChange()">
+      <input matInput [(ngModel)]="filters.clienteCognome" (keyup)="onFilterChange()">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Email</mat-label>
-      <input matInput type="email" [(ngModel)]="filters.clienteEmail"
-             (ngModelChange)="onFilterChange()" placeholder="esempio@dominio.com">
+      <input matInput type="email" [(ngModel)]="filters.clienteEmail" (keyup)="onFilterChange()" placeholder="esempio@dominio.com">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>From Anno</mat-label>
-      <input matInput type="number" [(ngModel)]="filters.annoFrom" (ngModelChange)="onFilterChange()" placeholder="2024">
+      <input matInput type="number" [(ngModel)]="filters.annoFrom" (change)="onFilterChange()" placeholder="2024">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>To Anno</mat-label>
-      <input matInput type="number" [(ngModel)]="filters.annoTo" (ngModelChange)="onFilterChange()" placeholder="2024">
+      <input matInput type="number" [(ngModel)]="filters.annoTo" (change)="onFilterChange()" placeholder="2024">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Tipo Spedizione</mat-label>
-      <mat-select [(ngModel)]="filters.tipoSpedizione" (ngModelChange)="onFilterChange()">
+      <mat-select [(ngModel)]="filters.tipoSpedizione" (keyup)="onFilterChange()">
         <mat-option *ngFor="let ts of tipiSpedizione" [value]="ts.tipoSpedizione">{{ ts.tipoSpedizione }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Tipo Pagamento</mat-label>
-      <mat-select [(ngModel)]="filters.tipoPagamento" (ngModelChange)="onFilterChange()">
+      <mat-select [(ngModel)]="filters.tipoPagamento" (keyup)="onFilterChange()">
         <mat-option *ngFor="let tp of tipiPagamento" [value]="tp.tipoPagamento">{{ tp.tipoPagamento }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -81,12 +80,12 @@
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>ID Ordine</mat-label>
-      <input matInput type="number" [(ngModel)]="filters.id_ordine" (ngModelChange)="onFilterChange()" placeholder="12345">
+      <input matInput type="number" [(ngModel)]="filters.id_ordine" (change)="onFilterChange()" placeholder="12345">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>ISBN</mat-label>
-      <input matInput [(ngModel)]="filters.isbn" (ngModelChange)="onFilterChange()" placeholder="978-0-123456-78-9">
+      <input matInput [(ngModel)]="filters.isbn" (keyup)="onFilterChange()" placeholder="978-0-123456-78-9">
     </mat-form-field>
 
   </div>
@@ -290,7 +289,9 @@
 
         <div class="doc-section">
           <div class="section-tag" style="display:flex; align-items:center; justify-content:space-between;">
-            <span>Voci&nbsp;<span class="voci-count">({{ fattura.righeFattura?.length ?? 0 }})</span></span>
+            <span>Voci&nbsp;<span class="voci-count">
+              ({{ righeVisibili[fattura.id] ? (fattura.righeFattura.length ?? 0) : '?' }})
+            </span></span>
             <button class="btn-ghost" (click)="toggleRighe(fattura, $event)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                   [style.transform]="righeVisibili[fattura.id] ? 'rotate(180deg)' : 'rotate(0)'"
@@ -301,37 +302,82 @@
             </button>
           </div>
 
-          <div *ngIf="righeLoading" style="padding: 12px; color: #9ca3af; font-size:0.85rem;">
+          <!-- spinner -->
+          <div *ngIf="loadingRighe[fattura.id]" 
+              style="padding: 12px; color: #9ca3af; font-size:0.85rem;">
             Caricamento...
           </div>
 
-          <ng-container *ngIf="righeVisibili[fattura.id] && !righeLoading">
-            <table mat-table [dataSource]="fattura.righeFattura" class="righe-table">
-              <ng-container matColumnDef="isbn">
-                <th mat-header-cell *matHeaderCellDef>ISBN</th>
-                <td mat-cell *matCellDef="let r"><span class="isbn-mono">{{ r.isbn || '—' }}</span></td>
-              </ng-container>
-              <ng-container matColumnDef="prezzoUnitario">
-                <th mat-header-cell *matHeaderCellDef class="cell-right">Prezzo Unit.</th>
-                <td mat-cell *matCellDef="let r" class="cell-right">{{ r.prezzoUnitario | currency:'EUR':'symbol':'1.2-2' }}</td>
-              </ng-container>
-              <ng-container matColumnDef="numeroCopie">
-                <th mat-header-cell *matHeaderCellDef class="cell-center">Qt.</th>
-                <td mat-cell *matCellDef="let r" class="cell-center">{{ r.numeroCopie }}</td>
-              </ng-container>
-              <ng-container matColumnDef="totaleRiga">
-                <th mat-header-cell *matHeaderCellDef class="cell-right">Totale</th>
-                <td mat-cell *matCellDef="let r" class="cell-right cell-totale">{{ r.totaleRiga | currency:'EUR':'symbol':'1.2-2' }}</td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="righeColumns; sticky: true"></tr>
-              <tr mat-row *matRowDef="let row; columns: righeColumns;" class="riga-row"></tr>
-            </table>
+          <!-- tabella righe -->
+            <ng-container *ngIf="righeVisibili[fattura.id] && !loadingRighe[fattura.id]">
+              <table mat-table [dataSource]="fattura.righeFattura" class="righe-table">
+                <ng-container matColumnDef="isbn">
+                  <th mat-header-cell *matHeaderCellDef>ISBN</th>
+                  <td mat-cell *matCellDef="let r">
+                    <span class="isbn-mono">{{ r.isbn || '—' }}</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="prezzoUnitario">
+                  <th mat-header-cell *matHeaderCellDef class="cell-right">Prezzo Unit.</th>
+                  <td mat-cell *matCellDef="let r" class="cell-right">
+                    {{ r.prezzoUnitario | currency:'EUR':'symbol':'1.2-2' }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="numeroCopie">
+                  <th mat-header-cell *matHeaderCellDef class="cell-center">Qt.</th>
+                  <td mat-cell *matCellDef="let r" class="cell-center">{{ r.numeroCopie }}</td>
+                </ng-container>
+                <ng-container matColumnDef="totaleRiga">
+                  <th mat-header-cell *matHeaderCellDef class="cell-right">Totale</th>
+                  <td mat-cell *matCellDef="let r" class="cell-right cell-totale">
+                    {{ r.totaleRiga | currency:'EUR':'symbol':'1.2-2' }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="azioni">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let r; let i = index">
+                    <button mat-icon-button (click)="editRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="righeColumns; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: righeColumns;" class="riga-row"></tr>
+              </table>
+              <!-- Aggiungi riga -->
+                <div class="aggiungi-riga-row" *ngIf="canEdit(fattura)">
+                  <button class="btn-ghost" (click)="addRigaFattura(fattura)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Aggiungi Riga
+                  </button>
+                </div>
 
-            <div *ngIf="(fattura.righeFattura?.length ?? 0) === 0" class="empty-righe">
-              <mat-icon>inventory_2</mat-icon>
-              <span>Nessuna riga presente</span>
-            </div>
-          </ng-container>
+              <!-- empty state righe -->
+              <div *ngIf="(fattura.righeFattura.length ?? 0) === 0" class="empty-righe">
+                <mat-icon>inventory_2</mat-icon>
+                <span>Nessuna riga presente</span>
+              </div>
+            </ng-container>
+
+        <ng-container matColumnDef="azioni">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let r; let i = index">
+            <button mat-icon-button (click)="editRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="righeColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: righeColumns;" class="riga-row"></tr>
         </div>
 
 
