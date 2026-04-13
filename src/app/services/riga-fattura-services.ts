@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -20,15 +20,11 @@ export class RigaFatturaServices {
     return this.http.get<any>(`${this.url}/findById`, { params: { id } });
   }
 
-  create(fattura: Omit<any, 'id'>): Observable<any> {
+  create(fattura: any): Observable<any> {
     return this.http.post(`${this.url}/create`, fattura);
   }
 
   update(fattura: any): Observable<any> {
     return this.http.put(`${this.url}/update`, fattura);
-  }
-
-  delete(id: number): Observable<any> {
-    return this.http.delete(`${this.url}/delete/${id}`); // ← path variable
   }
 }

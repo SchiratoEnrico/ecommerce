@@ -19,19 +19,48 @@ import { Registrazione } from './components/registrazione/registrazione';
 import { GestioneAnagrafica } from './components/admin/gestione-anagrafica/gestione-anagrafica';
 import { GestioneSaghe } from './components/admin/gestione-saghe/gestione-saghe';
 import { GestioneStatoOrdine } from './components/admin/gestione-stato-ordine/gestione-stato-ordine';
+import { GestioneFatture } from './components/admin/gestione-fatture/gestione-fatture';
 import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-carrello';
+
+// Import uniti dai due branch
 import { Pagamento } from './components/pagamento/pagamento';
+import { MailValidation } from './components/mail-validation/mail-validation';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home',    component: Home },
-  { path: 'carrello', component: Carrello, canActivate:[authAuthenticatedGuard] },
-  { path: 'ordini',   component: Ordini, canActivate:[authAuthenticatedGuard] },
-  { path: 'profilo',  component: Profilo, canActivate:[authAuthenticatedGuard] },
-  { path: 'login',    component: Login },
-  { path: 'registrazione', component: Registrazione },
-  { path: 'pagamento', component: Pagamento, canActivate:[authAuthenticatedGuard] },
+  {
+    path: '',
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
 
+      // ── Utente ──
+      { path: 'home',    component: Home },
+      { path: 'carrello', component: Carrello, canActivate:[authAuthenticatedGuard] },
+      { path: 'ordini',   component: Ordini, canActivate:[authAuthenticatedGuard] },
+      { path: 'profilo',  component: Profilo, canActivate:[authAuthenticatedGuard] },
+
+      // ── Admin (protette dal guard) ──
+      { path: 'admin/manga',          component: GestioneManga,         canActivate: [authAdminGuard] },
+      { path: 'admin/autori',         component: GestioneAutori,        canActivate: [authAdminGuard] },
+      { path: 'admin/generi',         component: GestioneGeneri,        canActivate: [authAdminGuard] },
+      { path: 'admin/case-editrici',  component: GestioneCaseEditrici,  canActivate: [authAdminGuard] },
+      { path: 'admin/ordini',         component: GestioneOrdini,        canActivate: [authAdminGuard] },
+      { path: 'admin/account',        component: GestioneAccount,       canActivate: [authAdminGuard] },
+      { path: 'admin/spedizioni',     component: GestioneSpedizioni,    canActivate: [authAdminGuard] },
+      { path: 'admin/pagamenti',      component: GestionePagamenti,     canActivate: [authAdminGuard] },
+      { path: 'admin/gestione-anagrafica', component: GestioneAnagrafica, canActivate: [authAdminGuard] },
+      { path: 'admin/gestione-ordini', component: GestioneOrdini, canActivate: [authAdminGuard] },
+      { path: 'admin/saghe', component: GestioneSaghe, canActivate: [authAdminGuard] },
+      { path: 'admin/stato-ordine', component: GestioneStatoOrdine, canActivate: [authAdminGuard] },
+      { path: 'admin/gestione-carrello',   component: GestioneCarrello,      canActivate: [authAdminGuard] },
+      { path: 'admin/fatture', component: GestioneFatture, canActivate: [authAdminGuard] },
+    ]
+  },
+  { path: 'login', component: Login },
+  { path: 'registrazione', component: Registrazione },
+  
+  // Rotte unite dai due branch
+  { path: 'pagamento', component: Pagamento, canActivate:[authAuthenticatedGuard] },
+  { path: 'emailValidation/:username', component: MailValidation },
 
   // ── Admin (protette dal guard) ──
   { path: 'admin/manga',          component: GestioneManga,         canActivate: [authAuthenticatedGuard, authAdminGuard] },

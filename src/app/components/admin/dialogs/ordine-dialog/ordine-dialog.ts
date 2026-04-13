@@ -1,9 +1,13 @@
-import { ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { RigaOrdine } from '../../../../models/riga-ordine';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RigaOrdineDialog } from '../riga-ordine-dialog/riga-ordine-dialog';
+import { OrdiniServices } from '../../../../services/ordini-services';
+import { SpedizioneServices } from '../../../../services/spedizioni-services';
+import { StatoOrdineServices } from '../../../../services/stato-ordine-services';
+import { GestionePagamentiService } from '../../../../services/gestione-pagamenti-service';
 
 @Component({
   selector: 'app-ordine-dialog',
@@ -11,9 +15,12 @@ import { RigaOrdineDialog } from '../riga-ordine-dialog/riga-ordine-dialog';
   templateUrl: './ordine-dialog.html',
   styleUrl: './ordine-dialog.css',
 })
-export class OrdineDialog {
+export class OrdineDialog implements OnInit{
   form: any;
   righeOrdine: RigaOrdine[] = [];
+  statoOrdine: string[] = [];
+  tipoPagamento: string[] = [];
+  tipoSpedizione: string[] = [];  
 
   constructor(
     private fb: FormBuilder,
@@ -21,6 +28,10 @@ export class OrdineDialog {
     private dialog: MatDialog,
     private snack: MatSnackBar,
     private cdr: ChangeDetectorRef,
+    private ordiniService: OrdiniServices,
+    private spedizioneServices: SpedizioneServices, 
+    private statoServices: StatoOrdineServices,        
+    private pagamentoServices: GestionePagamentiService, 
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.form = fb.group({
@@ -42,6 +53,19 @@ export class OrdineDialog {
         data: data.data ?? '',
       }); 
     }
+  }
+
+  ngOnInit(): void {
+    this.statoServices.list().subscribe((data: any[]) => {
+    this.statoOrdine = data.map((s: any) => s.statoOrdine);
+  });
+    this.pagamentoServices.list().subscribe((data: any[]) => {
+    this.tipoPagamento = data.map((p: any) => p.tipoPagamento);
+  });
+  this.spedizioneServices.list().subscribe((data: any[]) => {
+    this.tipoSpedizione = data.map((s: any) => s.tipoSpedizione);
+  });
+
   }
 
   addRigaLocale() {
