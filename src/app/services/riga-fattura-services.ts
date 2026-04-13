@@ -27,4 +27,8 @@ export class RigaFatturaServices {
   update(fattura: any): Observable<any> {
     return this.http.put(`${this.url}/update`, fattura);
   }
+
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.url}/delete/${id}`);
+  }
 }

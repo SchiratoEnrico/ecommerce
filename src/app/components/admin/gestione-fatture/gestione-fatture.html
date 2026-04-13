@@ -359,7 +359,7 @@
                 </div>
 
               <!-- empty state righe -->
-              <div *ngIf="(fattura.righeFattura.length ?? 0) === 0" class="empty-righe">
+              <div *ngIf="fattura.righeFattura.length === 0" class="...">
                 <mat-icon>inventory_2</mat-icon>
                 <span>Nessuna riga presente</span>
               </div>
