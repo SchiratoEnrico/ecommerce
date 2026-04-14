@@ -17,7 +17,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { debounceTime, forkJoin, Subject, takeUntil } from 'rxjs';
+import { catchError, debounceTime, forkJoin, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { Saga } from '../../../models/saga';
 import { Autore } from '../../../models/autore';
 import { Genere } from '../../../models/genere';
@@ -29,6 +29,7 @@ import { MangaDialog } from '../dialogs/manga-dialog/manga-dialog';
 import { error } from 'console';
 import { AutoriServices } from '../../../services/autori-services';
 import { GeneriServices } from '../../../services/generi-services';
+import { ImageServices } from '../../../services/image-services';
 
 @Component({
   selector: 'app-gestione-manga',
@@ -80,6 +81,7 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
     private snack: MatSnackBar,
     private dialog: MatDialog,
     private route: ActivatedRoute,
+    private imageService: ImageServices
   ) {}
 
   ngOnInit(): void {
@@ -224,10 +226,17 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
         if (!result || result.action !== 'save') return;
-
         this.mangaServices
           .create(result)
-          .pipe(takeUntil(this.destroy$))
+          .pipe(
+            switchMap(resp => {
+              if (result.selectedFile) {
+                return this.imageService.upload(result.selectedFile, result.isbn);
+              }
+              return of(resp);
+            }),
+            takeUntil(this.destroy$)
+          )
           .subscribe({
             next: (res: any) => {
               this.showMsg(res.msg, false);
@@ -239,57 +248,93 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openEditDialog(manga: Manga): void {
-    const dialogRef = this.dialog.open(MangaDialog, {
-      width: '500px',
-      data: {
-        manga,
-        saghe: this.saghe,
-        autori: this.autori,
-        generi: this.generi,
-        caseEditrici: this.caseEditrici,
-      },
-    });
-
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    console.log(manga);
+    this.mangaServices.findMangaByIsbn(manga.isbn)
       .subscribe({
-        next: (result) => {
-          if (!result) return;
+        next: (fullManga) => {
+          const dialogRef = this.dialog.open(MangaDialog, {
+            width: '500px',
+            data: {
+              manga: fullManga,
+              saghe: this.saghe,
+              autori: this.autori,
+              generi: this.generi,
+              caseEditrici: this.caseEditrici,
+            },
+            });
+          dialogRef
+            .afterClosed()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: (result) => {
+                if (!result) return;
+              
+                if (result.action === 'delete') {
+                  this.mangaServices
+                    .delete(result.isbn)
+                    .pipe(
+                      switchMap((res: any) => {
+                        if (result.immagine) {
+                          // extract filename from full path/url if needed
+                          const filename = result.immagine.split('/').pop();
+                          return this.imageService.deleteImage(filename).pipe(
+                            catchError(err => {
+                              // manga già eliminato => solo warning
+                              console.warn('Immagine non eliminata:', err);
+                              return of(res);
+                            })
+                          );
+                        }
+                        return of(res);
+                      }),
+                      takeUntilDestroyed(this.destroyRef)
+                    )
+                    .subscribe({
+                      next: (res: any) => {
+                        this.showMsg(res.msg, false);
+                        this.loadData();
+                      },
+                      error: (err) => {
+                        this.showMsg(err.error?.msg ?? 'Errore eliminazione', true);
+                      },
+                    });
+                }
+              
+                if (result.action === 'save') {
+                  this.mangaServices
+                    .update(result)
+                    .pipe(
+                      switchMap(resp => {
+                          console.log("result.selectedFile: ", result.selectedFile);
+                          if (result.selectedFile) {
+                            console.log("will call upload imageservices");
 
-          if (result.action === 'delete') {
-            this.mangaServices
-              .delete(result.isbn)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: (res: any) => {
-                  this.showMsg(res.msg, false);
-                  this.loadData();
-                },
-                error: (err) => {
-                  this.showMsg(err.error?.msg ?? 'Errore eliminazione', true);
-                },
-              });
-          }
-
-          if (result.action === 'save') {
-            this.mangaServices
-              .update(result)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: (resp) => {
-                  this.showMsg(resp.msg, false);
-                  this.loadData();
-                },
-                error: (err) => {
-                  this.showMsg(err.error?.msg ?? 'Errore Upate', true);
-                },
-              });
-          }
+                            return this.imageService.upload(result.selectedFile, result.isbn);
+                          }
+                          return of(resp);
+                        }),
+                      takeUntil(this.destroy$))
+                    .subscribe({
+                      next: (resp) => {
+                        this.showMsg(resp.msg, false);
+                        this.loadData();
+                      },
+                      error: (err) => {
+                        this.showMsg(err.error?.msg ?? 'Errore Upate', true);
+                      },
+                    });
+                }
+              },
+              error: (err) => {
+                this.showMsg(err.error?.msg ?? 'Errore Upate', true);
+              },
+            });
         },
         error: (err) => {
-          this.showMsg(err.error?.msg ?? 'Errore Upate', true);
-        },
+                  this.showMsg(err.error?.msg ?? 'Errore caricamento manga by id', true);
+                }
       });
+
+   
   }
 }
