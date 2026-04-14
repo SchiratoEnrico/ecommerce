@@ -3,6 +3,7 @@ import { MangaServices } from '../../services/manga-services';
 import { AuthServices } from '../../auth/auth-services';
 import { Router } from '@angular/router';
 import { GestioneCarrelloServices } from '../../services/gestione-carrello-services';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,10 @@ export class Home implements OnInit {
   advice = signal<any[]>([]);
   bestSellers = signal<any[]>([]);
   newArrives = signal<any[]>([]);
+  risultatiRicerca = signal<any[]>([]);
+  searchQuery = signal<string>('');
+  searchGenre = signal<string>('');
+  searchAuthor = signal<string>('');
 
   constructor(
     private mangaService: MangaServices,
@@ -115,4 +120,34 @@ export class Home implements OnInit {
       }
     });
   }
+ 
+  cerca() {
+    const query = this.searchQuery().trim();
+    if (!query) { this.risultatiRicerca.set([]); return; }
+
+    const titolo$ = this.mangaService.listManga({ titolo: query });
+    const autore$ = this.mangaService.listManga({ autoreNome: query });
+    const genere$ = this.mangaService.listManga({ sagaNome: query });
+
+    forkJoin([titolo$, autore$, genere$]).subscribe({
+      next: ([perTitolo, perAutore, perGenere]) => {
+        // Unisce i risultati ed elimina i duplicati tramite id
+        const tutti = [...perTitolo, ...perAutore, ...perGenere];
+        const unici = tutti.filter(
+          (manga, index, self) => index === self.findIndex(m => m.isbn === manga.isbn)
+        );
+        this.risultatiRicerca.set(unici);
+      },
+      error: (err) => console.error(err)
+    });
+    }
+
+  // Aggiorna anche onSearchKeydown se vuoi che Enter funzioni su tutti i campi
+  onSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') this.cerca();
+  }
+
+
+ 
+  
 }

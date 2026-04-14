@@ -36,7 +36,7 @@ export class CheckoutDialog implements OnInit {
     this.isLoading = true;
     try {
       const [anagraficheRes, pagamentiRes, spedizioniRes] = await Promise.all([
-        firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/anagrafica/list')),
+        firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/anagrafica/find_by_account_id')),
         firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/tipo_pagamento/list')),
         firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/tipo_spedizione/list'))
       ]);

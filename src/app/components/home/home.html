@@ -3,13 +3,39 @@
   <div class="row justify-content-center mb-5">
     <div class="col-12 col-md-8 col-lg-6">
       <div class="input-group input-group-lg shadow-sm">
-        <input type="text" class="form-control border-0" placeholder="Cerca manga, autori, generi..." aria-label="Cerca manga">
-        <button class="search-btn btn px-4" type="button">
-          <mat-icon class="search-icon">search</mat-icon>
-        </button>
+        <input type="text" class="form-control border-0" placeholder="Cerca manga, autori, generi..." aria-label="Cerca manga"[value]="searchQuery()"(input)="searchQuery.set($any($event.target).value)"(keydown)="onSearchKeydown($event)">
+      <button class="search-btn btn px-4" type="button" (click)="cerca()">
+        <mat-icon class="search-icon">search</mat-icon>
+      </button>
       </div>
     </div>
   </div>
+  @if (risultatiRicerca().length > 0) {
+  <div class="d-flex justify-content-between align-items-end mb-3 border-bottom pb-2">
+    <h2 class="m-0 section-title">Risultati ricerca</h2>
+    <span class="section-link" style="cursor:pointer" (click)="risultatiRicerca.set([])">Chiudi ✕</span>
+  </div>
+
+  <div class="row mb-5">
+    @for (manga of risultatiRicerca(); track $index) {
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+        <div class="card h-100 shadow-sm border-0 manga-card">
+          <img [src]="manga.immagine | mangaImg" class="card-img-top manga-card-img" alt="{{manga.titolo}}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title manga-card-title m-0 mb-1">{{ manga.titolo }} - VOL. {{ manga.sagaVol }}</h5>
+            <p class="card-text small mb-2 manga-card-author">{{ manga.autore }}</p>
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              <span class="fw-bold fs-5 manga-card-price">€ {{ manga.prezzo }}</span>
+              <button mat-mini-fab class="add-to-cart-btn" (click)="addToCart(manga)">
+                <mat-icon>add_shopping_cart</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
 
   <div id="carouselBanner" 
      class="carousel slide mb-5 shadow rounded overflow-hidden position-relative" 
