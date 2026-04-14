@@ -16,6 +16,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class Carrello implements OnInit {
   user: any;
+  idAccount: number;
 
   get chartEl() {
     return this.gestioneCarrello.carrello();
@@ -37,7 +38,8 @@ export class Carrello implements OnInit {
     try {
       const dialogRef = this.dialog.open(CheckoutDialog, {
         width: '600px',
-        disableClose: true
+        disableClose: true,
+        data: { idAccount: this.idAccount }
       });
 
       const result = await firstValueFrom(dialogRef.afterClosed());
@@ -46,7 +48,7 @@ export class Carrello implements OnInit {
         return;
 
       const { anagraficaId, tipoPagamentoId, tipoSpedizioneId } = result;
-
+      console.log("risultato: ", result)
       const carrelloId = this.gestioneCarrello.chartId();
 
       if(!carrelloId){
@@ -94,6 +96,7 @@ export class Carrello implements OnInit {
 
   ngOnInit(): void {
     this.user = this.auth.currentUser();
+    this.idAccount = this.user.id;
     this.caricaCarrello();
   }
 

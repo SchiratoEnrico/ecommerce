@@ -9,12 +9,12 @@ import { Anagrafica } from '../models/anagrafica';
 export class AnagraficaService {
   private url = 'http://localhost:9090/rest/anagrafica';
 
-  autori = signal<Anagrafica[]>([]);
+  anagrafiche = signal<Anagrafica[]>([]);
 
   constructor(private http: HttpClient) {}
 
   findByAccountId(id: number): Observable<Anagrafica[]> {
-    return this.http.get<Anagrafica[]>(`${this.url}/findByAccountId`, { params: { id } });
+    return this.http.get<Anagrafica[]>(`${this.url}/find_by_account_id`, { params: { id } });
   }
 
   list(): Observable<Anagrafica[]> {
