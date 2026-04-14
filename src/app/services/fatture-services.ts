@@ -13,7 +13,24 @@ export class FattureServices {
   constructor(private http: HttpClient) {}
 
   list(params?: any): Observable<any[]> {
-    return this.http.get<any[]>(`${this.url}/list`, { params });
+    let httpParams: any = {};
+
+    if (params) {
+      // copia tutti i parametri normali
+      Object.keys(params).forEach(key => {
+        if (key !== 'isbns' && params[key] != null && params[key] !== '') {
+          httpParams[key] = params[key];
+        }
+      });
+
+      // isbns va serializzato come array di append
+      if (params.isbns?.length) {
+        // HttpClient accetta array direttamente come valore
+        httpParams['isbns'] = params.isbns;
+      }
+    }
+
+    return this.http.get<any[]>(`${this.url}/list`, { params: httpParams });
   }
 
   findById(id: number): Observable<any> {
