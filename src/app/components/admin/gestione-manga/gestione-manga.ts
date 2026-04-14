@@ -300,6 +300,7 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
                     });
                 }
               
+                
                 if (result.action === 'save') {
                   this.mangaServices
                     .update(result)

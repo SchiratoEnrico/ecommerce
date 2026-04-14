@@ -19,6 +19,7 @@ export class ImageServices {
     if (id){
       formData.append('id', id.toString());
     }   
+    console.log("will call image upload with parameters: ", formData);
 
     return this.http.post<Response>(`${this.url}/upload`, formData);
   }

@@ -62,7 +62,10 @@ export class SagaDialog {
   
     save() {
       if (this.form.invalid) return;
-        this.dialogRef.close({ action: 'save', ...this.form.value });
+        this.dialogRef.close({ 
+          action: 'save', 
+          selectedFile: this.selectedFile,
+          ...this.form.value });
     }
   
     close() {
