@@ -1,8 +1,16 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AnagraficaService } from '../../services/anagrafica-service';
+import { GestionePagamentiService } from '../../services/gestione-pagamenti-service';
+import { SpedizioneServices } from '../../services/spedizioni-services';
+import { Anagrafica } from '../../models/anagrafica';
+import { TipoPagamento } from '../../models/tipo-pagamento.model';
+import { Spedizione } from '../../models/spedizione';
+
 
 @Component({
   selector: 'app-checkout-dialog',
@@ -10,21 +18,26 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './checkout-dialog.html',
   styleUrl: './checkout-dialog.css'
 })
+
 export class CheckoutDialog implements OnInit {
   anagraficaId!: number;
   tipoPagamentoId!: number;
   tipoSpedizioneId!: number;
 
-  anagrafiche: any[] = [];
-  tipiPagamento: any[] = [];
-  tipiSpedizione: any[] = [];
+  anagrafiche: Anagrafica[] = [];
+  tipiPagamento: TipoPagamento[] = [];
+  tipiSpedizione: Spedizione[] = [];
 
   isLoading: boolean = true;
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) private data: {idAccount:number},
     public dialogRef: MatDialogRef<CheckoutDialog>,
     private http: HttpClient,
     private router: Router,
+    private anaS: AnagraficaService,
+    private pagS: GestionePagamentiService,
+    private speS: SpedizioneServices,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -36,9 +49,9 @@ export class CheckoutDialog implements OnInit {
     this.isLoading = true;
     try {
       const [anagraficheRes, pagamentiRes, spedizioniRes] = await Promise.all([
-        firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/anagrafica/find_by_account_id')),
-        firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/tipo_pagamento/list')),
-        firstValueFrom(this.http.get<any[]>('http://localhost:9090/rest/tipo_spedizione/list'))
+        firstValueFrom(this.anaS.findByAccountId(this.data.idAccount)),
+        firstValueFrom(this.pagS.list()),
+        firstValueFrom(this.speS.list())
       ]);
 
       this.anagrafiche = anagraficheRes;
