@@ -50,6 +50,15 @@ export class GestioneFatture implements OnInit {
     annoFrom: null as number | null,
     annoTo: null as number | null,
   };
+
+  resetFilters(): void {
+    this.filters = {
+      numeroFattura: '', clienteNome: '', clienteCognome: '',
+      clienteEmail: '', tipoSpedizione: '', tipoPagamento: '',
+      statoFattura: '', id_ordine: null, isbn: '', annoFrom: null, annoTo: null,
+    };
+    this.loadData();
+  }
  
   constructor(
     private fattureService: FattureServices,
@@ -83,8 +92,8 @@ export class GestioneFatture implements OnInit {
     if (this.filters.tipoSpedizione) params.tipoSpedizione = this.filters.tipoSpedizione;
     if (this.filters.tipoPagamento)  params.tipoPagamento  = this.filters.tipoPagamento;
     if (this.filters.statoFattura)   params.statoFattura   = this.filters.statoFattura;
-    if (this.filters.id_ordine)      params.id_ordine      = this.filters.id_ordine;
-    if (this.filters.isbn)           params.isbn           = this.filters.isbn;
+    if (this.filters.id_ordine)      params.idOrdine       = this.filters.id_ordine;
+    if (this.filters.isbn)           params.isbns          = [this.filters.isbn];
     if (this.filters.annoFrom)       params.annoFrom       = this.filters.annoFrom;
     if (this.filters.annoTo)         params.annoTo         = this.filters.annoTo;
  
@@ -161,17 +170,8 @@ export class GestioneFatture implements OnInit {
  
   canConfermaReso(f: Fattura): boolean { return f.statoFattura === 'RICHIESTA_RESO'; }
   canRifiutaReso(f: Fattura): boolean  { return f.statoFattura === 'RICHIESTA_RESO'; }
-  canRimborsa(f: Fattura): boolean     { return f.statoFattura === 'RESTITUITO'; }
-  canEdit(f: Fattura): boolean         { return !['RICHIESTA_RESO', 'RESTITUITO', 'RIMBORSATO', 'RIFIUTATO', 'ANNULLATA'].includes(f.statoFattura); }
-
-  resetFilters(): void {
-    this.filters = {
-      numeroFattura: '', clienteNome: '', clienteCognome: '',
-      clienteEmail: '', tipoSpedizione: '', tipoPagamento: '',
-      statoFattura: '', id_ordine: null, isbn: '', annoFrom: null, annoTo: null,
-    };
-    this.loadData();
-  }
+  canRimborsa(f: Fattura): boolean     { return f.statoFattura === 'RICONSEGNATO'; }
+  canEdit(f: Fattura): boolean {return !['RICHIESTA_RESO', 'RICONSEGNATO', 'RIMBORSATO','RIFIUTATO', 'ANNULLATA', 'CONFERMATO'].includes(f.statoFattura);}
  
   confermaReso(fattura: Fattura): void {
     if (!confirm(`Confermare il reso ${fattura.numeroFattura}?`)) return;
@@ -180,7 +180,7 @@ export class GestioneFatture implements OnInit {
       next: () => {
         this.showMsg('Reso confermato', false);
         this.processing = false;
-        this.selectedFattura = { ...fattura, statoFattura: 'RESTITUITO' };
+        this.selectedFattura = { ...fattura, statoFattura: 'RICONSEGNATO' };
         this.loadData();
         this.cdr.detectChanges();
       },
@@ -217,26 +217,24 @@ export class GestioneFatture implements OnInit {
       error: (err) => { this.showMsg(err.error?.msg || 'Errore rimborso', true); this.processing = false; }
     });
   }
-  private loadTipiSpedizione(): void {
-    this.tipoSpedizioneServices.list().subscribe({
-      next: (data) => this.tipiSpedizione = data,
-      error: () => this.showMsg('Errore caricamento tipi spedizione', true)
-    });
-  }
- 
-  private loadTipiPagamento(): void {
-    this.tipoPagamentoServices.list().subscribe({
-      next: (data) => this.tipiPagamento = data,
-      error: () => this.showMsg('Errore caricamento tipi pagamento', true)
-    });
-  }
- 
+  /*
   selectFattura(fattura: Fattura): void {
     this.fattureServices.findById(fattura.id).subscribe((fatturaCompleta: any) => {
     this.selectedFattura = fatturaCompleta;
     this.righeVisibili[fattura.id] = false;});
   }
-
+*/
+  selectFattura(fattura: Fattura): void {
+  // imposta subito la fattura selezionata per aggiornare la UI
+  this.selectedFattura = fattura;
+  
+  // poi carica il dettaglio completo
+  this.fattureServices.findById(fattura.id).subscribe((fatturaCompleta: any) => {
+    this.selectedFattura = fatturaCompleta;
+    this.righeVisibili[fattura.id] = false;
+    this.cdr.detectChanges();
+  });
+}
   toggleRighe(fattura: Fattura, event: Event): void {
     event.stopPropagation();
     const id = Number(fattura.id);
@@ -312,6 +310,19 @@ addRigaFattura(fattura: any): void {
     }
   });
 }
+  private loadTipiSpedizione(): void {
+      this.tipoSpedizioneServices.list().subscribe({
+        next: (data) => this.tipiSpedizione = data,
+        error: () => this.showMsg('Errore caricamento tipi spedizione', true)
+      });
+    }
+  
+    private loadTipiPagamento(): void {
+      this.tipoPagamentoServices.list().subscribe({
+        next: (data) => this.tipiPagamento = data,
+        error: () => this.showMsg('Errore caricamento tipi pagamento', true)
+      });
+    }
 
   showMsg(msg: string, isError: boolean): void {
     this.snack.open(msg, 'OK', {

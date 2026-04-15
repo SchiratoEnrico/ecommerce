@@ -125,7 +125,7 @@ export class Profilo implements OnInit {
   }
 
   // --- METODI ANAGRAFICA ---
-
+/*
   caricaIndirizzi() {
     if (this.accountLoggato) {
       this.anagraficaService.findByAccountId(this.accountLoggato.id).subscribe({
@@ -136,7 +136,21 @@ export class Profilo implements OnInit {
       });
     }
   }
-
+*/
+caricaIndirizzi() {
+  if (this.accountLoggato) {
+    this.anagraficaService.findByAccountId(this.accountLoggato.id).subscribe({
+      next: (res) => {
+        this.indirizzi = res;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Errore caricamento indirizzi", err);
+        this.indirizzi = []; // evita che l'app si blocchi
+      }
+    });
+  }
+}
   toggleFormAnagrafica() {
    this.mostraFormAnagrafica = !this.mostraFormAnagrafica;
     if (!this.mostraFormAnagrafica) {

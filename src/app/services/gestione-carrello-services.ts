@@ -90,4 +90,10 @@ export class GestioneCarrelloServices {
     };
     return this.http.put(`${this.url}riga_carrello/update`, payload);
   }
+  findByAccountId(accountId: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.url}carrello/findByAccountId`, 
+      { params: { id: accountId } }
+    );
+  }
 }
