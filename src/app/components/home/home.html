@@ -142,21 +142,18 @@
       }
     }
   </div>
-  <!-- SEZIONE SAGHE / CATALOGO -->
-  <div class="d-flex justify-content-between align-items-end mb-3 border-bottom pb-2">
+    <div class="d-flex justify-content-between align-items-end mb-3 border-bottom pb-2">
     <h2 class="m-0 section-title">Esplora le Saghe</h2>
     <a href="#" class="section-link">Vedi tutti &rarr;</a>
   </div>
 
-  <div class="row mb-5">
-    @for (saga of saghe(); track $index) {
+  <div class="row mb-3">
+    @for (saga of sagheDataSource.connect() | async; track $index) {
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
         <div class="card h-100 shadow-sm border-0 saga-card p-3">
-          
-          <img [src]="saga.immagine"
-                  class="card-img-top manga-card-img" 
-                  alt="{{saga.titolo}} - VOL. {{saga.sagaVol}}">
-
+          <img [src]="saga.immagine | mangaImg"
+              class="card-img-top manga-card-img" 
+              alt="{{saga.nome}}">
           <div class="card-body d-flex flex-column p-0">
             <h5 class="saga-card-title mb-1">{{ saga.nome }}</h5>
             <p class="saga-card-desc small mb-3">{{ saga.descrizione }}</p>
@@ -167,10 +164,10 @@
               </button>
             </div>
           </div>
-
         </div>
       </div>
     }
   </div>
+  <mat-paginator #saghePaginator [pageSize]="8"></mat-paginator>
+  </div>
 
-</div>
