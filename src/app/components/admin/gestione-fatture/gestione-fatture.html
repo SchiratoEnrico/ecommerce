@@ -51,6 +51,7 @@
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Tipo Spedizione</mat-label>
       <mat-select [(ngModel)]="filters.tipoSpedizione" (ngModelChange)="onFilterChange()">
+        <mat-option value="">Tutti</mat-option>
         <mat-option *ngFor="let ts of tipiSpedizione" [value]="ts.tipoSpedizione">{{ ts.tipoSpedizione }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -58,6 +59,7 @@
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Tipo Pagamento</mat-label>
       <mat-select [(ngModel)]="filters.tipoPagamento" (ngModelChange)="onFilterChange()">
+        <mat-option value="">Tutti</mat-option>
         <mat-option *ngFor="let tp of tipiPagamento" [value]="tp.tipoPagamento">{{ tp.tipoPagamento }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -65,13 +67,15 @@
     <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
       <mat-label>Stato Fattura</mat-label>
       <mat-select [(ngModel)]="filters.statoFattura" (ngModelChange)="onFilterChange()">
+        <mat-option value="">Tutti</mat-option>
         <mat-option value="CREATO">Creato</mat-option>
         <mat-option value="PAGATO">Pagato</mat-option>
         <mat-option value="LAVORAZIONE">Lavorazione</mat-option>
         <mat-option value="SPEDITO">Spedito</mat-option>
         <mat-option value="CONSEGNATO">Consegnato</mat-option>
+        <mat-option value="CONFERMATO">Confermato</mat-option>
         <mat-option value="RICHIESTA_RESO">Richiesta reso</mat-option>
-        <mat-option value="RESTITUITO">Restituito</mat-option>
+        <mat-option value="RICONSEGNATO">Riconsegnato</mat-option>
         <mat-option value="RIMBORSATO">Rimborsato</mat-option>
         <mat-option value="RIFIUTATO">Rifiutato</mat-option>
         <mat-option value="ANNULLATA">Annullata</mat-option>
@@ -213,10 +217,11 @@
 
       <!-- Banner stato -->
       <div *ngIf="fattura.statoFattura === 'RICHIESTA_RESO'" class="banner banner--warn">Richiesta di reso in attesa</div>
-      <div *ngIf="fattura.statoFattura === 'RESTITUITO'"     class="banner banner--info">Prodotto restituito</div>
+      <div *ngIf="fattura.statoFattura === 'RICONSEGNATO'"   class="banner banner--info">Prodotto riconsegnato</div>
       <div *ngIf="fattura.statoFattura === 'RIMBORSATO'"     class="banner banner--success">Rimborso completato</div>
       <div *ngIf="fattura.statoFattura === 'RIFIUTATO'"      class="banner banner--error">Reso rifiutato</div>
       <div *ngIf="fattura.statoFattura === 'ANNULLATA'"      class="banner banner--neutral">Fattura annullata</div>
+      <div *ngIf="fattura.statoFattura === 'CONFERMATO'"     class="banner banner--success">Ordine confermato</div>
 
       <!-- Corpo documento -->
       <div class="detail-body">
@@ -290,7 +295,7 @@
         <div class="doc-section">
           <div class="section-tag" style="display:flex; align-items:center; justify-content:space-between;">
             <span>Voci&nbsp;<span class="voci-count">
-              ({{ righeVisibili[fattura.id] ? (fattura.righeFattura.length ?? 0) : '?' }})
+              ({{ righeVisibili[fattura.id] ? (fattura.righeFattura?.length ?? 0) : '?' }})
             </span></span>
             <button class="btn-ghost" (click)="toggleRighe(fattura, $event)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -303,83 +308,76 @@
           </div>
 
           <!-- spinner -->
-          <div *ngIf="loadingRighe[fattura.id]" 
+          <div *ngIf="loadingRighe[fattura.id]"
               style="padding: 12px; color: #9ca3af; font-size:0.85rem;">
             Caricamento...
           </div>
 
           <!-- tabella righe -->
-            <ng-container *ngIf="righeVisibili[fattura.id] && !loadingRighe[fattura.id]">
-              <table mat-table [dataSource]="fattura.righeFattura" class="righe-table">
-                <ng-container matColumnDef="isbn">
-                  <th mat-header-cell *matHeaderCellDef>ISBN</th>
-                  <td mat-cell *matCellDef="let r">
-                    <span class="isbn-mono">{{ r.isbn || '—' }}</span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="prezzoUnitario">
-                  <th mat-header-cell *matHeaderCellDef class="cell-right">Prezzo Unit.</th>
-                  <td mat-cell *matCellDef="let r" class="cell-right">
-                    {{ r.prezzoUnitario | currency:'EUR':'symbol':'1.2-2' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="numeroCopie">
-                  <th mat-header-cell *matHeaderCellDef class="cell-center">Qt.</th>
-                  <td mat-cell *matCellDef="let r" class="cell-center">{{ r.numeroCopie }}</td>
-                </ng-container>
-                <ng-container matColumnDef="totaleRiga">
-                  <th mat-header-cell *matHeaderCellDef class="cell-right">Totale</th>
-                  <td mat-cell *matCellDef="let r" class="cell-right cell-totale">
-                    {{ r.totaleRiga | currency:'EUR':'symbol':'1.2-2' }}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="azioni">
-                  <th mat-header-cell *matHeaderCellDef></th>
-                  <td mat-cell *matCellDef="let r; let i = index">
-                    <button mat-icon-button (click)="editRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <button mat-icon-button color="warn" (click)="deleteRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
-                      <mat-icon>delete_outline</mat-icon>
-                    </button>
-                  </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="righeColumns; sticky: true"></tr>
-                <tr mat-row *matRowDef="let row; columns: righeColumns;" class="riga-row"></tr>
-              </table>
-              <!-- Aggiungi riga -->
-                <div class="aggiungi-riga-row" *ngIf="canEdit(fattura)">
-                  <button class="btn-ghost" (click)="addRigaFattura(fattura)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="12" y1="5" x2="12" y2="19"/>
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Aggiungi Riga
+          <ng-container *ngIf="righeVisibili[fattura.id] && !loadingRighe[fattura.id]">
+            <table mat-table [dataSource]="fattura.righeFattura" class="righe-table">
+
+              <ng-container matColumnDef="isbn">
+                <th mat-header-cell *matHeaderCellDef>ISBN</th>
+                <td mat-cell *matCellDef="let r">
+                  <span class="isbn-mono">{{ r.isbn || '—' }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="prezzoUnitario">
+                <th mat-header-cell *matHeaderCellDef class="cell-right">Prezzo Unit.</th>
+                <td mat-cell *matCellDef="let r" class="cell-right">
+                  {{ r.prezzoUnitario | currency:'EUR':'symbol':'1.2-2' }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="numeroCopie">
+                <th mat-header-cell *matHeaderCellDef class="cell-center">Qt.</th>
+                <td mat-cell *matCellDef="let r" class="cell-center">{{ r.numeroCopie }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="totaleRiga">
+                <th mat-header-cell *matHeaderCellDef class="cell-right">Totale</th>
+                <td mat-cell *matCellDef="let r" class="cell-right cell-totale">
+                  {{ r.totaleRiga | currency:'EUR':'symbol':'1.2-2' }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="azioni">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let r; let i = index">
+                  <button mat-icon-button (click)="editRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
+                    <mat-icon>edit</mat-icon>
                   </button>
-                </div>
+                  <button mat-icon-button color="warn" (click)="deleteRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
 
-              <!-- empty state righe -->
-              <div *ngIf="fattura.righeFattura.length === 0" class="...">
-                <mat-icon>inventory_2</mat-icon>
-                <span>Nessuna riga presente</span>
-              </div>
-            </ng-container>
+              <tr mat-header-row *matHeaderRowDef="righeColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: righeColumns;" class="riga-row"></tr>
+            </table>
 
-        <ng-container matColumnDef="azioni">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let r; let i = index">
-            <button mat-icon-button (click)="editRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteRigaFattura(fattura, r, i)" [disabled]="!canEdit(fattura)">
-              <mat-icon>delete_outline</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="righeColumns; sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: righeColumns;" class="riga-row"></tr>
+            <!-- Aggiungi riga -->
+            <div class="aggiungi-riga-row" *ngIf="canEdit(fattura)">
+              <button class="btn-ghost" (click)="addRigaFattura(fattura)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Aggiungi Riga
+              </button>
+            </div>
+
+            <!-- empty state righe -->
+            <div *ngIf="(fattura.righeFattura?.length ?? 0) === 0" class="empty-righe">
+              <mat-icon>inventory_2</mat-icon>
+              <span>Nessuna riga presente</span>
+            </div>
+          </ng-container>
+
         </div>
-
 
         <!-- Totali -->
         <div class="totali-block">
