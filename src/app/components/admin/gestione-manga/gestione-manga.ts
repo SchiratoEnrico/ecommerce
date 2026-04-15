@@ -31,6 +31,7 @@ import { AutoriServices } from '../../../services/autori-services';
 import { GeneriServices } from '../../../services/generi-services';
 import { ImageServices } from '../../../services/image-services';
 import { GestioneCarrelloServices } from '../../../services/gestione-carrello-services';
+import { AuthServices } from '../../../auth/auth-services';
 
 @Component({
   selector: 'app-gestione-manga',
@@ -48,13 +49,12 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
   private filterChanges = new Subject<void>();
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['immagine', 'titolo', 'prezzo', 'dataPubblicazione', 'numeroCopie', 'azioni'];
   dataSource = new MatTableDataSource<Manga>();
   form!: FormGroup;
   loading = false;
   loadingOptions = false;
   MangaInModifica: Manga | null = null;
-
+  displayedColumns: string[];
   saghe: Saga[] = [];
   autori: Autore[] = [];
   generi: Genere[] = [];
@@ -79,8 +79,10 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private imageService: ImageServices,
-    private carrelloService: GestioneCarrelloServices
+    private carrelloService: GestioneCarrelloServices,
+    public auth: AuthServices
   ) {}
+
 
   ngOnInit(): void {
     // questo per caricare i filtri impostati quando redirect da altre pagine
@@ -88,7 +90,7 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
     if (sagaIdParam) {
       this.filters.sagaId = Number(sagaIdParam);
     }
-
+    
     const autoreIdParam = this.route.snapshot.queryParamMap.get('autoreId');
     if (autoreIdParam) {
       this.filters.autoreId = Number(autoreIdParam);
@@ -98,6 +100,10 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
       // Convertiamo l'array di stringhe in un array di numeri
       this.filters.generiId = generiParams.map((id) => Number(id));
     }
+
+    this.displayedColumns = this.auth.isRoleAdmin()
+    ? ['immagine', 'titolo', 'prezzo', 'dataPubblicazione', 'numeroCopie']
+    : ['immagine', 'titolo', 'prezzo', 'dataPubblicazione', 'numeroCopie', 'azioni'];
 
     // carica risultato con filtri
     this.filterChanges

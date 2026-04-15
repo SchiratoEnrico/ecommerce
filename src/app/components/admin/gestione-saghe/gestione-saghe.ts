@@ -14,6 +14,7 @@ import { Autore } from '../../../models/autore';
 import { CasaEditrice } from '../../../models/casa-editrice';
 import { Genere } from '../../../models/genere';
 import { GeneriServices } from '../../../services/generi-services';
+import { AuthServices } from '../../../auth/auth-services';
 
 @Component({
   selector: 'app-gestione-saghe',
@@ -49,7 +50,8 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
     private autoriS:      AutoriServices,
     private caseS:        CaseEditriciServices,
     private generiS:        GeneriServices,
-    private imageService: ImageServices
+    private imageService: ImageServices,
+    public auth: AuthServices
   ) {}
 
   ngOnInit(): void {
