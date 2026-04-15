@@ -4,14 +4,10 @@ import { Saga } from '../models/saga';
 import { Observable } from 'rxjs';
 
 export interface SagaFilters {
-  sagaId?:  number | null;
-  casaEditriceNome?:string;
-  sagaNome?:string;
+  sagaId?:         number | null;
   casaEditriceId?: number | null;
-  autoreNome?: string;
-  autoreCognome?: string;
-  autoreId?: number | null;
-  generiId?: number[];
+  autoreId?:       number | null;
+  generiId?:       number[];
 }
 
 
@@ -28,16 +24,10 @@ export class SagheServices {
   listSaghe(filters?: SagaFilters): Observable<Saga[]> {
     let params = new HttpParams();
     if (filters) {
-      if (filters.sagaNome)
-        params = params.set('sagaNome', filters.sagaNome);
       if (filters.sagaId != null) 
         params = params.set('sagaId', filters.sagaId);
-      if (filters.casaEditriceNome) 
-        params = params.set('casaEditriceNome', filters.casaEditriceNome);
       if (filters.casaEditriceId != null) 
         params = params.set('casaEditriceId', filters.casaEditriceId);
-      if (filters.autoreNome)
-        params = params.set('autoreNome', filters.autoreNome);
       if (filters.autoreId != null) 
         params = params.set('autoreId', filters.autoreId);
       if (filters.generiId?.length) {

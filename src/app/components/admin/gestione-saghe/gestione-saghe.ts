@@ -8,6 +8,12 @@ import { catchError, debounceTime, of, Subject, switchMap, takeUntil } from 'rxj
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ImageServices } from '../../../services/image-services';
+import { AutoriServices } from '../../../services/autori-services';
+import { CaseEditriciServices } from '../../../services/case-editrici-services';
+import { Autore } from '../../../models/autore';
+import { CasaEditrice } from '../../../models/casa-editrice';
+import { Genere } from '../../../models/genere';
+import { GeneriServices } from '../../../services/generi-services';
 
 @Component({
   selector: 'app-gestione-saghe',
@@ -22,18 +28,17 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
   private filterChanges = new Subject<void>();
   private cdr           = inject(ChangeDetectorRef);
 
+  autori: Autore[]  = [];
+  case: CasaEditrice[]  = [];
   sagas:   Saga[]  = [];
+  generi:   Genere[]  = [];
   loading: boolean = false;
-
+  
   filters: SagaFilters = {
-    casaEditriceNome: '',
-    autoreNome:       '',
-    autoreCognome:    '',
-    sagaNome:         '',
-    sagaId:           null,
-    casaEditriceId:   null,
-    autoreId:         null,
-    generiId:         []
+    sagaId:         null,
+    casaEditriceId: null,
+    autoreId:       null,
+    generiId:       []
   };
 
   constructor(
@@ -41,17 +46,54 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
     private snack:         MatSnackBar,
     private dialog:        MatDialog,
     private router:        Router,
+    private autoriS:      AutoriServices,
+    private caseS:        CaseEditriciServices,
+    private generiS:        GeneriServices,
     private imageService: ImageServices
   ) {}
 
   ngOnInit(): void {
     this.filterChanges
       .pipe(debounceTime(1), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.loadData());
+      .subscribe({
+        next: () => {
+          this.loadData();
+          this.loadAutori();
+          this.loadCase();
+          this.loadGeneri();
+        },
+        error: (err) => this.showMsg('Errore caricamento dati', true)
+      });
+  }
+  
+  private loadAutori(): void {
+    this.autoriS.list().subscribe({
+      next: (data) => this.autori = data,
+      error: () => this.showMsg('Errore caricamento autori', true)
+    });
+  }
+ 
+  private loadCase(): void {
+    this.caseS.listCaseEditrici().subscribe({
+      next: (data) => this.case = data,
+      error: () => this.showMsg('Errore caricamento case editrici', true)
+    });
+  }
+
+  private loadGeneri(): void {
+    this.generiS.list().subscribe({
+      next: (data) => this.generi = data,
+      error: () => this.showMsg('Errore caricamento generi', true)
+    });
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.loadData(), 0);
+    setTimeout(() => {
+      this.loadData();
+      this.loadAutori();
+      this.loadCase();
+      this.loadGeneri();
+    }, 0);
   }
 
   ngOnDestroy(): void {
@@ -63,13 +105,10 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
     this.loading = true;
 
     const activeFilters: SagaFilters = {
-      sagaNome:         this.filters.sagaNome         || undefined,
-      sagaId:           this.filters.sagaId           ?? undefined,
-      casaEditriceNome: this.filters.casaEditriceNome || undefined,
-      casaEditriceId:   this.filters.casaEditriceId   ?? undefined,
-      autoreNome:       this.filters.autoreNome       || undefined,
-      autoreId:         this.filters.autoreId         ?? undefined,
-      generiId:         this.filters.generiId?.length ? this.filters.generiId : undefined
+      sagaId:         this.filters.sagaId         ?? undefined,
+      casaEditriceId: this.filters.casaEditriceId ?? undefined,
+      autoreId:       this.filters.autoreId       ?? undefined,
+      generiId:       this.filters.generiId?.length ? this.filters.generiId : undefined
     };
 
     this.sagheServices.listSaghe(activeFilters)
@@ -102,7 +141,6 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
 
   resetFilters(): void {
     this.filters = {
-      casaEditriceNome: '', autoreNome: '', autoreCognome: '', sagaNome: '',
       sagaId: null, casaEditriceId: null, autoreId: null, generiId: []
     };
     // BUG FIX (loading bar stays on reset):

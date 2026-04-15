@@ -16,28 +16,42 @@
 <div class="card filter-card">
   <div class="filter-row">
     <mat-form-field appearance="outline">
-      <mat-label>Id Saga</mat-label>
-      <input matInput [(ngModel)]="filters.sagaId" (keyup)="onFilterChange()">
+      <mat-label>Saga</mat-label>
+      <mat-select [(ngModel)]="filters.sagaId" (selectionChange)="onFilterChange()">
+        <mat-option [value]="null">— Tutte —</mat-option>
+        @for (s of sagas; track s.id) {
+          <mat-option [value]="s.id">{{ s.nome }}</mat-option>
+        }
+      </mat-select>
     </mat-form-field>
+  
     <mat-form-field appearance="outline">
-      <mat-label>Titolo Saga</mat-label>
-      <input matInput [(ngModel)]="filters.sagaNome" (keyup)="onFilterChange()">
+      <mat-label>Casa Editrice</mat-label>
+      <mat-select [(ngModel)]="filters.casaEditriceId" (selectionChange)="onFilterChange()">
+        <mat-option [value]="null">— Tutte —</mat-option>
+        @for (ce of case; track ce.id) {
+          <mat-option [value]="ce.id">{{ ce.nome }}</mat-option>
+        }
+      </mat-select>
     </mat-form-field>
+  
     <mat-form-field appearance="outline">
-      <mat-label>Id Casa Editrice</mat-label>
-      <input matInput [(ngModel)]="filters.casaEditriceId" (keyup)="onFilterChange()">
+      <mat-label>Autore</mat-label>
+      <mat-select [(ngModel)]="filters.autoreId" (selectionChange)="onFilterChange()">
+        <mat-option [value]="null">— Tutti —</mat-option>
+        @for (a of autori; track a.id) {
+          <mat-option [value]="a.id">{{ a.nome }} {{ a.cognome }}</mat-option>
+        }
+      </mat-select>
     </mat-form-field>
+  
     <mat-form-field appearance="outline">
-      <mat-label>Nome Casa Editrice</mat-label>
-      <input matInput [(ngModel)]="filters.casaEditriceNome" (keyup)="onFilterChange()">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Id Autore</mat-label>
-      <input matInput [(ngModel)]="filters.autoreId" (keyup)="onFilterChange()">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Nome Autore</mat-label>
-      <input matInput [(ngModel)]="filters.autoreNome" (keyup)="onFilterChange()">
+      <mat-label>Generi</mat-label>
+      <mat-select [(ngModel)]="filters.generiId" multiple (selectionChange)="onFilterChange()">
+        @for (g of generi; track g.id) {
+          <mat-option [value]="g.id">{{ g.descrizione }}</mat-option>
+        }
+      </mat-select>
     </mat-form-field>
   </div>
   <div class="actions-group">

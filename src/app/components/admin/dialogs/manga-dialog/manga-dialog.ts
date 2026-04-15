@@ -124,7 +124,7 @@ export class MangaDialog implements OnInit {
   
   delete(): void {
     if (!confirm('Confermi eliminazione?')) return;
-      this.dialogRef.close({ action: 'delete', id: this.data.manga!.isbn });
+      this.dialogRef.close({ action: 'delete', isbn: this.data.manga!.isbn });
 
   }
   
