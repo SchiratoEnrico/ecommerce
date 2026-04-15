@@ -4,9 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Saga } from '../../../models/saga';
 import { SagaFilters, SagheServices } from '../../../services/saghe-services';
 import { SagaDialog } from '../dialogs/saga-dialog/saga-dialog';
-import { debounceTime, Subject, takeUntil } from 'rxjs';
+import { catchError, debounceTime, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { ImageServices } from '../../../services/image-services';
 
 @Component({
   selector: 'app-gestione-saghe',
@@ -40,11 +41,12 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
     private snack:         MatSnackBar,
     private dialog:        MatDialog,
     private router:        Router,
+    private imageService: ImageServices
   ) {}
 
   ngOnInit(): void {
     this.filterChanges
-      .pipe(debounceTime(400), takeUntilDestroyed(this.destroyRef))
+      .pipe(debounceTime(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadData());
   }
 
@@ -123,7 +125,14 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(result => {
         if (!result || result.action !== 'save') return;
         this.sagheServices.create(result)
-          .pipe(takeUntil(this.destroy$))
+          .pipe(switchMap(resp => {
+            if (result.selectedFile && resp.data?.id) {
+              return this.imageService.upload(result.selectedFile, undefined, resp.data.id);
+            }
+            return of(resp);
+          }),
+            takeUntil(this.destroy$)
+          )
           .subscribe({
             next:  (res: any) => { this.showMsg(res.msg, false); this.loadData(); },
             error: (err)      => this.showMsg(err.error?.msg ?? 'Errore creazione', true)
@@ -141,7 +150,22 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
 
         if (result.action === 'delete') {
           this.sagheServices.delete(result.id)
-            .pipe(takeUntil(this.destroy$))
+            .pipe(
+              switchMap((res: any) => {
+                if (result.immagine) {
+                  // prendi filename da url
+                  const filename = result.immagine.split('/').pop();
+                  return this.imageService.deleteImage(filename).pipe(
+                    catchError(err => {
+                      // manga già eliminato => solo warning
+                      console.warn('Immagine non eliminata:', err);
+                      return of(res);
+                    })
+                  );
+                }
+                return of(res);
+              }),
+              takeUntil(this.destroy$))
             .subscribe({
               next:  (res: any) => { this.showMsg(res.msg, false); this.loadData(); },
               error: (err)      => this.showMsg(err.error?.msg ?? 'Errore eliminazione', true)
@@ -150,7 +174,14 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
 
         if (result.action === 'save') {
           this.sagheServices.update({ id: saga.id, ...result })
-            .pipe(takeUntil(this.destroy$))
+            .pipe(
+              switchMap(resp => {
+                if (result.selectedFile) {
+                  return this.imageService.upload(result.selectedFile, undefined, saga.id);
+                }
+                return of(resp);
+               }),
+              takeUntil(this.destroy$))
             .subscribe({
               next:  (res: any) => { this.showMsg(res.msg, false); this.loadData(); },
               error: (err)      => this.showMsg(err.error?.msg ?? 'Errore aggiornamento', true)
@@ -160,9 +191,11 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMsg(msg: string, isError: boolean): void {
-    this.snack.open(msg ?? 'Operazione completata', 'OK', {
-      duration: 2000,
-      panelClass: isError ? 'snack-error' : 'snack-success'
+    setTimeout(() => {
+      this.snack.open(msg ?? 'Operazione completata', 'OK', {
+        duration: 2000,
+        panelClass: isError ? 'snack-error' : 'snack-success'
+      });
     });
   }
 }

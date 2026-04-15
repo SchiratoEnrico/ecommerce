@@ -11,6 +11,7 @@ export interface Manga {
 	immagine: string;
 	numeroCopie: number;
 	saga: Saga;
+	sagaVol: number;
 	casaEditrice: CasaEditrice | null;
 	generi: Genere[] | null;
 	autori: Autore[] | null;

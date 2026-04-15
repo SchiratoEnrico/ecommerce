@@ -39,7 +39,7 @@ export class MangaDialog implements OnInit {
       @Inject(MAT_DIALOG_DATA) public data: MangaDialogData
      ) {
       this.form = fb.group({
-        isbn: [{ value: '', disabled: !!data.manga }, Validators.required],
+        isbn: [{value: '' , disabled: !!data.manga }, Validators.required],
         titolo: ['', Validators.required],
         dataPubblicazione:[null, Validators.required],
         immagine: [''],
@@ -67,6 +67,7 @@ export class MangaDialog implements OnInit {
         prezzo:       this.manga.prezzo,
         numeroCopie:  this.manga.numeroCopie,
         immagine:     this.manga.immagine,
+        sagaVol: this.manga.sagaVol,
         // IDs for the selects: mat-select compares by value reference,
         // so we extract the ID from the nested object.
         casaEditrice: this.manga.casaEditrice?.id ?? null,
@@ -133,6 +134,7 @@ export class MangaDialog implements OnInit {
     const raw = this.form.getRawValue();
     this.dialogRef.close({
       action: 'save',
+      selectedFile: this.selectedFile, 
       ...raw,
       // Convert Date back to ISO string for the backend (Spring expects String)
       dataPubblicazione: raw.dataPubblicazione instanceof Date
