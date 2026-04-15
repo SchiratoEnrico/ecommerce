@@ -30,6 +30,7 @@ import { error } from 'console';
 import { AutoriServices } from '../../../services/autori-services';
 import { GeneriServices } from '../../../services/generi-services';
 import { ImageServices } from '../../../services/image-services';
+import { GestioneCarrelloServices } from '../../../services/gestione-carrello-services';
 
 @Component({
   selector: 'app-gestione-manga',
@@ -47,7 +48,7 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
   private filterChanges = new Subject<void>();
   private cdr = inject(ChangeDetectorRef);
 
-  displayedColumns: string[] = ['immagine', 'titolo', 'prezzo', 'dataPubblicazione', 'numeroCopie'];
+  displayedColumns: string[] = ['immagine', 'titolo', 'prezzo', 'dataPubblicazione', 'numeroCopie', 'azioni'];
   dataSource = new MatTableDataSource<Manga>();
   form!: FormGroup;
   loading = false;
@@ -62,10 +63,6 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
   // NW attualmente filter saranno da riunire direttamente a id
   filters: MangaFilters = {
     titolo: '',
-    casaEditriceNome: '',
-    autoreNome: '',
-    autoreCognome: '',
-    sagaNome: '',
     sagaId: null,
     casaEditriceId: null,
     autoreId: null,
@@ -81,7 +78,8 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
     private snack: MatSnackBar,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private imageService: ImageServices
+    private imageService: ImageServices,
+    private carrelloService: GestioneCarrelloServices
   ) {}
 
   ngOnInit(): void {
@@ -160,10 +158,6 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
 
     const activeFilters: MangaFilters = {
       titolo: this.filters.titolo || undefined,
-      casaEditriceNome: this.filters.casaEditriceNome || undefined,
-      autoreNome: this.filters.autoreNome || undefined,
-      autoreCognome: this.filters.autoreCognome || undefined,
-      sagaNome: this.filters.sagaNome || undefined,
       sagaId: this.filters.sagaId ?? undefined,
       casaEditriceId: this.filters.casaEditriceId ?? undefined,
       autoreId: this.filters.autoreId ?? undefined,
@@ -197,10 +191,6 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
   resetFilters() {
     this.filters = {
       titolo: '',
-      casaEditriceNome: '',
-      autoreNome: '',
-      autoreCognome: '',
-      sagaNome: '',
       sagaId: null,
       casaEditriceId: null,
       autoreId: null,
@@ -293,6 +283,7 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
                       next: (res: any) => {
                         this.showMsg(res.msg, false);
                         this.loadData();
+                        this.loadOptions();
                       },
                       error: (err) => {
                         this.showMsg(err.error?.msg ?? 'Errore eliminazione', true);
@@ -337,5 +328,17 @@ export class GestioneManga implements OnInit, AfterViewInit, OnDestroy {
       });
 
    
+  }
+
+  addToCart(manga: Manga): void {
+    this.carrelloService.addRow(manga).subscribe({
+      next: () => {
+        this.carrelloService.aggiornaDatiCarrello();
+        this.showMsg('Aggiunto al carrello', false);
+      },
+      error: (err) => {
+        this.showMsg(err.error?.msg ?? 'Errore aggiunta al carrello', true);
+      }
+    });
   }
 }
