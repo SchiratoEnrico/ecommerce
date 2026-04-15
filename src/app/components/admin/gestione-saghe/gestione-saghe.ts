@@ -149,12 +149,14 @@ export class GestioneSaghe implements OnInit, AfterViewInit, OnDestroy {
         if (!result) return;
 
         if (result.action === 'delete') {
+          console.log("Will delete saga with id: ", result.id);
           this.sagheServices.delete(result.id)
             .pipe(
               switchMap((res: any) => {
                 if (result.immagine) {
                   // prendi filename da url
                   const filename = result.immagine.split('/').pop();
+                  console.log("Will delete img with filename: ", filename);
                   return this.imageService.deleteImage(filename).pipe(
                     catchError(err => {
                       // manga già eliminato => solo warning

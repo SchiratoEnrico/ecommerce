@@ -59,7 +59,7 @@ export class SagheServices {
     }
   
     delete(id: number): Observable<any> {
-      return this.http.delete(`${this.url}/delete`, { params: { id: id.toString() } });
+      return this.http.delete(`${this.url}/delete/${id}`);
     }
   
 }
