@@ -4,17 +4,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { forkJoin, Observable } from 'rxjs';
 
 export interface MangaFilters {
-  titolo?:string;
-  casaEditriceNome?:string;
-  autoreNome?: string;
-  autoreCognome?: string;
-  sagaNome?:string;
-  sagaId?: number | null;
+  titolo?:         string;
+  sagaId?:         number | null;
   casaEditriceId?: number | null;
-  autoreId?: number | null;
-  generiId?: number[];
+  autoreId?:       number | null;
+  generiId?:       number[];
 }
-
 
 @Injectable({
   providedIn: 'root',
@@ -29,16 +24,10 @@ export class MangaServices {
   if (filters) {
     if (filters.titolo)
       params = params.set('titolo', filters.titolo);
-    if (filters.sagaNome)
-      params = params.set('sagaNome', filters.sagaNome);
     if (filters.sagaId != null) 
       params = params.set('sagaId', filters.sagaId);
-    if (filters.casaEditriceNome) 
-      params = params.set('casaEditriceNome', filters.casaEditriceNome);
     if (filters.casaEditriceId != null) 
       params = params.set('casaEditriceId', filters.casaEditriceId);
-    if (filters.autoreNome)
-      params = params.set('autoreNome', filters.autoreNome);
     if (filters.autoreId != null) 
       params = params.set('autoreId', filters.autoreId);
     if (filters.generiId?.length) {
