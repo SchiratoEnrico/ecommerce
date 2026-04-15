@@ -40,7 +40,6 @@ const routes: Routes = [
       { path: 'profilo',  component: Profilo, canActivate:[authAuthenticatedGuard] },
 
       // ── Admin (protette dal guard) ──
-      { path: 'admin/manga',          component: GestioneManga,         canActivate: [authAdminGuard] },
       { path: 'admin/autori',         component: GestioneAutori,        canActivate: [authAdminGuard] },
       { path: 'admin/generi',         component: GestioneGeneri,        canActivate: [authAdminGuard] },
       { path: 'admin/case-editrici',  component: GestioneCaseEditrici,  canActivate: [authAdminGuard] },
@@ -50,7 +49,6 @@ const routes: Routes = [
       { path: 'admin/pagamenti',      component: GestionePagamenti,     canActivate: [authAdminGuard] },
       { path: 'admin/gestione-anagrafica', component: GestioneAnagrafica, canActivate: [authAdminGuard] },
       { path: 'admin/gestione-ordini', component: GestioneOrdini, canActivate: [authAdminGuard] },
-      { path: 'admin/saghe', component: GestioneSaghe, canActivate: [authAdminGuard] },
       { path: 'admin/stato-ordine', component: GestioneStatoOrdine, canActivate: [authAdminGuard] },
       { path: 'admin/gestione-carrello',   component: GestioneCarrello,      canActivate: [authAdminGuard] },
       { path: 'admin/fatture', component: GestioneFatture, canActivate: [authAdminGuard] },
@@ -58,7 +56,9 @@ const routes: Routes = [
   },
   { path: 'login', component: Login },
   { path: 'registrazione', component: Registrazione },
-  
+  { path: 'admin/manga',          component: GestioneManga},
+  { path: 'admin/saghe', component: GestioneSaghe},
+
   // Rotte unite dai due branch
   { path: 'pagamento', component: Pagamento, canActivate:[authAuthenticatedGuard] },
   { path: 'emailValidation/:username', component: MailValidation },
