@@ -4,11 +4,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { forkJoin, Observable } from 'rxjs';
 
 export interface MangaFilters {
-    titolo?: '';
-    casaEditriceNome?: '';
-    autoreNome?: '';
-    autoreCognome?: '';
-    sagaNome?: '';
+    titolo?: string;
+    casaEditriceNome?: string;
+    autoreNome?: string;
+    autoreCognome?: string;
+    sagaNome?: string;
     sagaId?: number | null;
     casaEditriceId?: number | null;
     autoreId?: number | null;
