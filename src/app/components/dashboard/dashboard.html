@@ -140,6 +140,17 @@
           <mat-icon matListItemIcon>note_stack</mat-icon>
           <span matListItemTitle>Fatture</span>
         </a>
+        @if (auth.isRoleAdmin()) {
+          <button mat-icon-button class="toolbar-icon-btn"
+            aria-label="Aggiorna immagine default"
+            matTooltip="Aggiorna immagine default"
+            (click)="defaultImgInput.click()">
+            <mat-icon>image</mat-icon>
+          </button>
+          <input #defaultImgInput type="file" accept="image/*"
+            style="display: none"
+            (change)="onUploadDefaultImg($event)" />
+        }
 
       </mat-nav-list>
     }
