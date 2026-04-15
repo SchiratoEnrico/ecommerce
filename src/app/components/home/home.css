@@ -130,3 +130,51 @@
     transform: translateX(min(0px, calc(-100% + 100cqi))); 
   }
 }
+.saga-card {
+  background-color: #f5f3ee;
+  border-radius: 16px;
+  transition: box-shadow 0.2s;
+}
+
+.saga-card:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+}
+
+.saga-card-icon {
+  background-color: #ede9df;
+  border-radius: 12px;
+  height: 140px;
+}
+
+.saga-icon {
+  font-size: 56px !important;
+  width: 56px !important;
+  height: 56px !important;
+  color: #b8963e;
+}
+
+.saga-card-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1a1a1a;
+}
+
+.saga-card-desc {
+  color: #666;
+  line-height: 1.4;
+}
+
+.saga-btn {
+  border: 1.5px solid #b8963e;
+  color: #b8963e;
+  background: transparent;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 8px 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.saga-btn:hover {
+  background-color: #b8963e;
+  color: white;
+}

@@ -25,6 +25,7 @@ import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-
 // Import uniti dai due branch
 import { Pagamento } from './components/pagamento/pagamento';
 import { MailValidation } from './components/mail-validation/mail-validation';
+import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettaglio-carrello';
 
 const routes: Routes = [
   {
@@ -75,7 +76,8 @@ const routes: Routes = [
   { path: 'admin/gestione-ordini', component: GestioneOrdini, canActivate: [authAuthenticatedGuard,authAdminGuard] },
   { path: 'admin/stato-ordine', component: GestioneStatoOrdine, canActivate: [authAuthenticatedGuard,authAdminGuard] },
   { path: 'admin/saghe', component: GestioneSaghe, canActivate: [authAuthenticatedGuard,authAdminGuard] },
-  { path: 'admin/gestione-carrello', component: GestioneCarrello, canActivate: [authAuthenticatedGuard,authAdminGuard] }
+  { path: 'admin/gestione-carrello', component: GestioneCarrello, canActivate: [authAuthenticatedGuard,authAdminGuard] },
+  { path: 'admin/dettaglio-carrello', component: DettaglioCarrello, canActivate: [authAuthenticatedGuard, authAdminGuard] }
 ];
 
 @NgModule({
