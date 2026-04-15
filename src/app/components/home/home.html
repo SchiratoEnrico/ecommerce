@@ -153,10 +153,9 @@
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
         <div class="card h-100 shadow-sm border-0 saga-card p-3">
           
-          <!-- Icona libro centrata -->
-          <div class="saga-card-icon d-flex justify-content-center align-items-center mb-3">
-            <mat-icon class="saga-icon">menu_book</mat-icon>
-          </div>
+          <img [src]="saga.immagine"
+                  class="card-img-top manga-card-img" 
+                  alt="{{saga.titolo}} - VOL. {{saga.sagaVol}}">
 
           <div class="card-body d-flex flex-column p-0">
             <h5 class="saga-card-title mb-1">{{ saga.nome }}</h5>
