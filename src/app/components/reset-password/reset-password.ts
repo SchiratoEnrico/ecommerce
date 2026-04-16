@@ -21,7 +21,7 @@ export class ResetPassword implements OnInit{
   ) {}
 
   ngOnInit() {
-    // Catturiamo il token dall'URL (es: ?token=abc-123)
+    // Catturiamo il token dall'URL 
     this.route.queryParams.subscribe(params => {
       this.token = params['token'];
       if (!this.token) {
@@ -41,7 +41,7 @@ export class ResetPassword implements OnInit{
     this.accountService.resetPassword(payload).subscribe({
       next: (res) => {
         this.isSuccess.set(true);
-        this.msg.set(res.msg); // "Password reimpostata con successo"
+        this.msg.set(res.msg); 
       },
       error: (err) => {
         this.msg.set(err.error?.msg || "Si è verificato un errore col token. Potrebbe essere scaduto.");
