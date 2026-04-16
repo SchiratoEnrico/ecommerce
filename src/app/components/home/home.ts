@@ -1,10 +1,12 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, OnInit, signal, ViewChild } from '@angular/core';
 import { MangaServices } from '../../services/manga-services';
 import { AuthServices } from '../../auth/auth-services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GestioneCarrelloServices } from '../../services/gestione-carrello-services';
 import { forkJoin } from 'rxjs';
 import { SagheServices } from '../../services/saghe-services';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +22,8 @@ export class Home implements OnInit {
   searchQuery = signal<string>('');
   searchGenre = signal<string>('');
   searchAuthor = signal<string>('');
-  saghe = signal<any[]>([]);
+  sagheDataSource = new MatTableDataSource<any>();
+  @ViewChild('saghePaginator') saghePaginator!: MatPaginator;
 
   constructor(
     private mangaService: MangaServices,
@@ -29,26 +32,17 @@ export class Home implements OnInit {
     private router: Router,
     private carrelloService: GestioneCarrelloServices,
     private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   isLogged = computed(() => !!this.auth.currentUser());
 
-  goToLogin() {
-    this.router.navigate(['/login']);
-  }
+  goToLogin() {this.router.navigate(['/login']);}
 
   ngOnInit(): void {
     this.caricaDatiHome(); // Carica arrivi, best sellers e carosello
     this.caricaConsigliati(); // Carica i consigliati per l'utente
     this.caricaSaghe(); 
-    this.route.queryParams.subscribe(params => {
-      if (params['sagaId']) {
-        this.mangaService.listManga({ sagaId: +params['sagaId'] }).subscribe({
-          next: (data) => this.risultatiRicerca.set(data),
-          error: (err) => console.error(err)
-        });
-      }
-    });
     this.route.queryParams.subscribe(params => {
       if (params['sagaId']) {
         this.mangaService.listManga({ sagaId: +params['sagaId'] }).subscribe({
@@ -123,15 +117,10 @@ export class Home implements OnInit {
   }
 
   addToCart(manga: any) {
-    if (!this.isLogged()) {
-      this.goToLogin();
-      return;
-    }
-    
+    if (!this.isLogged()) {this.goToLogin();return;}
     this.carrelloService.addRow(manga).subscribe({
       next: () => {
         this.carrelloService.aggiornaDatiCarrello();
-        
         // Invece di ricaricare tutta la home, ricarichiamo SOLO i consigliati!
         this.caricaConsigliati(); 
       },
@@ -159,9 +148,7 @@ export class Home implements OnInit {
       next: ([perTitolo, perAutore, perGenere]) => {
         // Unisce i risultati ed elimina i duplicati tramite id
         const tutti = [...perTitolo, ...perAutore, ...perGenere];
-        const unici = tutti.filter(
-          (manga, index, self) => index === self.findIndex(m => m.isbn === manga.isbn)
-        );
+        const unici = tutti.filter((manga, index, self) => index === self.findIndex(m => m.isbn === manga.isbn));
         this.risultatiRicerca.set(unici);
       },
       error: (err) => console.error(err)
@@ -169,25 +156,25 @@ export class Home implements OnInit {
     }
 
   // Aggiorna anche onSearchKeydown se vuoi che Enter funzioni su tutti i campi
-  onSearchKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') this.cerca();
-  }
+  onSearchKeydown(event: KeyboardEvent) {if (event.key === 'Enter') this.cerca();}
 
   caricaSaghe() {
-  this.sagheService.listSaghe().subscribe({
-    next: (data: any[]) => {
-      console.log('Saghe caricate:', data);
-      this.saghe.set(data);
-    },
-    error: (err: any) => console.error('Errore nel caricamento saghe', err)
-  });
-}
+    this.sagheService.listSaghe().subscribe({
+      next: (data: any[]) => {this.sagheDataSource.data = data; },
+      error: (err: any) => console.error('Errore nel caricamento saghe', err)
+    });
+  }
 
-  goToSaga(saga: any) {
-  this.router.navigate(['/home'], { queryParams: { sagaId: saga.id } });
-}
+  // Computed che legge i dati paginati dal dataSource
+  get saghePaginate(): any[] {
+    const paginator = this.saghePaginator;
+    if (!paginator) return this.sagheDataSource.data;
+    const start = paginator.pageIndex * paginator.pageSize;
+    return this.sagheDataSource.data.slice(start, start + paginator.pageSize);
+  }
+  onPageChange() {this.cdr.detectChanges();} 
 
+  goToSaghe() {this.router.navigate(['/saghe']); } //premi su 'vedi tutte' e rimanda alle saghe
 
- 
-  
+  goToSaga(saga: any) {this.router.navigate(['/home'], { queryParams: { sagaId: saga.id } });}
 }
