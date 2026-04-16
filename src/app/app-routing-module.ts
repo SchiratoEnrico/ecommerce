@@ -26,6 +26,8 @@ import { GestioneCarrello } from './components/admin/gestione-carrello/gestione-
 import { Pagamento } from './components/pagamento/pagamento';
 import { MailValidation } from './components/mail-validation/mail-validation';
 import { DettaglioCarrello } from './components/admin/dettaglio-carrello/dettaglio-carrello';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password';
+import { ResetPassword } from './components/reset-password/reset-password';
 
 const routes: Routes = [
   {
@@ -56,6 +58,8 @@ const routes: Routes = [
   },
   { path: 'login', component: Login },
   { path: 'registrazione', component: Registrazione },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPassword },
   { path: 'admin/manga',          component: GestioneManga},
   { path: 'admin/saghe', component: GestioneSaghe},
 

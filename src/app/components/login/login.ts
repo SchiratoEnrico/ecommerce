@@ -48,4 +48,8 @@ export class Login {
   goHome(){
      this.routing.navigate(['/home']);
   }
+
+  goForgotPassword() { 
+    this.routing.navigate(['/forgot-password']); 
+  }
 }

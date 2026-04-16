@@ -74,6 +74,8 @@ import { FatturaDialog } from './components/admin/dialogs/fattura-dialog/fattura
 
 // Import da develop
 import { MailValidation } from './components/mail-validation/mail-validation';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password';
+import { ResetPassword } from './components/reset-password/reset-password';
 
 @NgModule({
   declarations: [
@@ -118,6 +120,8 @@ import { MailValidation } from './components/mail-validation/mail-validation';
     RigaFatturaDialog,
     FatturaDialog,
     MailValidation,
+    ForgotPasswordComponent,
+    ResetPassword,
   ],
   imports: [
     BrowserModule,
