@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, OnInit, signal, ViewChild } from '@angular/core';
 import { MangaServices } from '../../services/manga-services';
 import { AuthServices } from '../../auth/auth-services';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -32,13 +32,12 @@ export class Home implements OnInit {
     private router: Router,
     private carrelloService: GestioneCarrelloServices,
     private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   isLogged = computed(() => !!this.auth.currentUser());
 
-  goToLogin() {
-    this.router.navigate(['/login']);
-  }
+  goToLogin() {this.router.navigate(['/login']);}
 
   ngOnInit(): void {
     this.caricaDatiHome(); // Carica arrivi, best sellers e carosello
@@ -118,15 +117,10 @@ export class Home implements OnInit {
   }
 
   addToCart(manga: any) {
-    if (!this.isLogged()) {
-      this.goToLogin();
-      return;
-    }
-    
+    if (!this.isLogged()) {this.goToLogin();return;}
     this.carrelloService.addRow(manga).subscribe({
       next: () => {
         this.carrelloService.aggiornaDatiCarrello();
-        
         // Invece di ricaricare tutta la home, ricarichiamo SOLO i consigliati!
         this.caricaConsigliati(); 
       },
@@ -154,9 +148,7 @@ export class Home implements OnInit {
       next: ([perTitolo, perAutore, perGenere]) => {
         // Unisce i risultati ed elimina i duplicati tramite id
         const tutti = [...perTitolo, ...perAutore, ...perGenere];
-        const unici = tutti.filter(
-          (manga, index, self) => index === self.findIndex(m => m.isbn === manga.isbn)
-        );
+        const unici = tutti.filter((manga, index, self) => index === self.findIndex(m => m.isbn === manga.isbn));
         this.risultatiRicerca.set(unici);
       },
       error: (err) => console.error(err)
@@ -164,28 +156,25 @@ export class Home implements OnInit {
     }
 
   // Aggiorna anche onSearchKeydown se vuoi che Enter funzioni su tutti i campi
-  onSearchKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') this.cerca();
-  }
+  onSearchKeydown(event: KeyboardEvent) {if (event.key === 'Enter') this.cerca();}
 
   caricaSaghe() {
     this.sagheService.listSaghe().subscribe({
-      next: (data: any[]) => {
-        this.sagheDataSource.data = data;
-        // Collega il paginator dopo che i dati sono caricati
-        setTimeout(() => {
-          this.sagheDataSource.paginator = this.saghePaginator;
-        });
-      },
+      next: (data: any[]) => {this.sagheDataSource.data = data; },
       error: (err: any) => console.error('Errore nel caricamento saghe', err)
     });
   }
 
-  goToSaga(saga: any) {
-  this.router.navigate(['/home'], { queryParams: { sagaId: saga.id } });
-}
+  // Computed che legge i dati paginati dal dataSource
+  get saghePaginate(): any[] {
+    const paginator = this.saghePaginator;
+    if (!paginator) return this.sagheDataSource.data;
+    const start = paginator.pageIndex * paginator.pageSize;
+    return this.sagheDataSource.data.slice(start, start + paginator.pageSize);
+  }
+  onPageChange() {this.cdr.detectChanges();} 
 
+  goToSaghe() {this.router.navigate(['/saghe']); } //premi su 'vedi tutte' e rimanda alle saghe
 
- 
-  
+  goToSaga(saga: any) {this.router.navigate(['/home'], { queryParams: { sagaId: saga.id } });}
 }
