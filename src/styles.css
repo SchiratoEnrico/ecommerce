@@ -1,1 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
+.stato-chip {
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+ 
+.stato-chip--creato        { background: #eef3fc; color: #2c4d8a; border: 1px solid #c5d5f2; }
+.stato-chip--pagato        { background: #e8f4f5; color: #1a6070; border: 1px solid #b2dde2; }
+.stato-chip--lavorazione   { background: #fdf4e7; color: #8a5c1a; border: 1px solid #f0d9ab; }
+.stato-chip--spedito       { background: #e8f4f5; color: #1a6070; border: 1px solid #b2dde2; }
+.stato-chip--consegnato    { background: #eaf5ec; color: #2a6b3f; border: 1px solid #c3e6c9; }
+.stato-chip--richiesta_reso { background: #fdf4e7; color: #8a5c1a; border: 1px solid #f0d9ab; }
+.stato-chip--restituito    { background: #fcedf0; color: #8a2a3a; border: 1px solid #f0bcc6; }
+.stato-chip--rimborsato    { background: #f5eefa; color: #6a3a8a; border: 1px solid #dbbff0; }
+.stato-chip--rifiutato     { background: #f5f0e8; color: #7a5c2a; border: 1px solid #e0d0b0; }
+.stato-chip--annullata     { background: var(--surface); color: var(--text-secondary); border: 1px solid var(--border); }

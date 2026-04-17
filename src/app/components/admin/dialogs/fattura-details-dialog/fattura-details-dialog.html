@@ -1,0 +1,197 @@
+<!-- fattura-details-dialog.html -->
+@let f = fattura();
+
+<div mat-dialog-title class="details-header">
+  <div>
+    <span class="eyebrow">Fattura</span>
+    <h2 class="title">{{ f.numeroFattura || 'N/D' }}</h2>
+    <span class="sub">{{ f.dataEmissione | date:'dd MMMM yyyy' }}</span>
+  </div>
+  @let badge = f.statoFattura | statoBadge;
+    <span [class]="badge.cssClass">{{ badge.label }}</span>
+</div>
+
+<mat-dialog-content class="details-content">
+
+  <!-- Banner -->
+  <div *ngIf="f.statoFattura === 'RICHIESTA_RESO'" class="banner banner--warn">Richiesta di reso in attesa</div>
+  <div *ngIf="f.statoFattura === 'RICONSEGNATO'"   class="banner banner--info">Prodotto riconsegnato</div>
+  <div *ngIf="f.statoFattura === 'RIMBORSATO'"     class="banner banner--success">Rimborso completato</div>
+  <div *ngIf="f.statoFattura === 'RIFIUTATO'"      class="banner banner--error">Reso rifiutato</div>
+  <div *ngIf="f.statoFattura === 'ANNULLATA'"      class="banner banner--neutral">Fattura annullata</div>
+  <div *ngIf="f.statoFattura === 'CONFERMATO'"     class="banner banner--success">Ordine confermato</div>
+
+  <!-- Cliente -->
+  <div class="doc-section">
+    <div class="section-tag">Cliente</div>
+    <div class="info-card">
+      <div class="info-card-row">
+        <div class="info-cell">
+          <span class="info-label">Nome e Cognome</span>
+          <span class="info-value">{{ f.clienteNome }} {{ f.clienteCognome }}</span>
+        </div>
+        <div class="info-cell">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ f.clienteEmail }}</span>
+        </div>
+      </div>
+      <div class="info-card-row">
+        <div class="info-cell">
+          <span class="info-label">Indirizzo</span>
+          <span class="info-value">{{ f.clienteIndirizzo }}</span>
+        </div>
+        <div class="info-cell">
+          <span class="info-label">Città</span>
+          <span class="info-value">{{ f.clienteCap }} {{ f.clienteCitta }}</span>
+        </div>
+      </div>
+      <div class="info-card-row">
+        <div class="info-cell">
+          <span class="info-label">Provincia</span>
+          <span class="info-value">{{ f.clienteProvincia || '—' }}</span>
+        </div>
+        <div class="info-cell">
+          <span class="info-label">CAP</span>
+          <span class="info-value">{{ f.clienteCap || '—' }}</span>
+        </div>
+        <div class="info-cell">
+          <span class="info-label">Stato</span>
+          <span class="info-value">{{ f.clienteStato }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Pagamento & Spedizione -->
+  <div class="doc-section">
+    <div class="section-tag">Pagamento &amp; Spedizione</div>
+    <div class="info-card">
+      <div class="info-card-row">
+        <div class="info-cell">
+          <span class="info-label">Tipo Pagamento</span>
+          <span class="info-value">{{ f.tipoPagamento }}</span>
+        </div>
+        <div class="info-cell">
+          <span class="info-label">Tipo Spedizione</span>
+          <span class="info-value">{{ f.tipoSpedizione }}</span>
+        </div>
+        <div class="info-cell">
+          <span class="info-label">Costo Spedizione</span>
+          <span class="info-value">{{ f.costoSpedizione | currency:'EUR':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="info-cell" *ngIf="f.ordineId">
+          <span class="info-label">Ordine collegato</span>
+          <span class="info-value info-value--link">#{{ f.ordineId }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voci -->
+  <div class="doc-section">
+    <div class="section-tag">Voci ({{ f.righeFattura.length || 0 }})</div>
+
+    @if (loadingRighe()) {
+      <div class="loading-inline">Caricamento...</div>
+    } @else if ((f.righeFattura.length || 0) === 0) {
+      <div class="empty-righe">
+        <mat-icon>inventory_2</mat-icon>
+        <span>Nessuna riga presente</span>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="f.righeFattura || []" class="righe-table">
+        <ng-container matColumnDef="isbn">
+          <th mat-header-cell *matHeaderCellDef>ISBN</th>
+          <td mat-cell *matCellDef="let r"><span class="isbn-mono">{{ r.isbn || '—' }}</span></td>
+        </ng-container>
+
+        <ng-container matColumnDef="prezzoUnitario">
+          <th mat-header-cell *matHeaderCellDef class="cell-right">Prezzo Unit.</th>
+          <td mat-cell *matCellDef="let r" class="cell-right">
+            {{ r.prezzoUnitario | currency:'EUR':'symbol':'1.2-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="numeroCopie">
+          <th mat-header-cell *matHeaderCellDef class="cell-center">Qt.</th>
+          <td mat-cell *matCellDef="let r" class="cell-center">{{ r.numeroCopie }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="totaleRiga">
+          <th mat-header-cell *matHeaderCellDef class="cell-right">Totale</th>
+          <td mat-cell *matCellDef="let r" class="cell-right cell-totale">
+            {{ r.totaleRiga | currency:'EUR':'symbol':'1.2-2' }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="righeColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: righeColumns"></tr>
+      </table>
+    }
+  </div>
+
+  <!-- Totali -->
+  <div class="totali-block">
+    <div class="totale-row">
+      <span>Subtotale voci</span>
+      <span>{{ getTotaleVoci() | currency:'EUR':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="totale-row">
+      <span>Spedizione</span>
+      <span>{{ f.costoSpedizione | currency:'EUR':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="totale-row totale-row--grand">
+      <span>TOTALE</span>
+      <span>{{ f.totale | currency:'EUR':'symbol':'1.2-2' }}</span>
+    </div>
+  </div>
+
+  <!-- Note -->
+  <div *ngIf="f.note" class="nota-fattura">
+    <span class="nota-label">Nota</span>
+    <span class="nota-text">{{ f.note }}</span>
+  </div>
+
+</mat-dialog-content>
+
+  <span class="spacer"></span>
+    <button mat-button (click)="onClose()">Chiudi</button>
+ <mat-dialog-actions class="details-actions">
+    <!-- Transition buttons -->
+    @if (statiPermessi().length > 0) {
+      <div class="transition-section">
+        <span class="transition-label">Azioni disponibili</span>
+        <div class="transition-buttons">
+          @for (stato of statiPermessi(); track stato) {
+            @let statoBadge = stato | statoBadge;
+
+            <div class="transition-item">
+              <!-- Checkboxes for this transition (if any) -->
+              @for (cb of getCheckboxes(stato); track cb.key) {
+                <mat-checkbox
+                  [(ngModel)]="checkboxValues[stato][cb.key]"
+                  class="transition-checkbox">
+                  {{ cb.label }}
+                </mat-checkbox>
+              }
+
+              <button (click)="onTransition(stato)"
+                      [class]="'transition-btn ' + statoBadge.cssClass">
+                {{ statoBadge.label }}
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="stato-terminal">
+        <mat-icon>lock</mat-icon>
+        <span>Nessuna transizione disponibile</span>
+      </div>
+    }
+
+    <span class="spacer"></span>
+    <button mat-button (click)="onClose()">Chiudi</button>
+  </mat-dialog-actions>

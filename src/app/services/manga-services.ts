@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Manga } from '../models/manga';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { forkJoin, Observable } from 'rxjs';
+import { catchError, forkJoin, Observable, of } from 'rxjs';
 
 export interface MangaFilters {
     titolo?: string;
@@ -57,9 +57,16 @@ export class MangaServices {
     return this.http.get<Manga>(`${this.url}/findByIsbn`, { params: { id: isbn } });
   }
 
-  listAllByIsbns(isbns: string[]): Observable<Manga[]> {
-    const requests = isbns.map(isbn => this.findMangaByIsbn(isbn));
-    return forkJoin(requests);
+  listAllByIsbns(isbns: string[]): Observable<(Manga | null)[]> {
+    const requests: Observable<Manga | null>[] = isbns.map((isbn: string) =>
+    this.findMangaByIsbn(isbn).pipe(
+      catchError((err: any) => {
+        console.error(`Errore caricamento manga ISBN ${isbn}:`, err);
+        return of(null);
+      })
+    ));
+    
+  return forkJoin(requests);
   }
 
   create(manga: Omit<Manga, 'id'>): Observable<any> {

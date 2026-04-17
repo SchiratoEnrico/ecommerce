@@ -6,7 +6,7 @@
         </div>
     </div>
 
-    @if (isLoading) {
+    @if (isLoading()) {
         <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Caricamento...</span>
@@ -14,7 +14,7 @@
         </div>
     }
 
-    @if (!isLoading && ordiniRecenti.length === 0 && ordiniPassati.length === 0) {
+    @if (!isLoading() && ordiniRecenti().length === 0 && ordiniPassati().length === 0) {
         <div class="alert alert-info text-center py-5 shadow-sm border-0">
             <mat-icon class="display-4 mb-3 d-block mx-auto text-info" style="opacity: 0.5;">receipt_long</mat-icon>
             <h4 class="alert-heading">Non hai ancora effettuato ordini.</h4>
@@ -22,16 +22,16 @@
         </div>
     }
 
-    @if (!isLoading && ordiniRecenti.length > 0) {
+    @if (!isLoading() && ordiniRecenti().length > 0) {
         <h4 class="mb-3 mt-4 fw-bold text-primary">Ordini Recenti (Ultimi 30 giorni)</h4>
-        @for (ordine of ordiniRecenti; track ordine.id) {
-            <ng-container *ngTemplateOutlet="cardOrdine; context: { $implicit: ordine }"></ng-container>
+        @for (ordine of ordiniRecenti(); track ordine.fattura.id) {
+            <ng-container *ngTemplateOutlet="cardOrdine; context: { $implicit: ordine}"></ng-container>
         }
     }
 
-    @if (!isLoading && ordiniPassati.length > 0) {
+    @if (!isLoading() && ordiniPassati().length > 0) {
         <h4 class="mb-3 mt-5 fw-bold text-secondary">Storico Ordini</h4>
-        @for (ordine of ordiniPassati; track ordine.id) {
+        @for (ordine of ordiniPassati(); track ordine.fattura.id) {
             <ng-container *ngTemplateOutlet="cardOrdine; context: { $implicit: ordine }"></ng-container>
         }
     }
@@ -42,28 +42,21 @@
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center py-3">
             <div>
-                <h5 class="mb-0 fw-bold">Fattura #{{ ordine.numeroFattura || ordine.id }}</h5>
-                <small class="text-muted">Emessa il {{ ordine.dataEmissione | date:'dd/MM/yyyy' }}</small>
+                <h5 class="mb-0 fw-bold">Fattura #{{ ordine.fattura.numeroFattura }}</h5>
+                <small class="text-muted">Emessa il {{ ordine.fattura.dataEmissione | date:'dd/MM/yyyy' }}</small>
             </div>
             <div class="text-end mt-2 mt-md-0">
-                <span class="badge rounded-pill px-3 py-2 fs-6" 
-                      [ngClass]="{
-                        'bg-success': ordine.statoFattura === 'RISOLTO' || ordine.statoFattura === 'CONSEGNATO',
-                        'bg-primary': ordine.statoFattura === 'IN_CORSO',
-                        'bg-secondary bg-gradient': ordine.statoFattura === 'APERTO',
-                        'bg-danger': ordine.statoFattura === 'RIFIUTATO'
-                      }">
-                    {{ ordine.statoFattura || 'Stato Sconosciuto' }}
-                </span>
+                @let badge = ordine.fattura.statoFattura | statoBadge;
+                <span [class]="badge.cssClass">{{ badge.label }}</span>
             </div>
         </div>
         <div class="card-body">
             <div class="row mb-3 border-bottom pb-3">
                 <div class="col-md-6">
-                    <p class="mb-1"><strong>Metodo di Pagamento:</strong> {{ ordine.tipoPagamento || 'N/D' }}</p>
+                    <p class="mb-1"><strong>Metodo di Pagamento:</strong> {{ ordine.fattura.tipoPagamento || 'N/D' }}</p>
                 </div>
                 <div class="col-md-6">
-                    <p class="mb-1"><strong>Spedizione:</strong> {{ ordine.tipoSpedizione || 'N/D' }}</p>
+                    <p class="mb-1"><strong>Spedizione:</strong> {{ ordine.fattura.tipoSpedizione || 'N/D' }}</p>
                 </div>
             </div>
             <h6 class="fw-bold mb-3">Articoli Acquistati:</h6>
@@ -78,28 +71,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for (riga of ordine.righeFattura; track riga.id) {
+                        @for (riga of ordine.fattura.righeFattura; track riga.id) {
                             <tr class="border-bottom-dashed">
                                 <td class="py-3">
                                     <div class="d-flex align-items-center">
-                                        <img [src]="mangaCache[riga.isbn || riga.manga]?.immagine | mangaImg" 
+                                        <img [src]="mangaCache()[riga.isbn || riga.manga]?.immagine | mangaImg" 
                                              alt="Cover" 
                                              class="rounded shadow-sm me-3" 
                                              style="width: 50px; height: 70px; object-fit: cover;">
                                         <div>
-                                            <h6 class="mb-0 fw-bold">{{ mangaCache[riga.isbn || riga.manga]?.titolo || 'Caricamento in corso...' }}</h6>
+                                            <h6 class="mb-0 fw-bold">{{ mangaCache()[riga.isbn || riga.manga]?.titolo || 'Caricamento in corso...' }}</h6>
                                             <small class="text-muted">ISBN: {{ riga.isbn || riga.manga }}</small>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="text-center align-middle">
-                                    € {{ mangaCache[riga.isbn || riga.manga]?.prezzo || riga.prezzoUnitario || '0.00' }}
+                                    € {{ mangaCache()[riga.isbn || riga.manga]?.prezzo || riga.prezzoUnitario || '0.00' }}
                                 </td>
                                 <td class="text-center align-middle fw-semibold">
                                     x{{ riga.numeroCopie || riga.quantita }}
                                 </td>
                                 <td class="text-end align-middle fw-bold text-primary pe-2">
-                                    € {{ (((mangaCache[riga.isbn || riga.manga]?.prezzo || riga.prezzoUnitario || 0) * (riga.numeroCopie || riga.quantita))) | number:'1.2-2' }}
+                                    € {{ (((mangaCache()[riga.isbn || riga.manga]?.prezzo || riga.prezzoUnitario || 0) * (riga.numeroCopie || riga.quantita))) | number:'1.2-2' }}
                                 </td>
                             </tr>
                         } 
@@ -113,8 +106,21 @@
             </div>
             
             <div class="text-end mt-3 pt-3 border-top">
-                <h5 class="fw-bold mb-0">Totale Ordine: <span class="text-primary">€ {{ ordine.totale || '0.00' }}</span></h5>
+                <h5 class="fw-bold mb-0">Totale Ordine: <span class="text-primary">€ {{ ordine.fattura.totale || '0.00' }}</span></h5>
             </div>
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+        @if (ordine.cancellabile) {
+          <button class="btn btn-outline-danger btn-sm" (click)="cancellaOrdine(ordine.fattura.id)">
+            Cancella ordine
+          </button>
+        }
+        @if (ordine.restituibile) {
+          <button class="btn btn-outline-warning btn-sm" (click)="richiediReso(ordine.fattura.id)">
+            Richiedi reso
+          </button>
+        }
+      </div>
+
         </div>
     </div>
 </ng-template>

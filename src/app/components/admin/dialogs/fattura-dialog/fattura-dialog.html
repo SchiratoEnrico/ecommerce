@@ -1,15 +1,53 @@
-<h2 mat-dialog-title>{{ data ? 'Fattura ' + data.numeroFattura : 'Nuova Fattura' }}</h2>
+<h2 mat-dialog-title>
+  @if (isEditMode) {
+    Fattura {{ data.numeroFattura }}
+  } @else {
+    Nuova Fattura
+  }
+</h2>
 
 <mat-dialog-content>
-  <form [formGroup]="form" class="dialog-form">
+  <!-- STATO SELECT (solo in modifica) -->
+  @if (isEditMode) {
+    @let badge = data.statoFattura | statoBadge;
+    <div class="stato-section">
+      <span class="section-title">Stato Fattura</span>
 
-    <!-- STATO BADGE (solo in modifica) -->
-    <div *ngIf="data" class="stato-header">
-      <span class="stato-label">Stato</span>
-      <span [ngClass]="'stato-chip stato-chip--' + data.statoFattura?.toLowerCase()">
-        {{ data.statoFattura }}
-      </span>
+      <div class="stato-current">
+        <span class="stato-label">Stato attuale:</span>
+        <span [class]="badge.cssClass">{{ badge.label }}</span>
+      </div>
+
+      @if (allowedStates().length > 0) {
+        <div class="stato-transition">
+          <span class="stato-label">Transizione a:</span>
+          <div class="stato-options">
+            @for (stato of allowedStates(); track stato) {
+              @let option = stato | statoBadge;
+              <button type="button"
+                      [class]="'stato-option ' + option.cssClass"
+                      [class.stato-option--selected]="selectedStato() === stato"
+                      (click)="onStatoChange(stato)">
+                {{ option.label }}
+                @if (selectedStato() === stato) {
+                  <mat-icon class="check-icon">check</mat-icon>
+                }
+              </button>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="stato-terminal">
+          <mat-icon>lock</mat-icon>
+          <span>Nessuna transizione disponibile</span>
+        </div>
+      }
     </div>
+
+    <mat-divider></mat-divider>
+  }
+
+  <form [formGroup]="form" class="dialog-form">
 
     <!-- INTESTAZIONE -->
     <div class="section-title">Intestazione</div>
@@ -27,7 +65,9 @@
       <mat-form-field appearance="outline">
         <mat-label>Data Emissione</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="dataEmissione">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        @if (!isEditMode) {
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        }
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
       <mat-form-field appearance="outline">
@@ -91,20 +131,30 @@
       </mat-form-field>
     </div>
 
+    @if (!isEditMode) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Note</mat-label>
+        <textarea matInput formControlName="note" rows="3"></textarea>
+      </mat-form-field>
+    }
+
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="close()">Annulla</button>
-  <button *ngIf="data" mat-button color="warn" (click)="delete()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polyline points="3 6 5 6 21 6"/>
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-      <path d="M10 11v6M14 11v6"/>
-      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-    </svg>
-    Elimina Fattura
-  </button>
-  <button mat-raised-button color="primary" (click)="save()"
-    [disabled]="form.invalid">Salva Fattura</button>
+
+  @if (isEditMode) {
+    <button mat-raised-button color="primary"
+            (click)="save()"
+            [disabled]="selectedStato() === data.statoFattura || selectedStato() === ''">
+      Aggiorna Stato
+    </button>
+  } @else {
+    <button mat-raised-button color="primary"
+            (click)="save()"
+            [disabled]="form.invalid">
+      Salva Fattura
+    </button>
+  }
 </mat-dialog-actions>

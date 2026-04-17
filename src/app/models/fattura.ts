@@ -2,7 +2,7 @@ import { RigaFattura } from "./riga-fattura";
 
 export interface Fattura {
 
-     id: number;
+  id: number;
   numeroFattura: string;
   dataEmissione: string; 
   // Snapshot cliente
