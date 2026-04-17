@@ -50,4 +50,12 @@ export class AccountServices {
   findByUsername(username: string): Observable<Account> {
     return this.http.get<Account>(`${this.url}/findByUsername`, { params: { username } });
   }
+  
+  requestPasswordReset(body: { email: string }): Observable<any> {
+    return this.http.post(`${this.url}/request-password-reset`, body);
+  }
+
+  resetPassword(body: { token: string, newPassword: string }): Observable<any> {
+    return this.http.post(`${this.url}/reset-password`, body);
+  }
 }

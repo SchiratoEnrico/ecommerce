@@ -69,6 +69,6 @@ export class OrdiniServices {
   }
 
   delete(id: number): Observable<any> {
-    return this.http.delete(`${this.url}/delete`, { params: { id } });
+    return this.http.delete(`${this.url}/delete/${id}?ripristinaCopie=true`); 
   }
 }

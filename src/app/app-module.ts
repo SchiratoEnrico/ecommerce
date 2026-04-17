@@ -76,6 +76,8 @@ import { FatturaDialog } from './components/admin/dialogs/fattura-dialog/fattura
 import { MailValidation } from './components/mail-validation/mail-validation';
 import { StatoBadgeClassPipe } from './pipes/stato-badge-class-pipe';
 import { FatturaDetailsDialog } from './components/admin/dialogs/fattura-details-dialog/fattura-details-dialog';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password';
+import { ResetPassword } from './components/reset-password/reset-password';
 
 @NgModule({
   declarations: [
@@ -122,6 +124,8 @@ import { FatturaDetailsDialog } from './components/admin/dialogs/fattura-details
     MailValidation,
     StatoBadgeClassPipe,
     FatturaDetailsDialog,
+    ForgotPasswordComponent,
+    ResetPassword,
   ],
   imports: [
     BrowserModule,
