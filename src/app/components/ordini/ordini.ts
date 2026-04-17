@@ -1,9 +1,19 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { OrdiniServices } from '../../services/ordini-services';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AuthServices } from '../../auth/auth-services';
 import { MangaServices } from '../../services/manga-services';
-import { catchError, forkJoin, of } from 'rxjs';
 import { FattureServices } from '../../services/fatture-services';
+import { Fattura } from '../../models/fattura';
+import { RigaFattura } from '../../models/riga-fattura';
+import { Manga } from '../../models/manga';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { StatoOrdine } from '../../models/stato-ordine';
+import { catchError, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
+
+interface OrdineView {
+  fattura: Fattura;
+  cancellabile: boolean;
+  restituibile: boolean;
+}
 
 @Component({
   selector: 'app-ordini',
@@ -12,17 +22,19 @@ import { FattureServices } from '../../services/fatture-services';
   styleUrl: './ordini.css',
 })
 export class Ordini implements OnInit{
-  ordiniRecenti: any[] = [];
-  ordiniPassati: any[] = [];
-  isLoading: boolean = true;
-  mangaCache: { [isbn: string]: any } = {};
+  private fattureService = inject(FattureServices);
+  private auth = inject(AuthServices);
+  private mangaService = inject(MangaServices);
 
   constructor(
-    private fattureService: FattureServices,
-    private auth: AuthServices,
-    private mangaService: MangaServices,
-    private cdr: ChangeDetectorRef
+    private snack: MatSnackBar,
   ){}
+
+  ordiniRecenti = signal<OrdineView[]>([]);
+  ordiniPassati = signal<OrdineView[]>([]);
+  isLoading = signal<boolean>(true);
+  mangaCache = signal<Record<string, Manga>>({});
+  //map = { [id: string] : any}{};
 
   ngOnInit(): void {
     this.caricaStoricoAcquisti();
@@ -31,79 +43,146 @@ export class Ordini implements OnInit{
   caricaStoricoAcquisti(){
     const user = this.auth.currentUser();
     if(!user?.id){
-      this.isLoading = false;
-      this.cdr.detectChanges();
+      this.isLoading.set(false);
       return;
     }
 
-    this.fattureService.findByAccountId(user.id).subscribe({
-      next: (data: any[]) => {
-        const oggi = new Date();
-        const limite30Giorni = 30*24*60*60*1000;
 
-        // USA f.dataEmissione
-        this.ordiniRecenti = data.filter(f => (oggi.getTime() - new Date(f.dataEmissione).getTime()) < limite30Giorni);
-        this.ordiniPassati = data.filter(f => (oggi.getTime() - new Date(f.dataEmissione).getTime()) >= limite30Giorni);
+    this.fattureService.findByAccountId(user.id)
+    .pipe(switchMap((data: Fattura[]): Observable<OrdineView[]> => {
+      if (data.length === 0) return of([]);
 
-        // ORDINAMENTO per dataEmissione
-        this.ordiniRecenti.sort((a,b) => new Date(b.dataEmissione).getTime() - new Date(a.dataEmissione).getTime());
-        this.ordiniPassati.sort((a,b) => new Date(b.dataEmissione).getTime() - new Date(a.dataEmissione).getTime());
+      const viste: Observable<OrdineView>[] = data.map((f: Fattura) =>
+        this.fattureService.getNextAllowedStates(f.id).pipe(
+          tap((stati: StatoOrdine[]) => console.log(`Stati per fattura ${f.id} con stato ${f.statoFattura}:`, stati)),
+          map((stati: StatoOrdine[]): OrdineView => ({
+            fattura: f,
+            cancellabile: stati.some(s => s.statoOrdine === 'CANCELLATO'),
+            restituibile: stati.some(s => s.statoOrdine === 'RICHIESTA_RESO')
+          })),
+          catchError((): Observable<OrdineView> =>
+            of({ fattura: f, cancellabile: false, restituibile: false })
+          )
+        )
+      );
+      return forkJoin(viste);
+    }))
+    .subscribe({
+      next: (data: OrdineView[]) => {
 
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        // definisco funzione sorting
+        const perDataDesc = (o1: OrdineView, o2: OrdineView): number =>
+          new Date(o2.fattura.dataEmissione).getTime() - new Date(o1.fattura.dataEmissione).getTime();
+
+        const recenti: OrdineView[] = [];
+        const passati: OrdineView[] = [];
+
+        // così itero una volta sola
+        for (const o of data) {
+          (o.fattura.statoFattura === "CONFERMATO" ? passati : recenti).push(o);
+        }
+
+        recenti.sort(perDataDesc);
+        passati.sort(perDataDesc);
+
+        this.ordiniRecenti.set(recenti);
+        this.ordiniPassati.set(passati);
+        this.isLoading.set(false);
 
         const isbns = new Set<string>();
-        
-        // USA f.righeFattura e assumo che dentro RigaFatturaDTO la variabile per l'ISBN si chiami 'isbn' o 'manga'
-        this.ordiniRecenti.forEach(fattura => {
-          fattura.righeFattura?.forEach((riga: any) => {
-            const isbnManga = riga.isbn || riga.manga; // fallback in base a come si chiama in RigaFatturaDTO
-            if(isbnManga && !this.mangaCache[isbnManga]){
-              isbns.add(isbnManga);
-            }
+        const cache = this.mangaCache();
+        const raccogliIsbn = (oL: OrdineView[]): void => {
+          oL
+            //
+            .filter((ord: OrdineView) => (ord.fattura.ordineId !== null))
+            .forEach((ord: OrdineView) => {
+              ord.fattura.righeFattura?.forEach(
+                (riga: RigaFattura) => {
+                  if (riga.isbn && !cache[riga.isbn]) {
+                    isbns.add(riga.isbn);
+                  }
+            });
           });
-        });
-        this.ordiniPassati.forEach(fattura => {
-          fattura.righeFattura?.forEach((riga: any) => {
-             const isbnManga = riga.isbn || riga.manga;
-             if(isbnManga && !this.mangaCache[isbnManga]){
-               isbns.add(isbnManga);
-             }
-          });
-        });
+        };
+
+        raccogliIsbn(recenti);
+        raccogliIsbn(passati);
 
         this.caricaDettagliManga(Array.from(isbns));
       },
       error: (err: any) => {
         console.error('Errore', err);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this.isLoading.set(false);
       }
     });
   }
 
   caricaDettagliManga(isbns: string[]){
     if(isbns.length === 0){
-      this.isLoading = false;
-      this.cdr.detectChanges();
+      this.isLoading.set(false);
       return;
     }
 
-    const chiamateHttp = isbns.map(isbn => 
-      this.mangaService.findMangaByIsbn(isbn).pipe(
-        catchError(() => of(null))
-      )
-    );
-
-    forkJoin(chiamateHttp).subscribe(risultati => {
-      risultati.forEach((manga, index) => {
-        if (manga) {
-          const isbnCorrispondente = isbns[index];
-          this.mangaCache[isbnCorrispondente] = manga;
-        }
+  this.mangaService
+  .listAllByIsbns(isbns)
+  .subscribe({
+    next: (risultati: (Manga | null)[]) => {
+      this.mangaCache.update((current: { [isbn: string]: Manga }) => {
+        const updated: { [isbn: string]: Manga } = { ...current };
+        risultati.forEach((manga: Manga | null, index: number) => {
+          if (manga) {
+            updated[isbns[index]] = manga;
+          }
+        });
+        return updated;
       });
-      this.isLoading = false;
-      this.cdr.detectChanges();
+      this.isLoading.set(false);
+    },
+    error: (err: any) => {
+      this.showMsg(err.error?.msg ?? 'Errore caricamento ISBN', true);
+      this.isLoading.set(false);
+    }
+  });
+  }
+
+  showMsg(msg: string, isError: boolean): void {
+    setTimeout(() => {
+      this.snack.open(msg ?? 'Operazione completata', 'OK', {
+        duration: 2000,
+        panelClass: isError ? 'snack-error' : 'snack-success'
+      });
     });
   }
+
+  cancellaOrdine(idFattura: number) {
+    const id = this.auth.currentUser()!.id;
+    console.log('richiesta eliminazione fattura con id: ' + idFattura + ' account: ' + id )
+    this.fattureService.annullaPagata(idFattura, id).subscribe({
+      next: () => {
+        this.caricaStoricoAcquisti()
+        this.isLoading.set(false);
+      },
+      error: (err: any) => {
+        this.showMsg(err.error?.msg ?? 'Errore caricamento ISBN', true);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  richiediReso(idFattura: number) {
+    const id = this.auth.currentUser()!.id;
+    console.log('richiesta reso fattura con id: ' + idFattura + ' account: ' + id )
+    this.fattureService.iniziaReso(idFattura, id).subscribe({
+      next: () => {
+        this.caricaStoricoAcquisti()
+        this.isLoading.set(false);
+      },
+      error: (err: any) => {
+        this.showMsg(err.error?.msg ?? 'Errore caricamento ISBN', true);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+
 }

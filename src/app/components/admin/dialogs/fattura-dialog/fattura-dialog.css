@@ -91,3 +91,74 @@
   border-radius: 20px;
   border: 1px solid currentColor;
 }
+
+
+.stato-section {
+  padding: 0 0 16px;
+}
+
+.stato-current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 16px;
+}
+
+/*
+.stato-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+  white-space: nowrap;
+}*/
+
+.stato-transition {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stato-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stato-option {
+  /* Inherit chip styles from the global stato-chip classes */
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stato-option:hover {
+  transform: scale(1.05);
+}
+
+.stato-option--selected {
+  border-color: currentColor;
+  box-shadow: 0 0 0 1px currentColor;
+}
+
+.stato-option .check-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.stato-terminal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  padding: 8px 0;
+}
+
+.stato-terminal mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}

@@ -1,5 +1,4 @@
 export interface RigaFattura {
-
   id?: number;
   idFattura?: number;
   isbn: string;

@@ -1,17 +1,19 @@
-import {  ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild, effect, AfterViewInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Fattura } from '../../../models/fattura';
-import { FattureServices } from '../../../services/fatture-services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { FatturaDialog } from '../dialogs/fattura-dialog/fattura-dialog';
+import { Fattura } from '../../../models/fattura';
+import { Spedizione } from '../../../models/spedizione';
+import { TipoPagamento } from '../../../models/tipo-pagamento.model';
+import { FattureServices } from '../../../services/fatture-services';
 import { SpedizioneServices } from '../../../services/spedizioni-services';
 import { GestionePagamentiService } from '../../../services/gestione-pagamenti-service';
-import { RigaFatturaServices } from '../../../services/riga-fattura-services';
-import { RigaFattura } from '../../../models/riga-fattura';
-import { RigaFatturaDialog } from '../dialogs/riga-fattura-dialog/riga-fattura-dialog';
+import { FatturaDialog } from '../dialogs/fattura-dialog/fattura-dialog';
+import { FatturaDetailsDialog, FatturaDetailsResult } from '../dialogs/fattura-details-dialog/fattura-details-dialog';
+import { AuthServices } from '../../../auth/auth-services';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-gestione-fatture',
@@ -19,24 +21,28 @@ import { RigaFatturaDialog } from '../dialogs/riga-fattura-dialog/riga-fattura-d
   templateUrl: './gestione-fatture.html',
   styleUrl: './gestione-fatture.css'
 })
-export class GestioneFatture implements OnInit {
- @ViewChild(MatPaginator) paginator!: MatPaginator;
+export class GestioneFatture implements OnInit, AfterViewInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  righeColumns: string[] = ['isbn', 'prezzoUnitario', 'numeroCopie', 'totaleRiga', 'azioni'];
- 
-  dataSource = new MatTableDataSource<Fattura>();
-  loading = false;
-  processing = false;
-  selectedFattura: Fattura | null = null;
+  private fattureService = inject(FattureServices);
+  private tipoSpedizioneServices = inject(SpedizioneServices);
+  private tipoPagamentoServices = inject(GestionePagamentiService);
+  private snack = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+  private auth = inject(AuthServices);
+  
 
-  righeFattura: { [idFattura: number]: RigaFattura[] } = {};
-  loadingRighe: { [id: number]: boolean } = {};
-  righeVisibili: { [id: number]: boolean } = {};
- 
-  tipiSpedizione: any[] = [];
-  tipiPagamento: any[] = [];
- 
+  displayedColumns: string[] = ['numeroFattura', 'dataEmissione', 'cliente', 'tipoPagamento', 'tipoSpedizione', 'totale', 'stato'];
+
+  fatture = signal<Fattura[]>([]);
+  loading = signal<boolean>(false);
+  processing = signal<boolean>(false);
+  tipiSpedizione = signal<Spedizione[]>([]);
+  tipiPagamento = signal<TipoPagamento[]>([]);
+
+  dataSource = new MatTableDataSource<Fattura>();
+
   filters = {
     numeroFattura: '',
     clienteNome: '',
@@ -51,6 +57,23 @@ export class GestioneFatture implements OnInit {
     annoTo: null as number | null,
   };
 
+  constructor() {
+    effect(() => {
+      this.dataSource.data = this.fatture();
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadData();
+    this.loadTipiSpedizione();
+    this.loadTipiPagamento();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
   resetFilters(): void {
     this.filters = {
       numeroFattura: '', clienteNome: '', clienteCognome: '',
@@ -59,31 +82,9 @@ export class GestioneFatture implements OnInit {
     };
     this.loadData();
   }
- 
-  constructor(
-    private fattureService: FattureServices,
-    private tipoSpedizioneServices: SpedizioneServices,
-    private rigaFatturaServices: RigaFatturaServices,
-    private fattureServices: FattureServices,
-    private tipoPagamentoServices: GestionePagamentiService,
-    private snack: MatSnackBar,
-    private dialog: MatDialog,
-    private cdr: ChangeDetectorRef
-  ) {}
- 
-  ngOnInit(): void {
-    this.loadData();
-    this.loadTipiSpedizione();
-    this.loadTipiPagamento();
-  }
- 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
- 
+
   loadData(): void {
-    this.loading = true;
+    this.loading.set(true);
     const params: any = {};
     if (this.filters.numeroFattura)  params.numeroFattura  = this.filters.numeroFattura;
     if (this.filters.clienteNome)    params.clienteNome    = this.filters.clienteNome;
@@ -96,23 +97,24 @@ export class GestioneFatture implements OnInit {
     if (this.filters.isbn)           params.isbns          = [this.filters.isbn];
     if (this.filters.annoFrom)       params.annoFrom       = this.filters.annoFrom;
     if (this.filters.annoTo)         params.annoTo         = this.filters.annoTo;
- 
+
     this.fattureService.list(params).subscribe({
-      next: (data) => {
-        this.dataSource.data = data;
-        this.loading = false;
-        this.cdr.detectChanges();
+      next: (data: Fattura[]) => {
+        this.fatture.set(data);
+        this.loading.set(false);
       },
       error: () => {
         this.showMsg('Errore caricamento fatture', true);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
- 
- 
+
+  onFilterChange(): void { this.loadData(); }
+
   openCreateDialog(): void {
-    const dialogRef = this.dialog.open(FatturaDialog, { width: '800px', data: null });
+    const dialogRef = this.dialog.open(FatturaDialog, 
+      { width: '800px', data: null });
     dialogRef.afterClosed().subscribe(result => {
       if (result?.action !== 'save') return;
       this.fattureService.create(result.payload).subscribe({
@@ -124,205 +126,52 @@ export class GestioneFatture implements OnInit {
       });
     });
   }
- 
-  edit(fattura: Fattura): void {
-    const dialogRef = this.dialog.open(FatturaDialog, { width: '800px', data: fattura });
-    dialogRef.afterClosed().subscribe(result => {
-      if (!result) return;
- 
-      if (result.action === 'delete') {
-        this.fattureService.delete(fattura.id).subscribe({
+
+  openDetails(fattura: Fattura): void {
+    const ref = this.dialog.open(FatturaDetailsDialog, {
+      width: '80%',
+      maxHeight: '90vh',
+      panelClass: 'fattura-details-dialog',
+      data: fattura   // dialog handles findById internally
+    });
+
+    ref.afterClosed().subscribe((result: FatturaDetailsResult | undefined) => {
+      if (!result || result.action === 'close') return;
+
+      if (result.action === 'changeStato' && result.stato) {
+        const call$: Observable<any> | null = this.getStatoCall(result.fattura, result.stato, result.params);
+        if (!call$) {
+          this.showMsg(`Transizione a ${result.stato} non gestita`, true);
+          return;
+        }
+        call$.subscribe({
           next: () => {
-            this.showMsg('Fattura eliminata', false);
-            this.selectedFattura = null;
+            this.showMsg('Stato aggiornato', false);
             this.loadData();
           },
-          error: (err) => this.showMsg(err.error?.msg, true)
-        });
-        return;
-      }
- 
-      if (result.action === 'save') {
-        const fatturaData = { id: fattura.id, ...result.payload };
-        console.log('payload update:', JSON.stringify(fatturaData));
-        this.fattureService.update(fatturaData as Fattura).subscribe({
-          next: () => {
-            this.showMsg('Fattura aggiornata', false);
-            this.fattureService.findById(fattura.id).subscribe({
-              next: (aggiornata) => {
-                this.selectedFattura = aggiornata;
-                this.loadData();
-                this.cdr.detectChanges();
-              },
-              error: () => {
-                this.selectedFattura = null;
-                this.loadData();
-              }
-            });
-          },
-          error: (err) => this.showMsg(err.error?.msg || 'Errore update fattura', true)
+          error: (err) => this.showMsg(err.error?.msg || 'Errore aggiornamento stato', true)
         });
       }
     });
   }
- 
-  onFilterChange(): void { this.loadData(); }
- 
-  canConfermaReso(f: Fattura): boolean { return f.statoFattura === 'RICHIESTA_RESO'; }
-  canRifiutaReso(f: Fattura): boolean  { return f.statoFattura === 'RICHIESTA_RESO'; }
-  canRimborsa(f: Fattura): boolean     { return f.statoFattura === 'RICONSEGNATO'; }
-  canEdit(f: Fattura): boolean {return !['RICHIESTA_RESO', 'RICONSEGNATO', 'RIMBORSATO','RIFIUTATO', 'ANNULLATA', 'CONFERMATO'].includes(f.statoFattura);}
- 
-  confermaReso(fattura: Fattura): void {
-    if (!confirm(`Confermare il reso ${fattura.numeroFattura}?`)) return;
-    this.processing = true;
-    this.fattureService.confermaReso(fattura.id).subscribe({
-      next: () => {
-        this.showMsg('Reso confermato', false);
-        this.processing = false;
-        this.selectedFattura = { ...fattura, statoFattura: 'RICONSEGNATO' };
-        this.loadData();
-        this.cdr.detectChanges();
-      },
-      error: (err) => { this.showMsg(err.error?.msg || 'Errore conferma reso', true); this.processing = false; }
-    });
-  }
 
-  rifiutaReso(fattura: Fattura): void {
-    if (!confirm(`Rifiutare il reso ${fattura.numeroFattura}?`)) return;
-    this.processing = true;
-    this.fattureService.rifiutaReso(fattura.id).subscribe({
-      next: () => {
-        this.showMsg('Reso rifiutato', false);
-        this.processing = false;
-        this.selectedFattura = { ...fattura, statoFattura: 'RIFIUTATO' };
-        this.loadData();
-        this.cdr.detectChanges();
-      },
-      error: (err) => { this.showMsg(err.error?.msg || 'Errore rifiuto reso', true); this.processing = false; }
-    });
-  }
-
-  rimborsa(fattura: Fattura): void {
-    const ripristina = confirm('Ripristinare copie in magazzino?');
-    this.processing = true;
-    this.fattureService.rimborsa(fattura.id, ripristina).subscribe({
-      next: () => {
-        this.showMsg('Rimborso effettuato', false);
-        this.processing = false;
-        this.selectedFattura = { ...fattura, statoFattura: 'RIMBORSATO' };
-        this.loadData();
-        this.cdr.detectChanges();
-      },
-      error: (err) => { this.showMsg(err.error?.msg || 'Errore rimborso', true); this.processing = false; }
-    });
-  }
-  /*
-  selectFattura(fattura: Fattura): void {
-    this.fattureServices.findById(fattura.id).subscribe((fatturaCompleta: any) => {
-    this.selectedFattura = fatturaCompleta;
-    this.righeVisibili[fattura.id] = false;});
-  }
-*/
-  selectFattura(fattura: Fattura): void {
-  // imposta subito la fattura selezionata per aggiornare la UI
-  this.selectedFattura = fattura;
-  
-  // poi carica il dettaglio completo
-  this.fattureServices.findById(fattura.id).subscribe((fatturaCompleta: any) => {
-    this.selectedFattura = fatturaCompleta;
-    this.righeVisibili[fattura.id] = false;
-    this.cdr.detectChanges();
-  });
-}
-  toggleRighe(fattura: Fattura, event: Event): void {
-    event.stopPropagation();
-    const id = Number(fattura.id);
-    if (!id || isNaN(id)) return;
-    if (this.righeVisibili[id]) {this.righeVisibili = { ...this.righeVisibili, [id]: false };return;}
-    if (fattura.righeFattura?.length) {this.righeVisibili = { ...this.righeVisibili, [id]: true };return;}
-    this.loadingRighe = { ...this.loadingRighe, [id]: true };
-
-    this.fattureService.findById(id).subscribe({
-      next: (dettaglio) => {
-        fattura.righeFattura = [...(dettaglio.righeFattura ?? [])];
-        this.righeVisibili  = { ...this.righeVisibili,  [id]: true };
-        this.loadingRighe   = { ...this.loadingRighe,   [id]: false };
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.showMsg('Errore caricamento voci', true);
-        this.loadingRighe = { ...this.loadingRighe, [id]: false };
-        this.cdr.detectChanges();
-        }
-      });
-    }
-  getTotaleVoci(fattura: Fattura): number {return (fattura.righeFattura ?? []).reduce((sum, r) => sum + r.totaleRiga, 0);}
-
-  editRigaFattura(fattura: Fattura, riga: RigaFattura, index: number): void {
-    const ref = this.dialog.open(RigaFatturaDialog, {width: '400px',data: { riga: { ...riga } }});
-    ref.afterClosed().subscribe(result => {
-      if (result?.action === 'save') {fattura.righeFattura = fattura.righeFattura!.map((r, i) =>i === index ? result.riga : r );
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-deleteRigaFattura(fattura: Fattura, riga: RigaFattura, index: number): void {
-  if (!riga.id) return;
-  if (!confirm(`Rimuovere la riga con ISBN ${riga.isbn}?`)) return;
-
-  this.rigaFatturaServices.delete(riga.id).subscribe({
-    next: () => {
-      fattura.righeFattura = fattura.righeFattura!.filter((_, i) => i !== index);
-      this.showMsg('Riga eliminata', false);
-      this.cdr.detectChanges();
-    },
-    error: (err) => this.showMsg(err.error?.msg || 'Errore eliminazione riga', true)
-  });
+private getStatoCall(fattura: Fattura, nuovoStato: string, params?: Record<string, any>): Observable<any> | null {
+  return this.fattureService.avanzaStato(fattura.id, nuovoStato, params?.['ripristinaCopie']);
 }
 
-addRigaFattura(fattura: any): void {
-  const dialogRef = this.dialog.open(RigaFatturaDialog, { width: '480px', data: { riga: null } });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result?.action === 'save') {
-      const nuovaRiga: RigaFattura = {
-        ...result.riga,
-        idFattura: fattura.id
-      };
-      this.rigaFatturaServices.create(nuovaRiga).subscribe({
-        next: () => {
-          this.fattureServices.findById(fattura.id).subscribe((fatturaAggiornata: any) => {
-            const index = this.dataSource.data.findIndex(f => f.id === fattura.id);
-            if (index !== -1) {
-              this.dataSource.data[index] = fatturaAggiornata;
-              this.dataSource.data = [...this.dataSource.data];
-            }
-            this.selectedFattura = fatturaAggiornata;
-            this.righeVisibili[fattura.id] = true;
-          });
-        },
-        error: (err) => {
-          console.error('Errore creazione riga:', err);
-        }
-      });
-    }
-  });
-}
   private loadTipiSpedizione(): void {
-      this.tipoSpedizioneServices.list().subscribe({
-        next: (data) => this.tipiSpedizione = data,
-        error: () => this.showMsg('Errore caricamento tipi spedizione', true)
-      });
-    }
-  
-    private loadTipiPagamento(): void {
-      this.tipoPagamentoServices.list().subscribe({
-        next: (data) => this.tipiPagamento = data,
-        error: () => this.showMsg('Errore caricamento tipi pagamento', true)
-      });
-    }
+    this.tipoSpedizioneServices.list().subscribe({
+      next: (data: Spedizione[]) => this.tipiSpedizione.set(data),
+      error: () => this.showMsg('Errore caricamento tipi spedizione', true)
+    });
+  }
+
+  private loadTipiPagamento(): void {
+    this.tipoPagamentoServices.list().subscribe({
+      next: (data: TipoPagamento[]) => this.tipiPagamento.set(data),
+      error: () => this.showMsg('Errore caricamento tipi pagamento', true)
+    });
+  }
 
   showMsg(msg: string, isError: boolean): void {
     this.snack.open(msg, 'OK', {

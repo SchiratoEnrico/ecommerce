@@ -1,4 +1,4 @@
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { LOCALE_ID, NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 
@@ -74,6 +74,8 @@ import { FatturaDialog } from './components/admin/dialogs/fattura-dialog/fattura
 
 // Import da develop
 import { MailValidation } from './components/mail-validation/mail-validation';
+import { StatoBadgeClassPipe } from './pipes/stato-badge-class-pipe';
+import { FatturaDetailsDialog } from './components/admin/dialogs/fattura-details-dialog/fattura-details-dialog';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password';
 import { ResetPassword } from './components/reset-password/reset-password';
 
@@ -120,6 +122,8 @@ import { ResetPassword } from './components/reset-password/reset-password';
     RigaFatturaDialog,
     FatturaDialog,
     MailValidation,
+    StatoBadgeClassPipe,
+    FatturaDetailsDialog,
     ForgotPasswordComponent,
     ResetPassword,
   ],
@@ -161,6 +165,7 @@ import { ResetPassword } from './components/reset-password/reset-password';
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptors([jwtInterceptor]), withFetch()),
+    { provide: LOCALE_ID, useValue: 'it-IT' }
   ],
   bootstrap: [App],
 })
